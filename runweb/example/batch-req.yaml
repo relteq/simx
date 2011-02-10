@@ -1,0 +1,12 @@
+ scenario_xml:  value ignored, but should be present
+ name:          test123
+ n_runs:        3
+ mode:          simulation
+ engine:        dummy
+ b_time:        0.0
+ duration:      100.0
+ control:       false
+ qcontrol:      false
+ events:        false
+ group:         topl
+ user:          topl

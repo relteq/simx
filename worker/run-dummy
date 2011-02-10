@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+topdir = File.expand_path("..")
+libdir = File.join(topdir, "lib")
+$LOAD_PATH.unshift libdir
+
+require 'worker/dummy-worker'
+
+Socket.do_not_reverse_lookup = true
+
+worker = DummyWorker.new(
+  :runq_host    => ENV["RUNQ_HOST"] || 'localhost',
+  :runq_port    => ENV["RUNQ_PORT"] || 8096,
+  :group        => "topl",
+  :user         => "topl",
+  :engine       => "dummy",
+  :cost         => 0,
+  :retry_delay  => 10,
+  :logdev       => $stderr,
+  :step_count   => 10,
+  :step_delay   => 1
+)
+
+worker.execute

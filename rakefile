@@ -1,0 +1,126 @@
+topdir = File.expand_path(".")
+libdir = File.join(topdir, "lib")
+$LOAD_PATH.unshift libdir
+
+##require 'simx/gems'
+
+#== Config
+
+##config_local_gems(topdir)
+
+# destination for the remote task
+dest_host = ENV["SIMX_DEST_HOST"] || "relteq-db.dyndns.org"
+dest_path = ENV["SIMX_DEST_PATH"] || "simx"
+
+remote_files = FileList[
+  "README",
+  "rakefile",
+  "bin/*",
+  "lib/*"
+]
+
+daemon_dirs = %w{
+  runq
+  runweb
+}
+
+# tasks that can be delegated to all of the daemon_dirs
+delegated_tasks = [:start, :stop, :restart, :stat]
+
+#== Tasks
+
+desc "update and restart remote daemons, #{dest_host}:#{dest_path}"
+task :remote => %w{ remote:update remote:restart }
+
+namespace :remote do
+  desc "update to #{dest_host}:#{dest_path}, including subdirs"
+  task :update
+  
+  desc "update to #{dest_host}:#{dest_path}, not including subdirs"
+  task :update_self
+  
+  delegated_tasks.each do |name|
+    desc "#{name} remote daemons"
+    task name
+  end
+
+### TODO
+###  desc "install remote cronjob to start daemons after reboot"
+###  task :crontab
+end
+
+delegated_tasks.each do |name|
+  desc "#{name} local daemons"
+  task name
+end
+
+###desc "install local cronjob to start daemons after reboot"
+###task :crontab
+
+###desc "puts needed gems in #{GEMDIR} dir"
+###task GEMDIR
+
+##desc "create file with env vars for local gems"
+##file GEMENV
+
+#== Implementation
+
+namespace :remote do
+  task :update => :update_self do
+    puts "="*60
+    daemon_dirs.each do |dir|
+      sh "cd #{dir} && rake remote:update"
+      puts "="*60
+    end
+  end
+  
+  task :update_self do
+    sh "rsync -Cavz --relative --exclude='*.bck' #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
+  end
+  
+  delegated_tasks.each do |name|
+    task name do
+      sh "ssh #{dest_host} 'cd #{dest_path} && rake #{name}'"
+    end
+  end
+  
+###  task :crontab do
+###    sh "ssh #{dest_host} 'cd #{dest_path} && rake crontab'"
+###  end
+end
+
+delegated_tasks.each do |name|
+  task name do
+    daemon_dirs.each do |dir|
+      print "%20s: " % dir
+      $stdout.flush
+      result = `cd #{dir} && rake #{name}`.split("\n")[1..-1]
+      puts result.join(";")
+    end
+  end
+end
+
+directory "var"
+
+###task :crontab => "var" do
+###  path = File.expand_path(".")
+###  cron_cmd = "*/5 * * * * cd #{path} && bin/nt.cron"
+###  
+###  ct = `crontab -l`
+###  rx = Regexp.quote(cron_cmd)
+###  if ct.grep(/^#{rx}/).empty?
+###    IO.popen("crontab -", "w") do |pipe|
+###      pipe.puts ct, cron_cmd
+###    end
+###  end
+###end
+
+##file GEMENV => GEMDIR
+##directory GEMDIR
+##task GEMDIR do |t|
+##  sh "bin/crown -v #{t.name} #{GEMLIST.join(" ")} >#{GEMENV}"
+##end
+
+DATA_DIR = "var/data/"
+
+directory DATA_DIR

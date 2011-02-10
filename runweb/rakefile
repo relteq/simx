@@ -1,0 +1,142 @@
+topdir = File.expand_path("..")
+libdir = File.join(topdir, "lib")
+$LOAD_PATH.unshift libdir
+
+require 'simx/daemon'
+##require 'simx/gems'
+
+#== Config
+
+# port served by the daemon process (rake start)
+# (with rake run, process port is printed on terminal)
+port = Integer(ENV["RUNWEB_PORT"] || 8097)
+
+# destination for the remote task
+dest_host = ENV["RUNWEB_DEST_HOST"] || "relteq-db.dyndns.org"
+dest_path = ENV["RUNWEB_DEST_PATH"] || "simx/runweb"
+
+proc_name   = "runweb"
+svr_name    = "lib/#{proc_name}.rb"
+exec_dir    = ".."
+sock_dir    = File.expand_path(File.join(exec_dir, "var/run"))
+sock_name   = File.join(sock_dir, "#{proc_name}.sock")
+log_dir     = File.expand_path(File.join(exec_dir, "var/log"))
+log_file    = File.join(log_dir, "#{proc_name}.log")
+err_file    = log_file.sub(/\.log/, ".err")
+
+FileUtils.mkdir_p log_dir
+FileUtils.mkdir_p sock_dir
+
+#== Tasks
+
+desc "update and restart remote daemon, #{dest_host}:#{port}"
+task :remote
+
+namespace :remote do
+  desc "update to #{dest_host}:#{dest_path}"
+  task :update
+  
+  [:start, :stop, :restart, :stat].each do |name|
+    desc "#{name} remote daemon"
+    task name
+  end
+end
+
+desc "run child process (not daemon; ^C to stop)"
+task :run
+
+desc "start daemon"
+task :start
+
+desc "restart daemon"
+task :restart
+
+desc "stop daemon"
+task :stop
+
+desc "status of daemon"
+task :stat
+
+#== Implementation
+
+include Daemon
+
+task :remote => ["remote:update", "remote:restart"]
+
+remote_files = FileList[
+  "rakefile",
+  "public",
+  "lib"
+]
+
+namespace :remote do
+  task :update do
+    sh "rsync -Cavz --delete --exclude='*.bck'" +
+       " #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
+  end
+  
+  [:start, :stop, :restart, :stat].each do |name|
+    task name do
+      sh "ssh #{dest_host} 'cd #{dest_path} && rake #{name}'"
+    end
+  end
+end
+
+task :run do
+  sh "ruby", "-C", exec_dir, "-I", File.expand_path(libdir),
+    File.expand_path(svr_name)
+end
+
+task :start do
+  result = command("stat", sock_name)
+  case result
+  when /not running/i
+    puts "starting on port #{port}"
+    
+    opts = {
+      "err_file"    => err_file,
+      "log_file"    => log_file,
+      "log_params"  => "weekly",
+      "sock_name"   => sock_name,
+      "daemon_dir"  => exec_dir,
+      "proc_name"   => proc_name
+    }
+    
+    args = [
+      "-I", File.expand_path(libdir),
+      File.expand_path(svr_name),
+      "-p", port.to_s,
+      "-e", "production",
+      "--", # end sinatra options; options below are passed to svr_name
+      "--log-file", log_file,
+      "--log-level", "info" ## how to set this externally?
+    ]
+    
+    daemonize opts do
+      exec "ruby", *args
+    end
+    
+    sleep 0.1
+    print_stat(sock_name, err_file)
+    
+  else
+    puts result
+  end
+end
+
+task :stop do
+  result = command("stop", sock_name)
+  puts result
+  FileUtils.rm_f err_file
+
+  case result
+  when Errno::ECONNREFUSED, TimeoutError
+    rm_f sock_name # assume it is stopped already
+  end
+end
+
+task :stat do
+  print_stat(sock_name, err_file)
+end
+
+task :restart => [:stop, :start]

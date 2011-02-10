@@ -1,0 +1,87 @@
+
+SIMX is a set of daemons for managing workers and batches of runs. Workers perform runs (typically, simulations of some kind, but really any kind of computation).
+
+The coordination is performed by the runq program, a tcp server, which maintains queues of workers and batches of runs, and finds matches among them. The state of these queues is stored in a database (currently sqlite using the sequel library). Matching is based on group and user identity and the requested simulation (or computation) engine.
+
+The workers can run anywhere; as tcp clients, they connect to the runq server. When runs are available, the server sends them to the workers.
+
+There is also a restful web api, implemented by the runweb daemon, based on sinatra.
+
+All of this is fairly robust to processes restarting, network connections reconnecting, etc., so you can usually stop and start individual processes. If you get really stuck, rm the database in simx/var/data/runq.sqlite.
+
+Basic usage:
+
+Requirements: ruby, sinatra, sequel, sqlite3-ruby
+
+To run the processes interactively, use `rake run` in the runq/ and runweb/ dirs (or use `rake start|stop|restart` to control them as daemons). Since the interactive use will normally choose a different port each time, you may want to specify the port, so you don't have to scrape it from the logs:
+
+  cd simx/runq && RUNQ_PORT=4949 rake run
+
+  cd simx/runweb && RUNQ_PORT=4949 rake run
+
+To start workers, let's use a "dummy" worker--no simulation, just a counter for 10 seconds. This worker will accept run requests that carry the "engine: dummy" tag.
+
+  cd simx/worker && RUNQ_PORT=4949 ./run-dummy
+
+You can start several of these.
+
+Adding batches and monitoring status is done via the web interface. The interactive (`rake run`) mode of the runweb server listens on port 4567 (the default for sinatra):
+
+  curl localhost:4567/batch
+  curl localhost:4567/batches
+ 
+    list known batches
+
+
+  curl localhost:4567/batch/n
+ 
+    display batch n, including all runs in the batch
+
+
+  curl localhost:4567/worker
+  curl localhost:4567/workers
+ 
+    list known workers (even ones that are long gone)
+
+
+  curl localhost:4567/user/n
+  
+    list all batches started by user n
+  
+  
+  curl localhost:4567/batch/new --data-binary @batch-req.yaml
+  
+    register a new batch of runs, which will be assigned to workers
+    as matches are found
+    
+    note that this is a POST; a sample data file is below:
+
+$ cat batch-req.yaml
+ scenario_xml:  value ignored, but should be present
+ name:          test123
+ n_runs:        3
+ mode:          simulation
+ engine:        dummy
+ b_time:        0.0
+ duration:      100.0
+ control:       false
+ qcontrol:      false
+ events:        false
+ group:         topl
+ user:          topl
+
+The significant attributes, at this point, are:
+
+  n_runs  - these will run in parallel if you have several workers
+  engine  - must match the worker
+  group   - ditto
+  user    - ditto
+
+You can also make requests to the runq/runweb instances that are running on relteq-db, but you will have to supply http basic authentication:
+
+  curl relteq-db.dyndns.org:8097/batch/new --data-binary @batch-req.yaml -u relteq:topl5678
+
+To set up a local worker that will be driven by these instances of runq/runweb, just set the host env var:
+
+  cd simx/worker && RUNQ_HOST=relteq-db.dyndns.org ./run-dummy
+
