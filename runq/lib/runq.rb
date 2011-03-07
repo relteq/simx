@@ -1,7 +1,8 @@
 # This is the main file for the daemon that manages the queue of
 # run requests and the queue of workers ready to execute runs.
 #
-# The daemon is run from the rakefile with 'rake start'.
+# The daemon is run from the rakefile with 'rake start'. See 'rake --tasks'
+# for details.
 
 require 'logger'
 require 'fileutils'
@@ -10,11 +11,11 @@ require 'thread'
 
 require 'simx/mtcp'
 require 'runq/db'
-require 'runq/request'
+require 'runq/handlers/from-worker'
+require 'runq/handlers/from-user'
 
 # We want to log the IP address of connected peers, but don't need full
-# domain info.
-## This should probably be set to false in production.
+# domain info (which may be useless anyway if peer is behind firewall or dhcp).
 Socket.do_not_reverse_lookup = true
 
 module Runq
@@ -32,10 +33,6 @@ module Runq
   class << self
     attr_reader :production
 
-    # last known socket for a worker id; this is the only non-persistent
-    # state of the runq process
-    attr_reader :socket_for_worker # hash { worker_id => socket }
-
     def log
       @log ||= Logger.new(@log_file || $stderr, "weekly")
     end
@@ -47,6 +44,17 @@ module Runq
       end
     end
     
+    # Queue for all incoming requests, both from workers and from users.
+    def request_queue
+      @request_queue ||= Queue.new
+    end
+    
+    # Last known socket for a worker id; this is the only non-persistent
+    # state of the runq process. It is a hash of worker_id => socket.
+    def socket_for_worker
+      @socket_for_worker ||= {}
+    end
+
     def parse_argv argv
       @production = argv.delete("--production")
       
@@ -71,18 +79,19 @@ module Runq
     end
     
     def run
-      @socket_for_worker = {}
-      @request_queue = Queue.new
-      
       log.level = @log_level
       log.info "Starting"
       
       trap("TERM") do
-        @request_queue << nil # wake the request queue thread
+        request_queue << nil # wake the request queue thread
         # don't need to wake other threads because only the request queue thread
         # actually touches persistent state or sends replies
       end
 
+      # start anything that can start, in case runq quit earlier with
+      # some runs that could start but didn't
+      dispatch_all
+      
       svr_thread = Thread.new do
         run_server_thread
       end
@@ -96,11 +105,8 @@ module Runq
     rescue Interrupt, SignalException
       log.info "#{self} exiting"
       exit
-    rescue => e
-      log.error "Main thread: " + [e.inspect, *e.backtrace].join("\n  ")
-      raise
     rescue Exception => e
-      log.warn e
+      log.error "Main thread: " + [e.inspect, *e.backtrace].join("\n  ")
       raise
     end
     
@@ -111,40 +117,40 @@ module Runq
           sock = svr.accept
           log.info "Connected to #{sock.peeraddr.inspect}"
           Thread.new(sock) do |s|
-            run_request_thread s
+            run_recv_thread s
           end
         end
       end
     rescue => e
       log.error "Server thread: " + [e.inspect, *e.backtrace].join("\n  ")
+      sleep 1
       retry
     end
     
-    # Manages requests from workers and web services
-    def run_request_thread sock
-      dispatch_all
-      
+    # Manages incoming requests from one client: a worker or a web service.
+    def run_recv_thread sock
       while msg_str = sock.recv_message
         req = YAML.load(msg_str)
         log.info "Got request from #{sock.peeraddr.inspect}"
         req.sock = sock
         req.runq = self
-        @request_queue << req
+        request_queue << req
       end
-      log.info "Request thread terminating: YAML stream closed"
+      log.info "Receiver thread terminating: YAML stream closed"
     rescue => e
-      log.error "Request thread: " + [e.inspect, *e.backtrace].join("\n  ")
+      log.error "Receiver thread: " + [e.inspect, *e.backtrace].join("\n  ")
     end
 
     # This thread is the only one allowed to access the database.
     # nil request means stop thread
     def run_request_queue_thread
-      while req = @request_queue.pop
+      while req = request_queue.pop
         handle_request req
       end
       log.info "Request queue thread terminating"
     rescue => e
       log.error "Request queue thread: " + [e, *e.backtrace].join("\n  ")
+      sleep 1
       retry
     end
     
@@ -163,14 +169,20 @@ module Runq
     
     # +req+ is WorkerReady; returns worker id
     def add_worker req
+      ## need some basic security here
+      
       worker_id = database[:workers] << {
-        :host     => req.host,
-        :pid      => req.pid,
-        :group    => req.group,
-        :user     => req.user,
-        :engine   => req.engine,
-        :cost     => req.cost,
-        :run_id   => nil  # none yet, hence worker is ready
+        :host         => req.host,
+        :ipaddr       => req.sock.peeraddr[3],
+        :pid          => req.pid,
+        :group        => req.group,
+        :user         => req.user,
+        :engine       => req.engine,
+        :cost         => req.cost,
+        :speed        => req.speed,
+        :priority     => req.priority,
+        :run_id       => nil,  # none yet, hence worker is ready
+        :last_contact => Time.now
       }
       ## check if uniq host/pid
       ## check if valid group/user
@@ -183,30 +195,45 @@ module Runq
     
     # +req+ is WorkerReconnect
     def reconnect_worker req
-      socket_for_worker[req.worker_id] = req.sock
+      worker_id = req.worker_id
+      socket_for_worker[worker_id] = req.sock
+      
+      workers = database[:workers].where(:id => worker_id)
+      workers.update(
+        :last_contact => Time.now,
+        :ipaddr       => req.sock.peeraddr[3] # in case of dhcp, for example
+      )
+      log.info "Reconnected worker #{worker_id}"
     end
     
     # +req+ is WorkerUpdate
     def update_worker req
       worker_id = req.worker_id
-      socket_for_worker[worker_id] = req.sock # might have changed
-
       workers = database[:workers].where(:id => worker_id)
       worker = workers.first
 
+      workers.update(
+        :last_contact => Time.now
+      )
+
       database[:runs].where(:id => worker[:run_id]).update(
-        :frac_complete => req.frac_complete
+        :frac_complete  => req.frac_complete
+        ## store progress as well?
       )
       log.info "Updated worker #{worker_id}, frac = #{req.frac_complete}"
     end
     
     # +req+ is WorkerFinishedRun
-    def finished_worker(req)
+    def finished_worker req
       worker_id = req.worker_id
-      socket_for_worker[worker_id] = req.sock # might have changed
-      
+      data = req.data
       workers = database[:workers].where(:id => worker_id)
       worker = workers.first
+      
+      workers.update(
+        :last_contact => Time.now,
+        :run_id => nil
+      )
       
       runs = database[:runs].where(:id => worker[:run_id])
       runs.update(
@@ -215,10 +242,6 @@ module Runq
         # and to signify that the run is not waiting to start
       )
       run = runs.first
-      
-      workers.update(
-        :run_id => nil
-      )
       
       batches = database[:batches].where(:id => run[:batch_id])
       batch = batches.first
@@ -238,6 +261,96 @@ module Runq
 
       log.info "Finished run by worker #{worker_id}; " +
         "#{new_n_complete} of #{n_runs} runs done in batch #{batch_id}"
+    end
+    
+    # +req+ is WorkerAbortedRun
+    def aborted_worker req
+      worker_id = req.worker_id
+      workers = database[:workers].where(:id => worker_id)
+      worker = workers.first
+      
+      workers.update(
+        :last_contact => Time.now,
+        :run_id => nil
+      )
+      
+      runs = database[:runs].where(:id => worker[:run_id])
+      #runs.update(
+        # leave the frac_complete intact of a record of last update
+        #
+        # leave the worker_id intact as record of who did the run
+        # and to signify that the run is not waiting to start
+      #)
+      run = runs.first
+      
+      batches = database[:batches].where(:id => run[:batch_id])
+      batch = batches.first
+      batch_id = batch[:id]
+      new_n_complete = batch[:n_complete] + 1 ## ?
+      n_runs = batch[:n_runs]
+      if new_n_complete == n_runs
+        batches.update(
+          :n_complete => new_n_complete,
+          :execution_time  => Time.now - batch[:start_time]
+        )
+      else
+        batches.update(
+          :n_complete => new_n_complete
+        )
+      end
+      
+      ## what else do we need to do?
+      ## - put abort message in db, so runweb can get it?
+      ## - flag in batch that indicates there were aborted runs?
+
+      log.info "Aborted run by worker #{worker_id}; " +
+        "#{new_n_complete} of #{n_runs} runs done in batch #{batch_id}\n"
+    end
+    
+    # +req+ is WorkerFailedRun
+    def failed_worker req
+      worker_id = req.worker_id
+      message = req.message
+      workers = database[:workers].where(:id => worker_id)
+      worker = workers.first
+      
+      workers.update(
+        :last_contact => Time.now,
+        :run_id => nil
+      )
+      
+      runs = database[:runs].where(:id => worker[:run_id])
+      #runs.update(
+        # leave the frac_complete intact of a record of last update
+        #
+        # leave the worker_id intact as record of who did the run
+        # and to signify that the run is not waiting to start
+      #)
+      run = runs.first
+      
+      batches = database[:batches].where(:id => run[:batch_id])
+      batch = batches.first
+      batch_id = batch[:id]
+      new_n_complete = batch[:n_complete] + 1 ## ?
+      n_runs = batch[:n_runs]
+      if new_n_complete == n_runs
+        batches.update(
+          :n_complete => new_n_complete,
+          :execution_time  => Time.now - batch[:start_time]
+        )
+      else
+        batches.update(
+          :n_complete => new_n_complete
+        )
+      end
+      
+      ## what else do we need to do?
+      ## - put failure message in db, so runweb can get it?
+      ## - flag in batch that indicates there were failures?
+
+      log.info "Failed run by worker #{worker_id}; " +
+        "#{new_n_complete} of #{n_runs} runs done in batch #{batch_id}\n" +
+        message
     end
     
     # Look for all runs and workers that can be matched, and set them to work.
@@ -260,7 +373,7 @@ module Runq
       end
       
       if worker[:run_id]
-        log.warn "Worker #{worker_id} already has a run"
+        log.error "Worker #{worker_id} already has a run"
         return
       end
       
@@ -287,7 +400,8 @@ module Runq
       run = database[:runs].where(:id => run_id).first
       
       # no race cond here because there is only one thread in db
-      ready_workers = database[:workers].where(:run_id => nil).order_by(:cost)
+      ready_workers = database[:workers].where(:run_id => nil).
+        order_by(:cost, :speed.desc, :priority.desc)
 
       matching_workers = ready_workers.all.select do |worker|
         have_match(worker, run)
@@ -306,44 +420,45 @@ module Runq
       ## may need more sophisticated logic here
       ## should we push logic into the sequel query?
       s = socket_for_worker[worker[:id]]
+      return false unless s && !s.closed?
+      
       batch = database[:batches].where(:id => run[:batch_id]).first
 
       batch &&
-      s && !s.closed? &&
       (batch[:engine] == worker[:engine]) &&
-      (batch[:group] == worker[:group]) &&
+      (!worker[:group] || batch[:group] == worker[:group]) &&
       (!worker[:user] || batch[:user] == worker[:user])
     end
     
     def send_run_to_worker run, worker
       run_id = run[:id]
       batch_id = run[:batch_id]
+      batch_index = run[:batch_index]
       batch = database[:batches].where(:id => batch_id).first
       worker_id = worker[:id]
+      param = YAML.load(batch[:param]) ## cache this per batch
       
-      ### use a class
-      msg = {
-        "status"  => "ok",
-        "message" => "sending scenario"
-      }
+      msg = Request::RunqAssignRun.new(
+        :param        => param,
+        :batch_index  => batch_index
+      )
+      ### TODO: export from database?
+      ### is this a special case based on engine?
+      ### other special cases for pre-processing:
+      ### - validate xml
       
-      if batch[:scenario_id]
-        msg["scenario_xml"] = nil ### TODO: export from database
-      elsif batch[:scenario_xml]
-        msg["scenario_xml"] = batch[:scenario_xml]
-      else
-        raise "Batch #{batch_id} has neither scenario_id nor scenario_xml"
-      end
-
       begin
         sock = socket_for_worker[worker_id]
         sock.send_message msg.to_yaml
       rescue *NETWORK_ERRORS => ex
         wdex = WorkerDisconnected.new
         wdex.worker_id = worker_id
-        raise wdex, "Failed to send run #{run_id} to worker #{worker_id}: #{ex.inspect}"
+        raise wdex,
+          "Failed to send run #{run_id} to worker #{worker_id}: #{ex.inspect}"
       end
 
+      # If the transmission succeeded, mark the run and worker as belonging to
+      # each other.
       database[:runs].where(:id => run_id).update(
         :worker_id => worker_id
       )
@@ -351,8 +466,10 @@ module Runq
         :run_id => run_id
       )
 
-      log.info "Dispatched #{run_id} in batch #{batch_id} " +
+      log.info "Dispatched run #{run_id}, " +
+        "index #{batch_index} in batch #{batch_id} " +
         "to worker #{worker_id}"
+      log.debug "message:\n#{msg.to_yaml}"
       
       return true
     end
@@ -360,6 +477,8 @@ module Runq
     ### how to periodically purge old records from db?
     ### and check if batch or run is stalled? or sock is dead?
     ### periodically delete worker records that do not have a corr socket
+    
+    ### how to restart run if worker went away?
   end
 end
 

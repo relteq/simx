@@ -47,7 +47,7 @@ configure :development do
 end
 
 configure do
-  LOGGER.info "Run web API service starting"
+  LOGGER.info "Runweb API service starting"
   
   services = [
     ### list service points here
@@ -127,19 +127,14 @@ end
 
 # StartBatch. Body is yaml hash with string keys:
 #
-#   scenario_id
-#   scenario_xml
-#   name
-#   n_runs
-#   mode
-#   engine
-#   b_time
-#   duration
-#   control
-#   qcontrol
-#   events
-#   group
-#   user
+#  name:           test123
+#  engine:         dummy
+#  group:          topl
+#  user:           topl
+#  n_runs:         3
+#  param:          10
+#
+# See README for more details.
 #
 post '/batch/new' do
   protected!
@@ -174,6 +169,8 @@ get %r{^/batch(?:es)?$} do
   LOGGER.info "BatchList request"
   req = Runq::Request::BatchList.new
   send_request_and_recv_response req
+    ## check for error and use that to distinguish between error here or
+    ## in the runq daemon
 end
 
 # WorkerList

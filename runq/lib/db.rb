@@ -55,6 +55,7 @@ module Runq
         primary_key :id
         
         text        :host   # on which process is running
+        text        :ipaddr # which request came from
         integer     :pid    # of worker process
         
         text        :group  # which group allowed to use, nil->no restriction
@@ -62,17 +63,24 @@ module Runq
         ## these should be ids of groups and users in redmine
         ## also, should be a n-to-n table of workers/users and workers/groups
 
-        text        :engine # "aurora" or "dummy"
+        text        :engine # "aurora", "dummy", etc.
         float       :cost   # unit-less assessment of the cost of this worker
+        float       :speed  # unit-less assessment of the speed of this worker
+        float       :priority
+                            # tie-breaker for when multiple workers available
         
-        # nil if worker is ready to accept new run
         foreign_key :run_id, :runs, :key => :id, :null => true
+                            # the run the worker is processing;
+                            # nil if worker is ready to accept new run
+        
+        time        :last_contact
         
         ## stats: uptime, cpu avg, etc.
         
         index :run_id
         index :group
         index :user
+        index :engine
       end
     end
 
@@ -80,33 +88,22 @@ module Runq
       create_table :batches do
         primary_key :id
         
-        integer     :scenario_id # nil means user provided xml directly
-        text        :scenario_xml # full description of scenario
         text        :name
-        integer     :n_runs
-        text        :mode     # "prediction" or "simulation"
+        text        :group    # for selecting workers
+        text        :user     # for selecting workers
         text        :engine   # "aurora" or "dummy"
+
+        integer     :n_runs   # number of rows in runs table for this batch
         
-        ### how do these relate to settings in the xml file?
-        float       :b_time   # begin time (in simulation clock)
-        float       :duration # of simulation (in simulation clock)
-        
-        boolean     :control  # enable control defined in scenario
-        boolean     :qcontrol # ditto qcontrol
-        boolean     :events   # ditto events
+        text        :param    # engine-specific YAML string
         
         time        :start_time # in wall clock time
         float       :execution_time # in wall clock time
-        
         integer     :n_complete # number of runs completed
-
-        text        :group    # for selecting workers
-        text        :user
-        
-        ## how will runs vary? (in sim mode, montecarlo)
 
         index :group
         index :user
+        index :engine
       end
     end
     
@@ -116,9 +113,12 @@ module Runq
         
         foreign_key :batch_id, :batches, :key => :id, :null => false
         
-        # nil means not assigned to a worker yet
-        # non-nil means this is the current OR former run of a worker
         foreign_key :worker_id, :workers, :key => :id, :null => true
+                              # nil means not assigned to a worker yet
+                              # non-nil means this is the current OR
+                              #  former run of a worker
+        
+        integer     :batch_index    # in 0..n_runs-1
         
         float       :frac_complete
         constraint  nil, :frac_complete => 0..1

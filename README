@@ -1,31 +1,33 @@
 
-SIMX is a set of daemons for managing workers and batches of runs. Workers perform runs (typically, simulations of some kind, but really any kind of computation).
+SIMX is a set of daemons for managing workers and tasks. Workers are processes on remote hosts that execute the tasks. Tasks are typically lengthy, cpu-intensive computations: simulation, calibration, postprocessing, report generation, etc. A task may be organized as a batch of runs that multiple workers can execute in parallel.
 
-The coordination is performed by the runq program, a tcp server, which maintains queues of workers and batches of runs, and finds matches among them. The state of these queues is stored in a database (currently sqlite using the sequel library). Matching is based on group and user identity and the requested simulation (or computation) engine.
+The coordination is performed by the runq program, a tcp server, which maintains queues of workers and tasks. As these two queues are filled, runq finds matches between them (workers that can handle tasks) and dispatches the tasks to the workers. The state of these queues is stored in a database (currently sqlite using the sequel library). Matching is based on group and user identity and the requested computational engine.
 
 The workers can run anywhere; as tcp clients, they connect to the runq server. When runs are available, the server sends them to the workers.
 
-There is also a restful web api, implemented by the runweb daemon, based on sinatra.
+There is also a restful web api, implemented by the runweb daemon, based on sinatra. This daemon accepts http requests to control and inspect tasks and dispatches those requests to the runq tcp server. The daemon has essentially no state of its own and does not talk directly to any database.
 
 All of this is fairly robust to processes restarting, network connections reconnecting, etc., so you can usually stop and start individual processes. If you get really stuck, rm the database in simx/var/data/runq.sqlite.
 
-Basic usage:
+Requirements
 
-Requirements: ruby, sinatra, sequel, sqlite3-ruby
+ruby, rake, sinatra, sequel, sqlite3-ruby
 
-To run the processes interactively, use `rake run` in the runq/ and runweb/ dirs (or use `rake start|stop|restart` to control them as daemons). Since the interactive use will normally choose a different port each time, you may want to specify the port, so you don't have to scrape it from the logs:
+Basic usage for running simulations
+
+To run the processes interactively (not as daemons; with logging to terminal), use `rake run` in the runq/ and runweb/ dirs (or use `rake start|stop|restart` to control them as daemons). Since the interactive use will normally choose a different port each time, you may want to specify the port, so you don't have to scrape it from the logs:
 
   cd simx/runq && RUNQ_PORT=4949 rake run
 
   cd simx/runweb && RUNQ_PORT=4949 rake run
 
-To start workers, let's use a "dummy" worker--no simulation, just a counter for 10 seconds. This worker will accept run requests that carry the "engine: dummy" tag.
+To start workers, let's use a "dummy" worker--no simulation, just a counter for 10 seconds (sleeping in increments of 1 second). This worker will accept run requests that carry the "engine: dummy" tag.
 
   cd simx/worker && RUNQ_PORT=4949 ./run-dummy
 
-You can start several of these.
+You can start several of these dummy workers.
 
-Adding batches and monitoring status is done via the web interface. The interactive (`rake run`) mode of the runweb server listens on port 4567 (the default for sinatra):
+Adding batches and monitoring their status is done using the runweb interface. The interactive (`rake run`) mode of the runweb server listens on port 4567 (4567 is the default for sinatra; when you run it as a daemon, it listens on RUNWEB_PORT, which defaults to 8097):
 
   curl localhost:4567/batch
   curl localhost:4567/batches
@@ -56,26 +58,35 @@ Adding batches and monitoring status is done via the web interface. The interact
     
     note that this is a POST; a sample data file is below:
 
-$ cat batch-req.yaml
- scenario_xml:  value ignored, but should be present
- name:          test123
- n_runs:        3
- mode:          simulation
- engine:        dummy
- b_time:        0.0
- duration:      100.0
- control:       false
- qcontrol:      false
- events:        false
- group:         topl
- user:          topl
+  $ cat batch-req.yaml
+  name:           test123
+  engine:         dummy
+  group:          topl
+  user:           topl
+  n_runs:         3
+  param:
+    step_count:   5
+    step_delay:   1
 
-The significant attributes, at this point, are:
+The name is mostly cosmetic; the other values have meaning as follows:
 
   n_runs  - these will run in parallel if you have several workers
   engine  - must match the worker
   group   - ditto
   user    - ditto
+  param   - number of seconds to wait before finishing the dummy run
+
+The param value can be any object, as defined by the engine, but it is ignored by the dummy engine. For a simulation run, the engine and param might look like this:
+
+  engine:           aurora
+  param:
+    mode:           simulation # alternative is prediction
+    b_time:         0.0
+    duration:       100.0
+    control:        false
+    qcontrol:       false
+    events:         false
+    scenario:       123 # id or xml string
 
 You can also make requests to the runq/runweb instances that are running on relteq-db, but you will have to supply http basic authentication:
 
@@ -85,3 +96,25 @@ To set up a local worker that will be driven by these instances of runq/runweb, 
 
   cd simx/worker && RUNQ_HOST=relteq-db.dyndns.org ./run-dummy
 
+Using this with the relteq redmine apps on heroku:
+
+For the development/staging/etc instances of relteq/redmine:
+
+heroku config:add RUNWEB_HOST=relteq-db.dyndns.com
+heroku config:add RUNWEB_PORT=9097
+
+For production:
+
+heroku config:add RUNWEB_HOST=relteq-db.dyndns.com
+heroku config:add RUNWEB_PORT=8097
+
+
+How to set up your own client
+
+Why?
+
+1. you have a spare machine with some spare cycles
+
+2. want to see the process running on your own host
+
+3. debugging new version of worker
