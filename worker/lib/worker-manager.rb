@@ -1,42 +1,105 @@
- worker manager
+require 'logger'
+require 'thread'
+require 'fileutils'
+require 'tempfile'
+require 'tmpdir'
+require 'yaml'
 
-  config
-    host: # for deployment
-      - [worker,...]
-      - [worker,...]
-    host:
-  
-    [
-      {
-        n_workers: N
-        worker: lib/workers/someworker.rb
-        options: # for these workers
-          runq_host:
-          runq_port:
-          ...
-      }
-      {
-        n_workers: N
-        options: # for these workers
-          runq_host
-          runq_port
-          ...
-      }
-    ]
-  
-  runs as daemon
-  
-  starts each set of workers as child processes
-  
-  when creating a worker, must specify run_class
-  
-  set logdev and log level of each worker
-  
-  if any die, restarts them
-  
-  manages centralized status, etc.
-  
-  monitor for out of control process?
+require 'worker/worker'
+require 'worker/run/dummy'
+require 'worker/run/generic'
 
-  worker: error handling
-    each run class must know how to tell if something went wrong
+# Daemon that starts sets of workers as child processes.
+# If a worker dies, restarts it. Each worker has a specified run_class, which
+# determines the class of the sequence of Run instances it manages.
+class WorkerManager
+  # Contains string keys: log_file, log_level, runq_host, runq_port, workers.
+  # The value at workers has keys run_class, count, group, etc.
+  attr_reader :config
+  
+  class << self
+    def run argv = ARGV
+      wmgr = new
+      wmgr.parse_argv argv
+      wmgr.run
+    end
+  end
+  
+  def parse_argv argv
+    if argv.length != 1
+      raise ArgumentError, "WorkerManager must be called with 1 arg"
+    end
+    @config = YAML.load(argv[0])
+  end
+  
+  def log
+    @log ||= begin
+      log = Logger.new(config["log_file"] || $stderr, "weekly")
+      
+      level = config["log_level"] || "info"
+      level = level.upcase
+      if Logger::Severity.constants.include?(level)
+        log.level = Logger::Severity.const_get(level)
+      else
+        log.level = Logger::INFO
+      end
+      
+      log
+    end
+  end
+  
+  def workers
+    config["workers"]
+  end
+  
+  def run
+    log.info "#{self.class} starting."
+
+    # trap("TERM") -- not here, just let the children handle it
+
+    @worker_threads = []
+    
+    workers.each do |worker_set|
+      worker_set["count"].times do
+        w = worker_set.dup # note shallow copy
+        w.delete "count"
+        w["runq_host"] = config["runq_host"]
+        w["runq_port"] = config["runq_port"]
+        w["logdev"] = config["log_file"]
+        @worker_threads << Thread.new(w) do |worker_spec|
+          run_worker worker_spec
+        end
+      end
+    end
+    
+    @worker_threads.each do |t|
+      t.join
+    end
+
+    log.info "#{self.class} done."
+  end
+  
+  def get_scoped_constant str
+    str.split("::").inject(Object) {|c,s|c.const_get s}
+  end
+  
+  def run_worker worker_spec
+    run_class = get_scoped_constant(worker_spec["run_class"])
+
+    loop do
+      log.debug "starting worker for spec:\n#{worker_spec.to_yaml}"
+      pid = fork do
+        Worker.new(run_class, worker_spec).execute
+      end
+      log.info "started #{run_class} worker in pid=#{pid}"
+      Process.waitpid pid
+
+      if $?.exitstatus == 0
+        # no error, just responding to TERM
+        break
+      else
+        log.info "Restarting worker."
+      end
+    end
+  end
+end

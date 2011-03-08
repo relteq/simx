@@ -1,0 +1,233 @@
+# Rakefile to manage deployment and remote control of worker processes and
+# worker-manager processes.
+
+TOPDIR = topdir = File.expand_path("..")
+libdir = File.join(topdir, "lib")
+$LOAD_PATH.unshift libdir
+
+DEPLOY_VERBOSELY = (RakeFileUtils.verbose_flag == true) # false when :default
+
+require 'yaml'
+
+require 'simx/daemon'
+##require 'simx/gems'
+
+#== Config
+
+class << self
+  attr_reader :config, :proc_name, :svr_name, :exec_dir,
+    :sock_dir, :sock_name, :log_dir, :log_file, :err_file,
+    :libdir
+end
+
+@libdir = libdir
+@config = YAML.load(File.read("config.yaml"))
+
+@proc_name   = "worker-manager"
+@svr_name    = "lib/#{proc_name}.rb"
+@exec_dir    = ".."
+@sock_dir    = File.expand_path(File.join(exec_dir, "var/run"))
+@sock_name   = File.join(sock_dir, "#{proc_name}.sock")
+@log_dir     = File.expand_path(File.join(exec_dir, "var/log"))
+@log_file    = File.join(log_dir, "#{proc_name}.log")
+@err_file    = log_file.sub(/\.log/, ".err")
+
+FileUtils.mkdir_p log_dir
+FileUtils.mkdir_p sock_dir
+
+#== Tasks
+
+instances = config.keys # unique set of names for all the deployments
+ops = %w{ update run start stop restart stat }
+
+namespace :all do
+  ops.each do |op|
+    desc "#{op} all workers specified in the config"
+    task op => instances.map {|s| "#{s}:#{op}"}
+  end
+end
+
+instances.each do |instance|
+  namespace instance do
+    ops.each do |op|
+      unless op == "restart"
+        desc "#{op} workers on #{instance}"
+        task op do |t|
+          send op, instance, config[instance]
+        end
+      end
+    end
+    
+    desc "restart workers on #{instance}"
+    task "restart" => ["stop", "start"]
+  end
+
+  desc "update and restart #{instance}"
+  task instance => ["#{instance}:update", "#{instance}:restart"]
+end
+
+#== Implementation
+
+DEFAULT_INSTANCE_CONFIG = {
+  "host"      => "localhost",
+  "user"      => ENV["USERNAME"],
+  "dir"       => TOPDIR,
+  "runq_host" => ENV["RUNQ_HOST"] || "localhost",
+  "runq_port" => (Integer(ENV["RUNQ_PORT"]) rescue nil)
+}
+
+def update instance, instance_config
+  if DEPLOY_VERBOSELY
+    puts "updating #{instance} with #{{instance => instance_config}.to_yaml}"
+  end
+  
+  if is_local? instance_config
+    puts "updating locally is a noop" if DEPLOY_VERBOSELY
+    return
+  end
+     
+  if DEPLOY_VERBOSELY
+    puts "updating #{instance} with #{{instance => instance_config}.to_yaml}"
+  end
+  
+  cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
+  wdir = File.join(cfg["dir"], "worker")
+  userhost = [ cfg["user"], cfg["host"] ].join("@")
+  
+  sh "ssh #{userhost} 'mkdir -p #{wdir}'" 
+  
+  sh "rsync -Cavz --delete --exclude='*.bck'" +
+     " lib rakefile #{userhost}:#{wdir}/"
+
+  ic = instance_config.dup
+  %w{ dir host user }.each do |k|
+    ic.delete k
+  end
+  remote_config = {"local" => ic} # local is just a convention
+  
+  IO.popen("ssh #{userhost} 'cd #{wdir} && cat >config.yaml'", "w") do |ssh|
+    ssh.puts remote_config.to_yaml
+  end
+end
+
+def run instance, instance_config
+  if is_local? instance_config
+    do_run instance, instance_config
+  else
+    abort "run task is not implemented for remote instance targets"
+  end
+end
+
+def start instance, instance_config
+  if is_local? instance_config
+    do_start instance, instance_config
+  else
+    do_remote "start", instance_config
+  end
+end
+
+def stop instance, instance_config
+  if is_local? instance_config
+    do_stop instance, instance_config
+  else
+    do_remote "stop", instance_config
+  end
+end
+
+def stat instance, instance_config
+  if is_local? instance_config
+    do_stat instance, instance_config
+  else
+    do_remote "stat", instance, instance_config
+  end
+end
+
+def is_local? instance_config
+  host, user, dir = instance_config.values_at("host", "user", "dir")
+  
+  (!host || host == "localhost") &&
+  (!user || user == ENV["USERNAME"]) &&
+  (!dir || File.expand_path(dir) == TOPDIR)
+end
+
+def do_remote op, instance, instance_config
+  puts "On remote instance #{instance}:"
+  
+  cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
+  wdir = File.join(cfg["dir"], "worker")
+  userhost = [ cfg["user"], cfg["host"] ].join("@")
+
+  sh "ssh #{userhost} 'cd #{wdir} && rake #{op}'"
+end
+
+include Daemon
+
+def do_run instance, instance_config
+  cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
+  cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
+  
+  sh "ruby",
+      "-C", exec_dir,
+      "-I", File.expand_path(libdir),
+      "-r", File.expand_path(svr_name),
+      "-e", "WorkerManager.run",
+      cfg_yml
+end
+
+def do_start instance, instance_config
+  result = command("stat", sock_name)
+  case result
+  when /not running/i
+    puts "starting #{instance}"
+    
+###  cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
+###  cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
+###  
+    opts = {
+      "err_file"    => err_file,
+      "log_file"    => log_file,
+      "log_params"  => "weekly",
+      "sock_name"   => sock_name,
+      "daemon_dir"  => exec_dir,
+      "proc_name"   => proc_name
+    }
+    
+    h = {
+      "log_file"    => log_file,
+      "log_level"   => "info"
+    }
+    ic = h.merge(instance_config)
+
+    args = [
+      "-I", File.expand_path(libdir),
+      "-r", File.expand_path(svr_name),
+      "-e", "WorkerManager.run",
+      ic.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
+    ]
+    
+    daemonize opts do
+      exec "ruby", *args
+    end
+    
+    sleep 0.1
+    print_stat(sock_name, err_file)
+    
+  else
+    puts result
+  end
+end
+
+def do_stop instance, instance_config
+  result = command("stop", sock_name)
+  puts result
+  FileUtils.rm_f err_file
+
+  case result
+  when Errno::ECONNREFUSED, TimeoutError
+    rm_f sock_name # assume it is stopped already
+  end
+end
+
+def do_stat instance, instance_config
+  print_stat(sock_name, err_file)
+end

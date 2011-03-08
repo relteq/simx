@@ -353,6 +353,26 @@ module Runq
         message
     end
     
+    # +req+ is WorkerStoppedRun
+    def stopped_worker req
+      worker_id = req.worker_id
+      workers = database[:workers].where(:id => worker_id)
+      worker = workers.first
+      
+      workers.update(
+        :last_contact => Time.now,
+        :run_id => nil
+      )
+      
+      runs = database[:runs].where(:id => worker[:run_id])
+      runs.update(
+        :frac_complete  => 0,
+        :worker_id      => nil
+      )
+      
+      log.info "Stopped run by worker #{worker_id}"
+    end
+    
     # Look for all runs and workers that can be matched, and set them to work.
     # Normally, this is only called when the daemon starts.
     def dispatch_all

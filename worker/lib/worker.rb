@@ -17,7 +17,7 @@ require 'runq/request'
 # Alternately, a worker can run ad hoc from any host (e.g. a desktop PC).
 #
 class Worker
-  # Subclass of Run which this worker instantiates.
+  # Subclass of Run::Base which this worker instantiates.
   attr_reader :run_class
   
   # Host on which runq server is listening.
@@ -73,16 +73,16 @@ class Worker
     
     @run_class = run_class or raise argerr, "missing run_class"
     
-    @runq_host    = opts[:runq_host]    or raise argerr, "missing :runq_host"
-    @runq_port    = opts[:runq_port]    or raise argerr, "missing :runq_port"
-    @group        = opts[:group]
-    @user         = opts[:user]
-    @engine       = opts[:engine]       or raise argerr, "missing :engine"
-    @cost         = opts[:cost]         || DEFAULT_COST
-    @speed        = opts[:speed]        || DEFAULT_SPEED
-    @priority     = opts[:priority]     || DEFAULT_PRIORITY
-    @retry_delay  = opts[:retry_delay]  || DEFAULT_RETRY_DELAY
-    @logdev       = opts[:logdev]       || $stderr
+    @runq_host    = opts["runq_host"]    or raise argerr, "missing :runq_host"
+    @runq_port    = opts["runq_port"]    or raise argerr, "missing :runq_port"
+    @group        = opts["group"]
+    @user         = opts["user"]
+    @engine       = opts["engine"]       or raise argerr, "missing :engine"
+    @cost         = opts["cost"]         || DEFAULT_COST
+    @speed        = opts["speed"]        || DEFAULT_SPEED
+    @priority     = opts["priority"]     || DEFAULT_PRIORITY
+    @retry_delay  = opts["retry_delay"]  || DEFAULT_RETRY_DELAY
+    @logdev       = opts["logdev"]       || $stderr
     
     @log = Logger.new(logdev, "weekly")
     @event_queue = Queue.new
@@ -278,6 +278,12 @@ class Worker
     )
   end
   
+  def runq_send_stopped
+    runq_send! Runq::Request::WorkerStoppedRun.new(
+      :worker_id      => worker_id
+    )
+  end
+  
   def initial_handshake
     runq_send_ready
     resp = runq_recv!
@@ -341,7 +347,10 @@ class Worker
       runq_send_finished event.data
     when Run::Event::Aborted
       @current_run = nil
-      runq_send_aborted
+    when Run::Event::Stopped
+      @current_run = nil
+      runq_send_stopped
+      exit 0 # the worker is requested to stop, not just the run
     when Run::Event::Failed
       @current_run = nil
       runq_send_failed event.message
@@ -372,7 +381,7 @@ class Worker
         end
       rescue Exception => ex
         log.error [e.inspect, *e.backtrace].join("\n  ")
-        exit
+        exit -1
       end
     end
   end
@@ -386,6 +395,10 @@ class Worker
   end
 
   def execute
+    trap "TERM" do
+      current_run.stop if current_run
+    end
+    
     handle_error do
       initial_handshake
       start_runq_listener

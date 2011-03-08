@@ -25,7 +25,11 @@ To start workers, let's use a "dummy" worker--no simulation, just a counter for 
 
   cd simx/worker && RUNQ_PORT=4949 ./run-dummy
 
-You can start several of these dummy workers.
+You can start several of these dummy workers. You can also start a local worker manager like this:
+
+  cd simx/worker && RUNQ_PORT=4949 rake local
+
+This will start several local worker processes. Use `rake local:stop` to stop them. You can also use this with other targets besides "local" to manage worker processes on remote hosts. For example, `rake all` starts up everything. See rake --tasks for details.
 
 Adding batches and monitoring their status is done using the runweb interface. The interactive (`rake run`) mode of the runweb server listens on port 4567 (4567 is the default for sinatra; when you run it as a daemon, it listens on RUNWEB_PORT, which defaults to 8097):
 
@@ -51,7 +55,7 @@ Adding batches and monitoring their status is done using the runweb interface. T
     list all batches started by user n
   
   
-  curl localhost:4567/batch/new --data-binary @batch-req.yaml
+  curl localhost:4567/batch/new --data-binary @runweb/example/batch-req.yaml
   
     register a new batch of runs, which will be assigned to workers
     as matches are found

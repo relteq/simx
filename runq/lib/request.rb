@@ -68,10 +68,17 @@ module Runq
       attr_accessor :worker_id
     end
     
-    # Worker has stopped a run due to a failure (e.g. bad input to computation).
+    # Worker has failed a run due to an error (e.g. bad input to computation).
     class WorkerFailedRun < Request
       attr_accessor :worker_id
       attr_accessor :message
+    end
+    
+    # Worker was stopped locally (e.g. by the worker manager, or a system
+    # halt sending the TERM signal). Note that this stops the worker process,
+    # not just the current run.
+    class WorkerStoppedRun < Request
+      attr_accessor :worker_id
     end
     
     # ------------------------

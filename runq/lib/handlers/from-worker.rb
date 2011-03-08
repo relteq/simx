@@ -107,4 +107,14 @@ module Runq
       runq.dispatch_to_worker worker_id # ready for another run
     end
   end
+  
+  class Request::WorkerStoppedRun
+    include FromWorker
+
+    def handle
+      have_worker_id or return
+      runq.stopped_worker(self)
+      runq.dispatch_all # not overkill: both run and worker may now be ready
+    end
+  end
 end
