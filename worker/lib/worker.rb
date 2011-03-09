@@ -279,7 +279,7 @@ class Worker
   end
   
   def runq_send_stopped
-    runq_send! Runq::Request::WorkerStoppedRun.new(
+    runq_send? Runq::Request::WorkerStoppedRun.new(
       :worker_id      => worker_id
     )
   end
@@ -363,6 +363,7 @@ class Worker
   
   def handle_error
     yield
+  rescue SystemExit
   rescue Exception => e
     log.error [e.inspect, *e.backtrace].join("\n  ")
     raise
@@ -396,7 +397,12 @@ class Worker
 
   def execute
     trap "TERM" do
-      current_run.stop if current_run
+      if current_run
+        current_run.stop
+        # exit -- handled by queue handler
+      else
+        exit
+      end
     end
     
     handle_error do

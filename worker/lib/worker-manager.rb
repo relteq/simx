@@ -13,8 +13,12 @@ require 'worker/run/generic'
 # If a worker dies, restarts it. Each worker has a specified run_class, which
 # determines the class of the sequence of Run instances it manages.
 class WorkerManager
-  # Contains string keys: log_file, log_level, runq_host, runq_port, workers.
-  # The value at workers has keys run_class, count, group, etc.
+  # Name of this WorkerManager instance, as referred to in the config.yaml
+  # (as a top-level key in the hash).
+  attr_reader :instance_name
+  
+  # Contains string keys: log_file, log_level, runq_host, runq_port, workers,
+  # instance_name. The value at workers has keys run_class, count, group, etc.
   attr_reader :config
   
   class << self
@@ -30,6 +34,7 @@ class WorkerManager
       raise ArgumentError, "WorkerManager must be called with 1 arg"
     end
     @config = YAML.load(argv[0])
+    @instance_name = @config["instance_name"] || "local"
   end
   
   def log
@@ -54,8 +59,20 @@ class WorkerManager
   
   def run
     log.info "#{self.class} starting."
+    
+    $0 = "#{self.class} for #{instance_name}"
 
-    # trap("TERM") -- not here, just let the children handle it
+    sid = Process.setsid
+    log.info "sid = #{sid}"
+    trap "TERM" do
+      trap "TERM" do
+        Process.waitall
+        exit
+      end
+      Process.kill "TERM", -sid
+      Process.waitall
+      exit
+    end
 
     @worker_threads = []
     
@@ -89,6 +106,7 @@ class WorkerManager
     loop do
       log.debug "starting worker for spec:\n#{worker_spec.to_yaml}"
       pid = fork do
+        $0 = "#{run_class} worker for #{instance_name}"
         Worker.new(run_class, worker_spec).execute
       end
       log.info "started #{run_class} worker in pid=#{pid}"

@@ -88,7 +88,12 @@ module Daemon
             end
           end
           
-          trap("TERM") {Process.kill("TERM", pid); exit}
+          trap "TERM" do
+            Process.kill "TERM", pid
+            Process.waitpid pid
+            exit
+          end
+          
           ctrl.run(pid) if ctrl
           Process.waitpid(pid)
           ctrl.finish if ctrl

@@ -1,6 +1,8 @@
 # Rakefile to manage deployment and remote control of worker processes and
 # worker-manager processes.
 
+### TODO: install crontab to start worker managers
+
 TOPDIR = topdir = File.expand_path("..")
 libdir = File.join(topdir, "lib")
 $LOAD_PATH.unshift libdir
@@ -40,9 +42,12 @@ FileUtils.mkdir_p sock_dir
 instances = config.keys # unique set of names for all the deployments
 ops = %w{ update run start stop restart stat }
 
+desc "update and restart all workers specified in config.yaml"
+task :all => ["all:update", "all:restart"]
+
 namespace :all do
   ops.each do |op|
-    desc "#{op} all workers specified in the config"
+    desc "#{op} all workers specified in config.yaml"
     task op => instances.map {|s| "#{s}:#{op}"}
   end
 end
@@ -65,6 +70,21 @@ instances.each do |instance|
   desc "update and restart #{instance}"
   task instance => ["#{instance}:update", "#{instance}:restart"]
 end
+
+desc "alias for local:run"
+task :run     => "local:run"
+
+desc "alias for local:start"
+task :start   => "local:start"
+
+desc "alias for local:stop"
+task :stop    => "local:stop"
+
+desc "alias for local:restart"
+task :restart => "local:restart"
+
+desc "alias for local:stat"
+task :stat    => "local:stat"
 
 #== Implementation
 
@@ -91,7 +111,9 @@ def update instance, instance_config
   end
   
   cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
-  wdir = File.join(cfg["dir"], "worker")
+  
+  dir = cfg["dir"]
+  wdir = File.join(dir, "worker")
   userhost = [ cfg["user"], cfg["host"] ].join("@")
   
   sh "ssh #{userhost} 'mkdir -p #{wdir}'" 
@@ -99,10 +121,14 @@ def update instance, instance_config
   sh "rsync -Cavz --delete --exclude='*.bck'" +
      " lib rakefile #{userhost}:#{wdir}/"
 
+  sh "cd .. && rsync -Cavz --delete --exclude='*.bck'" +
+     " lib runq #{userhost}:#{dir}/"
+
   ic = instance_config.dup
   %w{ dir host user }.each do |k|
     ic.delete k
   end
+  ic["instance_name"] = instance
   remote_config = {"local" => ic} # local is just a convention
   
   IO.popen("ssh #{userhost} 'cd #{wdir} && cat >config.yaml'", "w") do |ssh|
@@ -122,7 +148,7 @@ def start instance, instance_config
   if is_local? instance_config
     do_start instance, instance_config
   else
-    do_remote "start", instance_config
+    do_remote "start", instance, instance_config
   end
 end
 
@@ -130,7 +156,7 @@ def stop instance, instance_config
   if is_local? instance_config
     do_stop instance, instance_config
   else
-    do_remote "stop", instance_config
+    do_remote "stop", instance, instance_config
   end
 end
 
@@ -157,7 +183,7 @@ def do_remote op, instance, instance_config
   wdir = File.join(cfg["dir"], "worker")
   userhost = [ cfg["user"], cfg["host"] ].join("@")
 
-  sh "ssh #{userhost} 'cd #{wdir} && rake #{op}'"
+  sh "ssh #{userhost} 'cd #{wdir} && rake local:#{op}'"
 end
 
 include Daemon
@@ -180,9 +206,6 @@ def do_start instance, instance_config
   when /not running/i
     puts "starting #{instance}"
     
-###  cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
-###  cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
-###  
     opts = {
       "err_file"    => err_file,
       "log_file"    => log_file,
@@ -193,16 +216,17 @@ def do_start instance, instance_config
     }
     
     h = {
-      "log_file"    => log_file,
-      "log_level"   => "info"
+      "log_file"      => log_file,
+      "log_level"     => "info"
     }
-    ic = h.merge(instance_config)
+    cfg = DEFAULT_INSTANCE_CONFIG.merge(h).merge(instance_config)
+    cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
 
     args = [
       "-I", File.expand_path(libdir),
       "-r", File.expand_path(svr_name),
       "-e", "WorkerManager.run",
-      ic.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
+      cfg_yml
     ]
     
     daemonize opts do
