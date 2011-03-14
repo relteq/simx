@@ -1,0 +1,4 @@
+env \
+  PATH=/usr/local/bin:$PATH \
+  RUBYOPT=rubygems \
+  bin/onboot var/simx.started rake stop start 1>var/simx.onboot.out 2>var/simx.onboot.err

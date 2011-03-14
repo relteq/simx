@@ -18,6 +18,7 @@ remote_files = FileList[
   "README",
   "rakefile",
   "lib",
+  "bin",
   "worker" # need the lib, but not the daemon
 ]
 
@@ -36,7 +37,7 @@ task :remote => %w{ remote:update remote:restart }
 
 namespace :remote do
   desc "update to #{dest_host}:#{dest_path}, including subdirs"
-  task :update
+  task :update => :update_me
   
   desc "update to #{dest_host}:#{dest_path}, not including subdirs"
   task :update_me
@@ -46,9 +47,8 @@ namespace :remote do
     task name
   end
 
-### TODO
-###  desc "install remote cronjob to start daemons after reboot"
-###  task :crontab
+  desc "install remote cronjob to start daemons after reboot"
+  task :crontab => :update_me
 end
 
 delegated_tasks.each do |name|
@@ -56,8 +56,8 @@ delegated_tasks.each do |name|
   task name
 end
 
-###desc "install local cronjob to start daemons after reboot"
-###task :crontab
+desc "install local cronjob to start daemons after reboot"
+task :crontab
 
 ##desc "puts needed gems in #{GEMDIR} dir"
 ##task GEMDIR
@@ -68,7 +68,7 @@ end
 #== Implementation
 
 namespace :remote do
-  task :update => :update_me do
+  task :update do
     puts "="*60
     daemon_dirs.each do |dir|
       sh "cd #{dir} && rake remote:update"
@@ -86,9 +86,9 @@ namespace :remote do
     end
   end
   
-###  task :crontab do
-###    sh "ssh #{dest_host} 'cd #{dest_path} && rake crontab'"
-###  end
+  task :crontab do
+    sh "ssh #{dest_host} 'cd #{dest_path} && rake crontab'"
+  end
 end
 
 delegated_tasks.each do |name|
@@ -104,18 +104,18 @@ end
 
 directory "var"
 
-###task :crontab => "var" do
-###  path = File.expand_path(".")
-###  cron_cmd = "*/5 * * * * cd #{path} && bin/nt.cron"
-###  
-###  ct = `crontab -l`
-###  rx = Regexp.quote(cron_cmd)
-###  if ct.grep(/^#{rx}/).empty?
-###    IO.popen("crontab -", "w") do |pipe|
-###      pipe.puts ct, cron_cmd
-###    end
-###  end
-###end
+task :crontab => "var" do
+  path = File.expand_path(".")
+  cron_cmd = "*/5 * * * * cd #{path} && bin/simx.cron" ## remove rubygems
+  
+  ct = `crontab -l`
+  rx = Regexp.quote(cron_cmd)
+  if ct.grep(/^#{rx}/).empty?
+    IO.popen("crontab -", "w") do |pipe|
+      pipe.puts ct, cron_cmd
+    end
+  end
+end
 
 ##file GEMENV => GEMDIR
 ##directory GEMDIR

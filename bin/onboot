@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+USAGE = <<END
+
+  onboot timestamp_file cmd arg arg ...
+
+  Execute the specified command only if it has not yet been
+  executed (in this way) since the last system boot. This state is
+  determined by comparing the time of the last boot with the mtime
+  of timestamp_file. Typically, this script will be run from a
+  crontab to emulate init scripts for user processes without
+  needing privileges to modify /etc/init*.
+  
+  If the timestamp_file does not exist it will be created. In any case
+  its mtime will be updated. A different timestamp_file should be used
+  for each command.
+
+END
+
+require 'time'
+
+def err(msg)
+  abort "#{msg}\n  ARGV = #{ARGV.inspect}\n" + USAGE
+end
+
+timestamp_file = ARGV[0] or err("No timestamp file given.")
+
+cmd = ARGV[1..-1]
+err("No command given.") if not cmd or cmd.empty?
+
+def open_creating_if_needed fn
+  f = nil
+  begin
+    f = File.open(fn)
+  rescue Errno::ENOENT
+    f = File.open(fn, "w")
+    File.utime(0, 0, f.path)
+      # in case two processes get to this point
+  end
+  yield f
+ensure
+  f.close if f
+end
+
+do_exec = false
+time_boot = Time.parse `who -b`
+
+open_creating_if_needed timestamp_file do |f|
+  if f.flock(File::LOCK_EX|File::LOCK_NB) and f.mtime < time_boot
+    t = Time.now
+    File.utime(t, t, f.path)
+    do_exec = true
+  end
+end
+
+exec(*cmd) if do_exec
