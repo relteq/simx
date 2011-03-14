@@ -21,6 +21,8 @@ remote_files = FileList[
   "bin",
   "worker" # need the lib, but not the daemon
 ]
+## refactor libs so that runq doesn't get sent to worker hosts, worker
+## doesn't get sent to runq hosts, etc.
 
 daemon_dirs = %w{
   runq

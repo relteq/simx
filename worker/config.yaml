@@ -33,25 +33,25 @@ vii:
       priority:     1
       retry_delay:  10
     
-    - run_class:    Run::Aurora
-      count:        3
-      group:        topl
-      user:         topl
-      engine:       aurora
-      cost:         0
-      speed:        1
-      priority:     1
-      retry_delay:  10
-    
-    - run_class:    Run::Calibrator
-      count:        3
-      group:        topl
-      user:         topl
-      engine:       calibrator
-      cost:         0
-      speed:        1
-      priority:     1
-      retry_delay:  10
+#    - run_class:    Run::Aurora
+#      count:        3
+#      group:        topl
+#      user:         topl
+#      engine:       aurora
+#      cost:         0
+#      speed:        1
+#      priority:     1
+#      retry_delay:  10
+#    
+#    - run_class:    Run::Calibrator
+#      count:        3
+#      group:        topl
+#      user:         topl
+#      engine:       calibrator
+#      cost:         0
+#      speed:        1
+#      priority:     1
+#      retry_delay:  10
 
 vii-dev:
   host:       vii.path.berkeley.edu

@@ -72,6 +72,7 @@ namespace :remote do
   task :update do
     sh "rsync -Cavz --delete --exclude='*.bck'" +
        " #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
+    ## sudbir updates need to update ../lib
   end
   
   [:start, :stop, :restart, :stat].each do |name|
