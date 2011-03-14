@@ -1,8 +1,6 @@
 # Rakefile to manage deployment and remote control of worker processes and
 # worker-manager processes.
 
-### TODO: install crontab to start worker managers
-
 TOPDIR = topdir = File.expand_path("..")
 libdir = File.join(topdir, "lib")
 $LOAD_PATH.unshift libdir
@@ -40,7 +38,7 @@ FileUtils.mkdir_p sock_dir
 #== Tasks
 
 instances = config.keys # unique set of names for all the deployments
-ops = %w{ update run start stop restart stat }
+ops = %w{ update run start stop restart stat crontab }
 
 desc "update and restart all workers specified in config.yaml"
 task :all => ["all:update", "all:restart"]
@@ -122,7 +120,7 @@ def update instance, instance_config
      " lib rakefile #{userhost}:#{wdir}/"
 
   sh "cd .. && rsync -Cavz --delete --exclude='*.bck'" +
-     " lib runq #{userhost}:#{dir}/"
+     " rakefile bin lib runq #{userhost}:#{dir}/"
 
   ic = instance_config.dup
   %w{ dir host user }.each do |k|
@@ -165,6 +163,14 @@ def stat instance, instance_config
     do_stat instance, instance_config
   else
     do_remote "stat", instance, instance_config
+  end
+end
+
+def crontab instance, instance_config
+  if is_local? instance_config
+    do_crontab instance, instance_config
+  else
+    do_remote "crontab", instance, instance_config
   end
 end
 
@@ -255,3 +261,17 @@ end
 def do_stat instance, instance_config
   print_stat(sock_name, err_file)
 end
+
+def do_crontab instance, instance_config
+  path = File.expand_path("..") # n.b.
+  cron_cmd = "*/5 * * * * cd #{path} && bin/worker-manager.cron" ## remove rubygems
+  
+  ct = `crontab -l`
+  rx = Regexp.quote(cron_cmd)
+  if ct.grep(/^#{rx}/).empty?
+    IO.popen("crontab -", "w") do |pipe|
+      pipe.puts ct, cron_cmd
+    end
+  end
+end
+

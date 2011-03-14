@@ -56,6 +56,13 @@ delegated_tasks.each do |name|
   task name
 end
 
+namespace :workers do
+  delegated_tasks.each do |name|
+    desc "#{name} local workers and manager"
+    task name
+  end
+end
+
 desc "install local cronjob to start daemons after reboot"
 task :crontab
 
@@ -98,6 +105,15 @@ delegated_tasks.each do |name|
       $stdout.flush
       result = `cd #{dir} && rake #{name}`.split("\n")[1..-1]
       puts result.join(";")
+    end
+  end
+end
+
+namespace :workers do
+  delegated_tasks.each do |name|
+    task name do
+      result = `cd worker && rake #{name}`
+      puts result
     end
   end
 end

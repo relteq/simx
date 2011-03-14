@@ -137,6 +137,7 @@ end
 
 task :stat do
   print_stat(sock_name, err_file)
+  ## could also send a stat request to the web server
 end
 
 task :restart => [:stop, :start]
