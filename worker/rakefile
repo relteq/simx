@@ -19,10 +19,11 @@ config_file = "config-dev.yaml"
 class << self
   attr_reader :config, :proc_name, :svr_name, :exec_dir,
     :sock_dir, :sock_name, :log_dir, :log_file, :err_file,
-    :libdir
+    :libdir, :config_file
 end
 
 @libdir = libdir
+@config_file = config_file
 @config = YAML.load(File.read(config_file))
 
 @proc_name   = "worker-manager"
@@ -50,6 +51,7 @@ namespace :all do
     desc "#{op} all workers specified in #{config_file}"
     task op => instances.map {|s| "#{s}:#{op}"}
   end
+  task "crontab" => "update"
 end
 
 instances.each do |instance|
@@ -65,6 +67,8 @@ instances.each do |instance|
     
     desc "restart workers on #{instance}"
     task "restart" => ["stop", "start"]
+    
+    task "crontab" => "update"
   end
 
   desc "update and restart #{instance}"
@@ -131,7 +135,7 @@ def update instance, instance_config
   ic["instance_name"] = instance
   remote_config = {"local" => ic} # local is just a convention
   
-  IO.popen("ssh #{userhost} 'cd #{wdir} && cat >#{"config.yaml"}'", "w") do |ssh|
+  IO.popen("ssh #{userhost} 'cd #{wdir} && cat >#{config_file}'", "w") do |ssh|
     ssh.puts remote_config.to_yaml
   end
 end
@@ -266,7 +270,8 @@ end
 
 def do_crontab instance, instance_config
   path = File.expand_path("..") # n.b.
-  cron_cmd = "*/5 * * * * cd #{path} && bin/worker-manager.cron" ## remove rubygems
+  cron_cmd = "*/5 * * * * cd #{path} && bin/worker-manager.cron || true"
+    ## remove rubygems
   
   ct = `crontab -l`
   rx = Regexp.quote(cron_cmd)

@@ -126,7 +126,8 @@ directory "var"
 
 task :crontab => "var" do
   path = File.expand_path(".")
-  cron_cmd = "*/5 * * * * cd #{path} && bin/simx.cron" ## remove rubygems
+  cron_cmd = "*/5 * * * * cd #{path} && bin/simx.cron || true"
+    ## remove rubygems
   
   ct = `crontab -l`
   rx = Regexp.quote(cron_cmd)
