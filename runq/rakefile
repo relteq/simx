@@ -12,7 +12,7 @@ require 'simx/daemon'
 port = Integer(ENV["RUNQ_PORT"] || 8096)
 
 # destination for the remote task
-dest_host = ENV["RUNQ_DEST_HOST"] || "relteq-db.dyndns.org"
+dest_host = ENV["RUNQ_DEST_HOST"] || "relteq"
 dest_path = ENV["RUNQ_DEST_PATH"] || "simx/runq"
 
 proc_name   = "runq"

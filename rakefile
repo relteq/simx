@@ -9,14 +9,16 @@ $LOAD_PATH.unshift libdir
 ##config_local_gems(topdir)
 
 # destination for the remote task
-dest_host = ENV["SIMX_DEST_HOST"] || "relteq-db.dyndns.org"
+dest_host = ENV["SIMX_DEST_HOST"] || "relteq"
 dest_path = ENV["SIMX_DEST_PATH"] || "simx"
+
+## dest_user
 
 remote_files = FileList[
   "README",
   "rakefile",
-  "bin/*",
-  "lib/*"
+  "lib",
+  "worker" # need the lib, but not the daemon
 ]
 
 daemon_dirs = %w{
@@ -37,7 +39,7 @@ namespace :remote do
   task :update
   
   desc "update to #{dest_host}:#{dest_path}, not including subdirs"
-  task :update_self
+  task :update_me
   
   delegated_tasks.each do |name|
     desc "#{name} remote daemons"
@@ -57,8 +59,8 @@ end
 ###desc "install local cronjob to start daemons after reboot"
 ###task :crontab
 
-###desc "puts needed gems in #{GEMDIR} dir"
-###task GEMDIR
+##desc "puts needed gems in #{GEMDIR} dir"
+##task GEMDIR
 
 ##desc "create file with env vars for local gems"
 ##file GEMENV
@@ -66,7 +68,7 @@ end
 #== Implementation
 
 namespace :remote do
-  task :update => :update_self do
+  task :update => :update_me do
     puts "="*60
     daemon_dirs.each do |dir|
       sh "cd #{dir} && rake remote:update"
@@ -74,8 +76,8 @@ namespace :remote do
     end
   end
   
-  task :update_self do
-    sh "rsync -Cavz --relative --exclude='*.bck' #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
+  task :update_me do
+    sh "rsync -Cavz --delete --exclude='*.bck' #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
   end
   
   delegated_tasks.each do |name|
