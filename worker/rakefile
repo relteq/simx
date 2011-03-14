@@ -14,6 +14,8 @@ require 'simx/daemon'
 
 #== Config
 
+config_file = "config-dev.yaml"
+
 class << self
   attr_reader :config, :proc_name, :svr_name, :exec_dir,
     :sock_dir, :sock_name, :log_dir, :log_file, :err_file,
@@ -21,7 +23,7 @@ class << self
 end
 
 @libdir = libdir
-@config = YAML.load(File.read("config.yaml"))
+@config = YAML.load(File.read(config_file))
 
 @proc_name   = "worker-manager"
 @svr_name    = "lib/#{proc_name}.rb"
@@ -40,12 +42,12 @@ FileUtils.mkdir_p sock_dir
 instances = config.keys # unique set of names for all the deployments
 ops = %w{ update run start stop restart stat crontab }
 
-desc "update and restart all workers specified in config.yaml"
+desc "update and restart all workers specified in #{config_file}"
 task :all => ["all:update", "all:restart"]
 
 namespace :all do
   ops.each do |op|
-    desc "#{op} all workers specified in config.yaml"
+    desc "#{op} all workers specified in #{config_file}"
     task op => instances.map {|s| "#{s}:#{op}"}
   end
 end
@@ -91,7 +93,7 @@ DEFAULT_INSTANCE_CONFIG = {
   "user"      => ENV["USERNAME"],
   "dir"       => TOPDIR,
   "runq_host" => ENV["RUNQ_HOST"] || "localhost",
-  "runq_port" => (Integer(ENV["RUNQ_PORT"]) rescue nil)
+  "runq_port" => Integer(ENV["RUNQ_PORT"] || 9096)
 }
 
 def update instance, instance_config
@@ -129,7 +131,7 @@ def update instance, instance_config
   ic["instance_name"] = instance
   remote_config = {"local" => ic} # local is just a convention
   
-  IO.popen("ssh #{userhost} 'cd #{wdir} && cat >config.yaml'", "w") do |ssh|
+  IO.popen("ssh #{userhost} 'cd #{wdir} && cat >#{"config.yaml"}'", "w") do |ssh|
     ssh.puts remote_config.to_yaml
   end
 end

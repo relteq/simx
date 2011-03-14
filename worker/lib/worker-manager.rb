@@ -104,7 +104,7 @@ class WorkerManager
     run_class = get_scoped_constant(worker_spec["run_class"])
 
     loop do
-      log.debug "starting worker for spec:\n#{worker_spec.to_yaml}"
+      log.info "starting worker for spec:\n#{worker_spec.to_yaml}"
       pid = fork do
         $0 = "#{run_class} worker for #{instance_name}"
         Worker.new(run_class, worker_spec).execute

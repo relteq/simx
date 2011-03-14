@@ -7,13 +7,18 @@ require 'simx/daemon'
 
 #== Config
 
+# Note: config defaults are for devel deployment.
+ 
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
-port = Integer(ENV["RUNWEB_PORT"] || 8097)
+port = Integer(ENV["RUNWEB_PORT"] || 9097)
+
+runq_port = Integer(ENV["RUNQ_PORT"] || 9096)
+runq_host = ENV["RUNQ_HOST"] || "localhost"
 
 # destination for the remote task
 dest_host = ENV["RUNWEB_DEST_HOST"] || "relteq"
-dest_path = ENV["RUNWEB_DEST_PATH"] || "simx/runweb"
+dest_path = ENV["RUNWEB_DEST_PATH"] || "simx-dev/runweb"
 
 proc_name   = "runweb"
 svr_name    = "lib/#{proc_name}.rb"
@@ -109,6 +114,8 @@ task :start do
       "-p", port.to_s,
       "-e", "production",
       "--", # end sinatra options; options below are passed to svr_name
+      "--runq-port", runq_port.to_s,
+      "--runq-host", runq_host,
       "--log-file", log_file,
       "--log-level", "info" ## how to set this externally?
     ]

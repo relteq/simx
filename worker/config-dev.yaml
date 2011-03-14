@@ -1,0 +1,54 @@
+local:
+  # in this case we can use defaults:
+  # host:       localhost
+  # user:       same
+  # dir:        .
+  # runq_host:  localhost
+  # runq_port:  env var or default
+  workers:
+    - run_class:    Run::Dummy
+      count:        3
+      group:        topl
+      user:         topl
+      engine:       dummy
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
+vii-dev:
+  host:       vii.path.berkeley.edu
+  user:       vjoel
+  dir:        simx-dev
+  runq_host:  relteq-db.dyndns.org
+  runq_port:  9096
+  workers:
+    - run_class:    Run::Dummy
+      count:        3
+      group:        topl
+      user:         topl
+      engine:       dummy
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+    
+#    - run_class:    Run::Aurora
+#      count:        3
+#      group:        topl
+#      user:         topl
+#      engine:       aurora
+#      cost:         0
+#      speed:        1
+#      priority:     1
+#      retry_delay:  10
+#    
+#    - run_class:    Run::Calibrator
+#      count:        3
+#      group:        topl
+#      user:         topl
+#      engine:       calibrator
+#      cost:         0
+#      speed:        1
+#      priority:     1
+#      retry_delay:  10

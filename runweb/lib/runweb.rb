@@ -27,6 +27,14 @@ configure do
   if (i = ARGV.index("--log-level"))
     _, MY_ENV[:log_level] = ARGV.slice!(i, 2) ## this is awkward
   end
+
+  if (i = ARGV.index("--runq-port"))
+    _, ENV["RUNQ_PORT"] = ARGV.slice!(i, 2) ## this is awkward
+  end
+
+  if (i = ARGV.index("--runq-host"))
+    _, ENV["RUNQ_HOST"] = ARGV.slice!(i, 2) ## this is awkward
+  end
 end
   
 configure :production do
@@ -86,7 +94,7 @@ helpers do
   end
 end
 
-RUNQ_PORT = ENV["RUNQ_PORT"] || 8096
+RUNQ_PORT = Integer(ENV["RUNQ_PORT"]) || 9096
 RUNQ_HOST = ENV["RUNQ_HOST"] || 'localhost'
 
 ## don't need this

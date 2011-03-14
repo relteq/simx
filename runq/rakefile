@@ -7,13 +7,15 @@ require 'simx/daemon'
 
 #== Config
 
+# Note: config defaults are for devel deployment.
+ 
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
-port = Integer(ENV["RUNQ_PORT"] || 8096)
+port = Integer(ENV["RUNQ_PORT"] || 9096)
 
 # destination for the remote task
 dest_host = ENV["RUNQ_DEST_HOST"] || "relteq"
-dest_path = ENV["RUNQ_DEST_PATH"] || "simx/runq"
+dest_path = ENV["RUNQ_DEST_PATH"] || "simx-dev/runq"
 
 proc_name   = "runq"
 svr_name    = "lib/#{proc_name}.rb"

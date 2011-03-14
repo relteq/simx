@@ -8,9 +8,11 @@ $LOAD_PATH.unshift libdir
 
 ##config_local_gems(topdir)
 
+# Note: config defaults are for devel deployment.
+ 
 # destination for the remote task
 dest_host = ENV["SIMX_DEST_HOST"] || "relteq"
-dest_path = ENV["SIMX_DEST_PATH"] || "simx"
+dest_path = ENV["SIMX_DEST_PATH"] || "simx-dev"
 
 ## dest_user
 
