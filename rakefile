@@ -138,8 +138,9 @@ task :crontab => "var" do
   end
 end
 
-namespace :git do
-  post_checkout = <<END
+if File.directory? ".git"
+  namespace :git do
+    post_checkout = <<END
 #!/bin/sh
 
 # Start from the repository root.
@@ -148,10 +149,12 @@ cd ./$(git rev-parse --show-cdup)
 RUBYOPT="" bin/switch-branch
 END
 
-  desc "set up git hooks after cloning"
-  task :init do
-    File.open(".git/hooks/post-checkout", "w") do |f|
-      f.puts post_checkout
+    desc "set up git hooks after cloning"
+    task :init do
+      File.open(".git/hooks/post-checkout", "w") do |f|
+        f.puts post_checkout
+      end
+      sh "chmod +x .git/hooks/post-checkout"
     end
   end
 end
