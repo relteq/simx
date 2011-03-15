@@ -2,17 +2,20 @@ topdir = File.expand_path(".")
 libdir = File.join(topdir, "lib")
 $LOAD_PATH.unshift libdir
 
+require 'yaml'
+
 ##require 'simx/gems'
 
 #== Config
 
+# Read the deployment-specific config file (see config/README).
+config = YAML.load(File.read("config.yaml"))
+
 ##config_local_gems(topdir)
 
-# Note: config defaults are for devel deployment.
- 
 # destination for the remote task
-dest_host = ENV["SIMX_DEST_HOST"] || "relteq"
-dest_path = ENV["SIMX_DEST_PATH"] || "simx-dev"
+dest_host = config["deploy"]["host"]
+dest_path = config["deploy"]["path"]
 
 ## dest_user
 
@@ -20,7 +23,7 @@ remote_files = FileList[
   "README",
   "rakefile",
   "config",
-  "confie.yaml",
+  "config.yaml",
   "lib",
   "bin",
   "worker" # need the lib, but not the daemon
@@ -158,6 +161,13 @@ END
       end
       sh "chmod +x .git/hooks/post-checkout"
     end
+  end
+end
+
+namespace :config do
+  desc "show config for the current deployment"
+  task :show do
+    puts config.to_yaml
   end
 end
 

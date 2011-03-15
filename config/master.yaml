@@ -1,1 +1,12 @@
-name: master
+deploy:
+  host: relteq
+  path: simx
+runq:
+  port: 8096
+  log level: info
+runweb:
+  port: 8097
+  log level: info
+worker:
+  config file: master.yaml
+  log level: info

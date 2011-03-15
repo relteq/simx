@@ -2,20 +2,24 @@ topdir = File.expand_path("..")
 libdir = File.join(topdir, "lib")
 $LOAD_PATH.unshift libdir
 
+require 'yaml'
+
 require 'simx/daemon'
 ##require 'simx/gems'
 
 #== Config
 
-# Note: config defaults are for devel deployment.
+# Read the deployment-specific config file (see config/README).
+config = YAML.load(File.read("../config.yaml"))
+runq_config = config["runq"]
  
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
-port = Integer(ENV["RUNQ_PORT"] || 9096)
+port = Integer(ENV["RUNQ_PORT"] || runq_config["port"])
 
 # destination for the remote task
-dest_host = ENV["RUNQ_DEST_HOST"] || "relteq"
-dest_path = ENV["RUNQ_DEST_PATH"] || "simx-dev/runq"
+dest_host = config["deploy"]["host"]
+dest_path = File.join(config["deploy"]["path"], "runq")
 
 proc_name   = "runq"
 svr_name    = "lib/#{proc_name}.rb"
@@ -110,7 +114,7 @@ task :start do
       "--port", port.to_s,
       "--production",
       "--log-file", log_file,
-      "--log-level", "info" ## how to set this externally?
+      "--log-level", runq_config["log level"]
     ]
     
     daemonize opts do

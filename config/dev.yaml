@@ -1,1 +1,12 @@
-name: dev
+deploy:
+  host: relteq
+  path: simx-dev
+runq:
+  port: 9096
+  log level: debug
+runweb:
+  port: 9097
+  log level: debug
+worker:
+  config file: dev.yaml
+  log level: debug

@@ -14,16 +14,24 @@ require 'simx/daemon'
 
 #== Config
 
-config_file = "config-dev.yaml"
-
 class << self
   attr_reader :config, :proc_name, :svr_name, :exec_dir,
     :sock_dir, :sock_name, :log_dir, :log_file, :err_file,
-    :libdir, :config_file
+    :libdir, :config_file, :worker_config, :runq_config
 end
 
+# Read the deployment-specific config file (see ../config/README).
+simx_config = YAML.load(File.read("../config.yaml"))
+
+@worker_config = simx_config["worker"]
+@runq_config = simx_config["runq"]
+
 @libdir = libdir
-@config_file = config_file
+@config_file = File.join("config", worker_config["config file"])
+if not File.file? @config_file
+  @config_file = "config.yaml"
+  # on a remote host, there's only one, written by the #update method
+end
 @config = YAML.load(File.read(config_file))
 
 @proc_name   = "worker-manager"
@@ -40,7 +48,7 @@ FileUtils.mkdir_p sock_dir
 
 #== Tasks
 
-instances = config.keys # unique set of names for all the deployments
+instances = config.keys # unique set of names for all the worker deployments
 ops = %w{ update run start stop restart stat crontab }
 
 desc "update and restart all workers specified in #{config_file}"
@@ -97,7 +105,7 @@ DEFAULT_INSTANCE_CONFIG = {
   "user"      => ENV["USERNAME"],
   "dir"       => TOPDIR,
   "runq_host" => ENV["RUNQ_HOST"] || "localhost",
-  "runq_port" => Integer(ENV["RUNQ_PORT"] || 9096)
+  "runq_port" => Integer(ENV["RUNQ_PORT"] || runq_config["port"])
 }
 
 def update instance, instance_config
@@ -126,7 +134,7 @@ def update instance, instance_config
      " lib rakefile #{userhost}:#{wdir}/"
 
   sh "cd .. && rsync -Cavz --delete --exclude='*.bck'" +
-     " rakefile bin lib runq #{userhost}:#{dir}/"
+     " rakefile config config.yaml bin lib runq #{userhost}:#{dir}/"
 
   ic = instance_config.dup
   %w{ dir host user }.each do |k|
@@ -135,7 +143,8 @@ def update instance, instance_config
   ic["instance_name"] = instance
   remote_config = {"local" => ic} # local is just a convention
   
-  IO.popen("ssh #{userhost} 'cd #{wdir} && cat >#{config_file}'", "w") do |ssh|
+  fn = "config.yaml" # remote deployments just have one config file
+  IO.popen("ssh #{userhost} 'cd #{wdir} && cat >#{fn}'", "w") do |ssh|
     ssh.puts remote_config.to_yaml
   end
 end
@@ -229,7 +238,7 @@ def do_start instance, instance_config
     
     h = {
       "log_file"      => log_file,
-      "log_level"     => "info"
+      "log_level"     => worker_config["log level"]
     }
     cfg = DEFAULT_INSTANCE_CONFIG.merge(h).merge(instance_config)
     cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
