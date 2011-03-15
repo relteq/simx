@@ -17,6 +17,9 @@ require 'runq/request'
 # Alternately, a worker can run ad hoc from any host (e.g. a desktop PC).
 #
 class Worker
+  # Opts specified in local worker config (not in message from runq).
+  attr_reader :opts
+  
   # Subclass of Run::Base which this worker instantiates.
   attr_reader :run_class
   
@@ -34,6 +37,9 @@ class Worker
   
   # Worker accepts runs requested for this engine.
   attr_reader :engine
+  
+  # Local config for this engine.
+  attr_reader :engine_opts
   
   # Unit-less assessment of the cost of this worker.
   attr_reader :cost
@@ -70,6 +76,11 @@ class Worker
   
   def initialize run_class, opts
     argerr = ArgumentError
+
+    unless opts.kind_of? Hash
+      raise argerr, "opts must be a hash, not #{opts.class}"
+    end
+    @opts = opts
     
     @run_class = run_class or raise argerr, "missing run_class"
     
@@ -78,6 +89,7 @@ class Worker
     @group        = opts["group"]
     @user         = opts["user"]
     @engine       = opts["engine"]       or raise argerr, "missing :engine"
+    @engine_opts  = opts["engine_opts"]
     @cost         = opts["cost"]         || DEFAULT_COST
     @speed        = opts["speed"]        || DEFAULT_SPEED
     @priority     = opts["priority"]     || DEFAULT_PRIORITY
@@ -253,7 +265,7 @@ class Worker
   def runq_send_update message = nil
     runq_send? Runq::Request::WorkerUpdate.new(
       :worker_id      => worker_id,
-      :progress       => current_run.progress,
+      :progress       => current_run ? current_run.progress : "", ## ?
       :message        => message
     )
   end
@@ -328,12 +340,14 @@ class Worker
       end
       
     when Runq::Request::RunqGetStatus
-      msg = current_run.status
-      runq_send_update msg
+      if r=current_run
+        runq_send_update r.status
+      end
     
     when Runq::Request::RunqAbortRun
-      current_run.abort
-      runq_send_aborted
+      if r=current_run
+        r.abort
+      end
     
     else
       log.warn "Unexpected runq request: #{req.inspect}."
@@ -347,6 +361,7 @@ class Worker
       runq_send_finished event.data
     when Run::Event::Aborted
       @current_run = nil
+      runq_send_aborted
     when Run::Event::Stopped
       @current_run = nil
       runq_send_stopped
@@ -391,7 +406,8 @@ class Worker
     if current_run
       raise "Called start_run, but current_run is not nil."
     end
-    @current_run = run_class.new event_queue, log, param, batch_index
+    @current_run = run_class.new event_queue, log, param, batch_index,
+      engine_opts
     @current_run.start
   end
 

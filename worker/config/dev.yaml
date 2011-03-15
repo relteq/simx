@@ -16,6 +16,19 @@ local:
       priority:     1
       retry_delay:  10
 
+    - run_class:    Run::Calibrator
+      count:        1
+      group:        topl
+      user:         topl
+      engine:       calibrator
+      engine_opts:
+        jar_file:   /home/vjoel/Documents/relteq/sensors/tmp/fdcalibrate/fdcalibrate.jar
+        sensor_file: /home/vjoel/Documents/relteq/sensors/tmp/d04_text_station_5min_2011_01_01.txt
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
 vii-dev:
   host:       vii.path.berkeley.edu
   user:       vjoel

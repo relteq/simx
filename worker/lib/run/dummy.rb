@@ -9,7 +9,7 @@ module Run
     attr_reader :step_delay
 
     # Param hash sent from user via runq. The only params used are
-    # with key :step_count and :step_delay.
+    # with key "step_count" and "step_delay".
     attr_reader :param
 
     def initialize *args

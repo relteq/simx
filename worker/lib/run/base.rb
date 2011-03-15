@@ -10,11 +10,11 @@ module Run
       end
     end
 
-    # Run was aborted due to abort command.
+    # Run was aborted due to abort command (from user via runq).
     class Aborted < Event
     end
 
-    # Run was stopped due to TERM signal.
+    # Run was stopped due to TERM signal (from admin via 'rake stop').
     class Stopped < Event
     end
 
@@ -34,8 +34,10 @@ module Run
 
   # Manages a single run in the context of a worker procress. Each Run subclass
   # contains logic to start the process and monitor its output. Subclass should
-  # define: #work, #cleanup, and #results. The #work implementation may need to
-  # call #update and #fail.
+  # define: #work, #cleanup, and #results. It may overridde #status as well.
+  # The #work implementation may need to call #update and #fail and to
+  # periodically set the value of progress. These methods runs in the Run's own
+  # thread, so it can perform blocking IO calls, #system, etc.
   class Base
     # The run sends messages (Run::Event instances) to the worker using this
     # queue.
@@ -49,18 +51,22 @@ module Run
     # Index of the run in the batch. May combine with param to derive some
     # run-specific parameters.
     attr_reader :batch_index
+    
+    # Engine-specific opts from local config.
+    attr_reader :engine_opts
 
-    # Estimated fraction, in 0..1, of work completed in this run. If not started
-    # yet, value is :waiting. If failed or aborted, value is :failed or :aborted.
-    # When finished, values is :finished (so that rounding up to 1.0 will not
-    # cause confusion). When stopped, vaue is :stopped.
+    # Estimated fraction, in 0..1, of work completed in this run. If not
+    # started yet, value is :waiting. Value is :failed, :aborted, or :stopped
+    # in those states. When finished, values is :finished (so that rounding up
+    # to 1.0 will not cause confusion).
     attr_reader :progress
 
-    def initialize worker_event_queue, log, param, batch_index
+    def initialize worker_event_queue, log, param, batch_index, engine_opts
       @worker_event_queue = worker_event_queue
       @log = log
       @param = param
       @batch_index = batch_index
+      @engine_opts = engine_opts
       @progress = :waiting
     end
 
@@ -103,7 +109,7 @@ module Run
         raise "Wrong thread."
       end
 
-      if @thread && 0..1 === progress
+      if @thread && (0..1) === progress
         log.info "Aborting."
         @thread.raise Interrupt
         @progress = :aborted
@@ -119,7 +125,7 @@ module Run
         raise "Wrong thread."
       end
 
-      if @thread && 0..1 === progress
+      if @thread && (0..1) === progress
         log.info "Stopping."
         @thread.raise Interrupt
         @progress = :stopped
