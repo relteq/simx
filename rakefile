@@ -19,6 +19,8 @@ dest_path = ENV["SIMX_DEST_PATH"] || "simx-dev"
 remote_files = FileList[
   "README",
   "rakefile",
+  "config",
+  "confie.yaml",
   "lib",
   "bin",
   "worker" # need the lib, but not the daemon

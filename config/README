@@ -1,7 +1,16 @@
-targets for the symlink config.yaml in the top level directory.
+Targets for the symlink config.yaml in the top level directory.
+
+Files in this dir correspond to the name of the current branch.
 
 The symlink is switched in git checkout. See:
 
   bin/switch-branch
   
   .git/hooks/post-checkout
+
+When you first clone the repository, you must do:
+
+  rake git:init
+
+which will set up this hook file. (Unfortunately, hooks are not part of the files tracked by git.)
+

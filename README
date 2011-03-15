@@ -13,6 +13,10 @@ Requirements
 
 ruby, rake, sinatra, sequel, sqlite3-ruby
 
+Note on the git repository
+
+The project uses git's hook mechanism to switch a symlink pointing to config files when you change branches. See config/README.
+
 Basic usage for running simulations
 
 To run the processes interactively (not as daemons; with logging to terminal), use `rake run` in the runq/ and runweb/ dirs (or use `rake start|stop|restart` to control them as daemons). Since the interactive use will normally choose a different port each time, you may want to specify the port, so you don't have to scrape it from the logs:
