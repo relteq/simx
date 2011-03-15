@@ -1,0 +1,7 @@
+targets for the symlink config.yaml in the top level directory.
+
+The symlink is switched in git checkout. See:
+
+  bin/switch-branch
+  
+  .git/hooks/post-checkout
