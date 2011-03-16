@@ -51,9 +51,11 @@ module Run
       
       case aurora_config
       when /\n/ # multiple lines; assume xml
+        log.info "assuming xml given: #{aurora_config[0..50]}"
         input_xml = aurora_config
       else # single line, assume url
-        input_xml = URI.parse(aurora_config).read
+        log.info "reading url: #{aurora_config}"
+        input_xml = open(aurora_config) {|f| f.read}
       end
 
       input_xml_file = File.join(@dir, "input.xml")
