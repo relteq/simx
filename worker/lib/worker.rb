@@ -1,5 +1,6 @@
 require 'logger'
 require 'thread'
+require 'thwait'
 require 'yaml'
 
 require 'simx/mtcp'
@@ -99,6 +100,7 @@ class Worker
     @log = Logger.new(logdev, "weekly")
     @event_queue = Queue.new
     @mutex = Mutex.new
+    @thread_wait = ThreadsWait.new
     @current_run = nil
     @worker_id = nil
   end
@@ -312,9 +314,11 @@ class Worker
     end
   end
   
-  def do_event_loop
-    loop do
-      handle_event event_queue.pop
+  def start_event_loop
+    Thread.new do
+      loop do
+        handle_event event_queue.pop
+      end
     end
   end
   
@@ -385,19 +389,14 @@ class Worker
   end
   
   def start_runq_listener
-    @runq_listener = Thread.new do
-      begin
-        loop do
-          req = runq_recv!
-          if req
-            event_queue << req
-          else
-            log.info "Server closed the message socket. Waiting again."
-          end
+    Thread.new do
+      loop do
+        req = runq_recv!
+        if req
+          event_queue << req
+        else
+          log.info "Server closed the message socket. Waiting again."
         end
-      rescue Exception => e
-        log.error [e.inspect, *e.backtrace].join("\n  ")
-        exit -1
       end
     end
   end
@@ -408,7 +407,9 @@ class Worker
     end
     @current_run = run_class.new event_queue, log, param, batch_index,
       engine_opts
-    @current_run.start
+    thread = @current_run.start
+    @thread_wait.join_nowait thread
+    thread
   end
 
   def execute
@@ -423,8 +424,10 @@ class Worker
     
     handle_error do
       initial_handshake
-      start_runq_listener
-      do_event_loop
+      @thread_wait.join_nowait start_runq_listener, start_event_loop
+      @thread_wait.all_waits do |thread|
+        thread.join
+      end
     end
   end
 end

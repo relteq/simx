@@ -1,5 +1,6 @@
 require 'logger'
 require 'thread'
+require 'thwait'
 require 'fileutils'
 require 'tempfile'
 require 'tmpdir'
@@ -75,7 +76,7 @@ class WorkerManager
       exit
     end
 
-    @worker_threads = []
+    threads = []
     
     workers.each do |worker_set|
       worker_set["count"].times do
@@ -84,14 +85,14 @@ class WorkerManager
         w["runq_host"] = config["runq_host"]
         w["runq_port"] = config["runq_port"]
         w["logdev"] = config["log_file"]
-        @worker_threads << Thread.new(w) do |worker_spec|
+        threads << Thread.new(w) do |worker_spec|
           run_worker worker_spec
         end
       end
     end
     
-    @worker_threads.each do |t|
-      t.join
+    ThreadsWait.all_waits(*threads) do |thread|
+      thread.join
     end
 
     log.info "#{self.class} done."
