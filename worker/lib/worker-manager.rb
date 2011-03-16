@@ -8,6 +8,7 @@ require 'yaml'
 require 'worker/worker'
 require 'worker/run/dummy'
 require 'worker/run/generic'
+require 'worker/run/calibrator'
 
 # Daemon that starts sets of workers as child processes.
 # If a worker dies, restarts it. Each worker has a specified run_class, which
@@ -119,5 +120,10 @@ class WorkerManager
         log.info "Restarting worker."
       end
     end
+  
+  rescue => e
+    log.error ["In thread for #{worker_spec["run_class"]}:",
+      e.inspect, *e.backtrace].join("\n  ")
+    ## how to report this to 'rake stat'?
   end
 end

@@ -395,7 +395,7 @@ class Worker
             log.info "Server closed the message socket. Waiting again."
           end
         end
-      rescue Exception => ex
+      rescue Exception => e
         log.error [e.inspect, *e.backtrace].join("\n  ")
         exit -1
       end

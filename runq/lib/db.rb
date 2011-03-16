@@ -26,12 +26,12 @@ module Runq
       tries = 0
       begin
         super
-      rescue Sequel::DatabaseError => ex
+      rescue Sequel::DatabaseError => e
         tries += 1
         case tries
         when 1..5
           if log
-            log.warn "#{ex.message.inspect}" +
+            log.warn "#{e.message.inspect}" +
               " on try ##{tries}: sleeping #{tries} seconds"
           end
           sleep tries

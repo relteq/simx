@@ -144,10 +144,10 @@ module Run
       finish
     rescue Interrupt
       log.info "run interrupted; worker may proceed."
-    rescue Exception => ex
+    rescue Exception => e
       log.error [e.inspect, *e.backtrace].join("\n  ")
       log.info "exiting worker due to error in run"
-      exit -2 ## ?
+      exit -2
     ensure
       begin
         cleanup
@@ -155,7 +155,7 @@ module Run
         log.warn "Interrupt during cleanup -- " +
           "may have left some temp files or running processes."
         log.info "exiting worker"
-        exit -3 ## ?
+        exit -3
       end
     end
 

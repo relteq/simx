@@ -11,18 +11,18 @@ module Daemon
       Timeout.timeout REQUEST_TIMEOUT do
         s.recv(1000)
       end
-    rescue TimeoutError => ex
+    rescue TimeoutError => e
       "timed out after #{REQUEST_TIMEOUT} seconds"
     rescue Errno::ENOENT
       "not running"
-    rescue Errno::ECONNREFUSED => ex
-      ex.message << " socket may be orphaned (power cycle?) -- try 'rake stop'"
-      ex
+    rescue Errno::ECONNREFUSED => e
+      e.message << " socket may be orphaned (power cycle?) -- try 'rake stop'"
+      e
     rescue Errno::ECONNRESET
       sleep 0.2
       retry  
-    rescue StandardError => ex
-      ex
+    rescue StandardError => e
+      e
     end
   end
 
@@ -143,14 +143,14 @@ module Daemon
       begin
         UNIXServer.open(sock_name)
 
-      rescue Errno::EADDRINUSE => ex
+      rescue Errno::EADDRINUSE => e
         tries += 1
         if tries <= 3
           sleep 0.1
           retry
         else
           raise Errno::EADDRINUSE,
-            "#{ex.message}: Someone else seems to be using the " +
+            "#{e.message}: Someone else seems to be using the " +
             "socket #{sock_name} -- try deleting it"
         end
       end
@@ -186,9 +186,9 @@ module Daemon
       end
       return should_accept_more
 
-    rescue => ex
+    rescue => e
       log.error "error in handling socket request, continuing: " +
-        "#{ex.class}: #{ex}\n" + ex.backtrace.join("\n  ")
+        "#{e.class}: #{e}\n" + e.backtrace.join("\n  ")
     end
   end
 end

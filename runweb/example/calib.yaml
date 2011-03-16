@@ -1,0 +1,7 @@
+name:           calib-test
+engine:         calibrator
+group:          topl
+user:           topl
+n_runs:         1
+param:
+  aurora_config: http://vii.path.berkeley.edu/~vjoel/ne680SNEW.xml

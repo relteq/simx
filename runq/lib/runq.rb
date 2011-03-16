@@ -470,11 +470,11 @@ module Runq
       begin
         sock = socket_for_worker[worker_id]
         sock.send_message msg.to_yaml
-      rescue *NETWORK_ERRORS => ex
+      rescue *NETWORK_ERRORS => e
         wdex = WorkerDisconnected.new
         wdex.worker_id = worker_id
         raise wdex,
-          "Failed to send run #{run_id} to worker #{worker_id}: #{ex.inspect}"
+          "Failed to send run #{run_id} to worker #{worker_id}: #{e.inspect}"
       end
 
       # If the transmission succeeded, mark the run and worker as belonging to

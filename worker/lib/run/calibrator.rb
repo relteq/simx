@@ -1,6 +1,7 @@
 require 'worker/run/base'
 
 require 'tmpdir'
+require 'open-uri'
 
 module Run
   class Calibrator < Base
@@ -47,16 +48,24 @@ module Run
 
     def work
       @progress = 0; update
+      
+      case aurora_config
+      when /\n/ # multiple lines; assume xml
+        input_xml = aurora_config
+      else # single line, assume url
+        input_xml = URI.parse(aurora_config).read
+      end
 
       input_xml_file = File.join(@dir, "input.xml")
       File.open(input_xml_file, "w") do |f|
-        f.puts aurora_config
+        f.puts input_xml
       end
       
       pid = fork do
+        Dir.chdir @dir
+        
         $stdout.reopen "out"
         $stderr.reopen "err"
-        Dir.chdir @dir
         
         cmd = %w{ java -jar }
         cmd << jar_file
@@ -69,9 +78,9 @@ module Run
       Process.waitpid pid
       
       if not $?.success?
-       err = File.read(File.join(@dir, "err"))
-       out = File.read(File.join(@dir, "out"))
-       fail out + err
+        err = File.read(File.join(@dir, "err"))
+        out = File.read(File.join(@dir, "out"))
+        fail out + err
       end
       
       @progress = 1; update
