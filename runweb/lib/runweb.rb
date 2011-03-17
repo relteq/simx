@@ -83,14 +83,14 @@ helpers do
       LOGGER.warn reply["message"]
     end
 
-    return reply.to_yaml
+    return reply
   
   rescue *NETWORK_ERRORS => e
     status 500
     return {
       "status" => "error",
       "message" => e.message,
-    }.to_yaml
+    }
   end
 
   def s3
@@ -164,7 +164,8 @@ post '/batch/new' do
   LOGGER.info "StartBatch request:\n#{s}"
   h = YAML.load(s)
   req = Runq::Request::StartBatch.new h
-  send_request_and_recv_response req
+  resp = send_request_and_recv_response req
+  resp.to_yaml
 end
 
 # UserStatus
@@ -173,7 +174,8 @@ get '/user/:id' do
   id = Integer(params[:id])
   LOGGER.info "UserStatus request, id=#{id}"
   req = Runq::Request::UserStatus.new :user_id => id
-  send_request_and_recv_response req
+  resp = send_request_and_recv_response req
+  resp.to_yaml
 end
 
 # BatchStatus
@@ -182,7 +184,8 @@ get '/batch/:id' do
   id = Integer(params[:id])
   LOGGER.info "BatchStatus request, id=#{id}"
   req = Runq::Request::BatchStatus.new :batch_id => id
-  send_request_and_recv_response req
+  resp = send_request_and_recv_response req
+  resp.to_yaml
 end
 
 # BatchList
@@ -190,7 +193,8 @@ get %r{^/batch(?:es)?$} do
   protected!
   LOGGER.info "BatchList request"
   req = Runq::Request::BatchList.new
-  send_request_and_recv_response req
+  resp = send_request_and_recv_response req
+  resp.to_yaml
     ## check for error and use that to distinguish between error here or
     ## in the runq daemon
 end
@@ -200,12 +204,64 @@ get %r{^/workers?$} do
   protected!
   LOGGER.info "WorkerList request"
   req = Runq::Request::WorkerList.new
-  send_request_and_recv_response req
+  resp = send_request_and_recv_response req
+  resp.to_yaml
 end
 
 ### WorkerStatus
 
 ### RunStatus
+
+# checks if batch is all done
+# returns YAML string "--- true" or "--- false".
+get "/batch/:batch_id/done" do
+  protected!
+  batch_id = Integer(params[:batch_id])
+  LOGGER.info "Batch done request, batch_id=#{batch_id}"
+  req = Runq::Request::BatchStatus.new :batch_id => batch_id
+  resp = send_request_and_recv_response req
+  batch = resp["batch"]
+  if batch
+    n_runs = batch[:n_runs]
+    n_complete = batch[:n_complete]
+    (n_runs == n_complete).to_yaml
+  else
+    status 404
+    return "no such batch"
+    ### these responses are not consistent with the "status"=>"ok" stuff
+  end
+end
+
+# checks if a run is done
+# returns YAML string "--- true" or "--- false".
+get "/batch/:batch_id/run/:run_id/done" do
+  protected!
+  batch_id = Integer(params[:batch_id])
+  run_id = Integer(params[:run_id])
+  LOGGER.info "Run done request, batch_id=#{batch_id}, run_id=#{run_id}"
+  req = Runq::Request::BatchStatus.new :batch_id => batch_id
+  resp = send_request_and_recv_response req
+  run = resp["runs"][run_id] ### handle nil
+  (run[:frac_complete] == 1.0).to_yaml
+  ### these responses are not consistent with the "status"=>"ok" stuff
+end
+
+# when run done, read result
+get "/batch/:batch_id/run/:run_id/result" do
+  protected!
+  batch_id = Integer(params[:batch_id])
+  run_id = Integer(params[:run_id])
+  LOGGER.info "Run done request, batch_id=#{batch_id}, run_id=#{run_id}"
+  req = Runq::Request::BatchStatus.new :batch_id => batch_id
+  resp = send_request_and_recv_response req
+  run = resp["runs"][run_id] ### handle nil
+  if run[:frac_complete] == 1.0
+    run[:data]
+  else
+    status 500 ## this isn't really right
+    return "not finished: batch_id=#{batch_id}, run_id=#{run_id}"
+  end
+end
 
 # /store?expiry=100&ext=xml
 #

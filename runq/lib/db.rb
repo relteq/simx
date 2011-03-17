@@ -120,6 +120,8 @@ module Runq
         
         integer     :batch_index    # in 0..n_runs-1
         
+        text        :data     # result data from run; short value or link
+        
         float       :frac_complete
         constraint  nil, :frac_complete => 0..1
         

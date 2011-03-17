@@ -249,7 +249,8 @@ module Runq
       
       runs = database[:runs].where(:id => worker[:run_id])
       runs.update(
-        :frac_complete => 1.0
+        :frac_complete => 1.0,
+        :data => data
         # leave the worker_id intact as record of who did the run
         # and to signify that the run is not waiting to start
       )
