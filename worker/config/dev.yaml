@@ -46,21 +46,24 @@ vii-dev:
       priority:     1
       retry_delay:  10
     
+    - run_class:    Run::Calibrator
+      count:        4
+      group:        topl
+      user:         topl
+      engine:       calibrator
+      engine_opts:
+        jar_file:   /home/vjoel/topl/calib/fdcalibrate.jar
+        sensor_file: /home/vjoel/topl/calib/d04_text_station_5min_2011_01_01.txt
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
 #    - run_class:    Run::Aurora
 #      count:        3
 #      group:        topl
 #      user:         topl
 #      engine:       aurora
-#      cost:         0
-#      speed:        1
-#      priority:     1
-#      retry_delay:  10
-#    
-#    - run_class:    Run::Calibrator
-#      count:        3
-#      group:        topl
-#      user:         topl
-#      engine:       calibrator
 #      cost:         0
 #      speed:        1
 #      priority:     1
