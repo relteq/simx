@@ -92,10 +92,24 @@ helpers do
       "message" => e.message,
     }.to_yaml
   end
+
+  def s3
+    unless @s3
+      require 'aws/s3'
+
+      AWS::S3::Base.establish_connection!(
+        :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
+        :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
+      )
+      
+      @s3 = true
+    end
+  end
 end
 
 RUNQ_PORT = Integer(ENV["RUNQ_PORT"]) || 9096
 RUNQ_HOST = ENV["RUNQ_HOST"] || 'localhost'
+RUNWEB_S3_BUCKET = ENV["RUNWEB_S3_BUCKET"] || "relteq-uploads-dev"
 
 ## don't need this
 TRUSTED_ADDRS = Set[*%w{
@@ -192,6 +206,53 @@ end
 ### WorkerStatus
 
 ### RunStatus
+
+# /store?expiry=100&ext=xml
+#
+# Request s3 storage; returns the s3 key, which is
+# a md5 hash of the data, plus the specified file extension, if any, which
+# s3 uses to make a content-type header. Expiry is in seconds. Default is
+# none. Expiry is not guaranteed, but will not happen before the specified
+# number of seconds has elapsed.
+post "/store" do
+  protected!
+  s3
+
+  expiry_str = params["expiry"]
+  expiry =
+    begin
+      expiry_str && Float(expiry_str)
+    rescue => e
+      LOGGER.warn e
+      nil
+    end
+  
+  ext = params["ext"]
+  
+  require 'digest/md5'
+  key = Digest::MD5.hexdigest(data)
+  if ext
+    if /\./ =~ ext
+      ext = ext[/\.([^.]*?)$/, 1]
+    end
+    key << "." << ext
+  end
+  
+  data = request.body.read
+  LOGGER.info "Storing at #{key} with expiry=#{expiry.inspect}: " + data[0..50]
+  
+  opts = {
+    :access => :public_read
+  }
+  if expiry
+    opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
+    ### need daemon to expire things
+  end
+  
+  AWS::S3::S3Object.store key, data, RUNWEB_S3_BUCKET, opts
+
+  key
+end
 
 not_found do
   "#{request.path_info} not found.\n"

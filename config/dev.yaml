@@ -10,3 +10,5 @@ runweb:
 worker:
   config file: dev.yaml
   log level: debug
+aws:
+  s3 bucket: relteq-uploads-dev
