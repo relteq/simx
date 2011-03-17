@@ -229,6 +229,8 @@ post "/store" do
   
   ext = params["ext"]
   
+  data = request.body.read
+  
   require 'digest/md5'
   key = Digest::MD5.hexdigest(data)
   if ext
@@ -238,8 +240,7 @@ post "/store" do
     key << "." << ext
   end
   
-  data = request.body.read
-  LOGGER.info "Storing at #{key} with expiry=#{expiry.inspect}: " + data[0..50]
+  LOGGER.debug "Storing at #{key} with expiry=#{expiry.inspect}: " + data[0..50]
   
   opts = {
     :access => :public_read
@@ -250,8 +251,8 @@ post "/store" do
   end
   
   AWS::S3::S3Object.store key, data, RUNWEB_S3_BUCKET, opts
-
-  key
+  
+  "https://s3.amazonaws.com/#{RUNWEB_S3_BUCKET}/#{key}"
 end
 
 not_found do
