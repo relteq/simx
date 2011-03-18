@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/async'
 require 'yaml'
 require 'logger'
 
@@ -143,6 +144,8 @@ helpers do
   end
 end
 
+Sinatra.register Sinatra::Async
+
 get '/' do
   index_page
 end
@@ -270,46 +273,52 @@ end
 # s3 uses to make a content-type header. Expiry is in seconds. Default is
 # none. Expiry is not guaranteed, but will not happen before the specified
 # number of seconds has elapsed.
-post "/store" do
+apost "/store" do
   protected!
   s3
 
-  expiry_str = params["expiry"]
-  expiry =
-    begin
-      expiry_str && Float(expiry_str)
-    rescue => e
-      LOGGER.warn e
-      nil
+  EM.defer do
+    LOGGER.info "started deferred store operation"
+
+    expiry_str = params["expiry"]
+    expiry =
+      begin
+        expiry_str && Float(expiry_str)
+      rescue => e
+        LOGGER.warn e
+        nil
+      end
+
+    ext = params["ext"]
+
+    ## should use async for this handler, in case following is slow
+    data = request.body.read
+
+    require 'digest/md5'
+    key = Digest::MD5.hexdigest(data)
+    if ext
+      if /\./ =~ ext
+        ext = ext[/\.([^.]*?)$/, 1]
+      end
+      key << "." << ext
     end
-  
-  ext = params["ext"]
-  
-  ## should use async for this handler, in case following is slow
-  data = request.body.read
-  
-  require 'digest/md5'
-  key = Digest::MD5.hexdigest(data)
-  if ext
-    if /\./ =~ ext
-      ext = ext[/\.([^.]*?)$/, 1]
+
+    LOGGER.debug "Storing at #{key} with expiry=#{expiry.inspect}: " +
+      data[0..50]
+
+    opts = {
+      :access => :public_read
+    }
+    if expiry
+      opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
+      ### need daemon to expire things
     end
-    key << "." << ext
+
+    AWS::S3::S3Object.store key, data, RUNWEB_S3_BUCKET, opts
+
+    LOGGER.info "finished deferred store operation"
+    body "https://s3.amazonaws.com/#{RUNWEB_S3_BUCKET}/#{key}"
   end
-  
-  LOGGER.debug "Storing at #{key} with expiry=#{expiry.inspect}: " + data[0..50]
-  
-  opts = {
-    :access => :public_read
-  }
-  if expiry
-    opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
-    ### need daemon to expire things
-  end
-  
-  AWS::S3::S3Object.store key, data, RUNWEB_S3_BUCKET, opts
-  
-  "https://s3.amazonaws.com/#{RUNWEB_S3_BUCKET}/#{key}"
 end
 
 not_found do
