@@ -290,8 +290,6 @@ apost "/store" do
       end
 
     ext = params["ext"]
-
-    ## should use async for this handler, in case following is slow
     data = request.body.read
 
     require 'digest/md5'
