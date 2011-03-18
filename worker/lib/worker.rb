@@ -30,6 +30,12 @@ class Worker
   # Port on which runq server is listening.
   attr_reader :runq_port
   
+  # Host on which runweb server is listening.
+  attr_reader :runweb_host
+  
+  # Port on which runweb server is listening.
+  attr_reader :runweb_port
+  
   # Worker accepts runs from this group (nil means any).
   attr_reader :group
   
@@ -87,6 +93,8 @@ class Worker
     
     @runq_host    = opts["runq_host"]    or raise argerr, "missing :runq_host"
     @runq_port    = opts["runq_port"]    or raise argerr, "missing :runq_port"
+    @runweb_host  = opts["runweb_host"]  or raise argerr, "missing :runweb_host"
+    @runweb_port  = opts["runweb_port"]  or raise argerr, "missing :runweb_port"
     @group        = opts["group"]
     @user         = opts["user"]
     @engine       = opts["engine"]       or raise argerr, "missing :engine"
@@ -405,8 +413,17 @@ class Worker
     if current_run
       raise "Called start_run, but current_run is not nil."
     end
-    @current_run = run_class.new event_queue, log, param, batch_index,
-      engine_opts
+    
+    @current_run = run_class.new(
+      :event_queue    => event_queue,
+      :log            => log,
+      :param          => param,
+      :batch_index    => batch_index,
+      :runweb_host    => runweb_host,
+      :runweb_port    => runweb_port,
+      :engine_opts    => engine_opts
+    )
+    
     thread = @current_run.start
     @thread_wait.join_nowait thread
     thread

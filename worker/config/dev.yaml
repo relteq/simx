@@ -1,10 +1,12 @@
 local:
   # in this case we can use defaults:
-  # host:       localhost
-  # user:       same
-  # dir:        .
-  # runq_host:  localhost
-  # runq_port:  env var or default
+  # host:         localhost
+  # user:         same
+  # dir:          .
+  # runq_host:    localhost
+  # runq_port:    env var or default
+  # runweb_host:  localhost
+  # runweb_port:  env var or default
   workers:
     - run_class:    Run::Dummy
       count:        3
@@ -30,11 +32,13 @@ local:
       retry_delay:  10
 
 vii-dev:
-  host:       vii.path.berkeley.edu
-  user:       vjoel
-  dir:        simx-dev
-  runq_host:  relteq-db.dyndns.org
-  runq_port:  9096
+  host:         vii.path.berkeley.edu
+  user:         vjoel
+  dir:          simx-dev
+  runq_host:    relteq-db.dyndns.org
+  runq_port:    9096
+  runweb_host:  relteq-db.dyndns.org
+  runweb_port:  9097
   workers:
     - run_class:    Run::Dummy
       count:        3

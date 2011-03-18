@@ -17,7 +17,7 @@ require 'simx/daemon'
 class << self
   attr_reader :config, :proc_name, :svr_name, :exec_dir,
     :sock_dir, :sock_name, :log_dir, :log_file, :err_file,
-    :libdir, :config_file, :worker_config, :runq_config
+    :libdir, :config_file, :worker_config, :runq_config, :runweb_config
 end
 
 # Read the deployment-specific config file (see ../config/README).
@@ -25,6 +25,7 @@ simx_config = YAML.load(File.read("../config.yaml"))
 
 @worker_config = simx_config["worker"]
 @runq_config = simx_config["runq"]
+@runweb_config = simx_config["runweb"]
 
 @libdir = libdir
 @config_file = File.join("config", worker_config["config file"])
@@ -102,11 +103,13 @@ task :stat    => "local:stat"
 #== Implementation
 
 DEFAULT_INSTANCE_CONFIG = {
-  "host"      => "localhost",
-  "user"      => ENV["USERNAME"],
-  "dir"       => TOPDIR,
-  "runq_host" => ENV["RUNQ_HOST"] || "localhost",
-  "runq_port" => Integer(ENV["RUNQ_PORT"] || runq_config["port"])
+  "host"        => "localhost",
+  "user"        => ENV["USERNAME"],
+  "dir"         => TOPDIR,
+  "runq_host"   => ENV["RUNQ_HOST"] || "localhost",
+  "runq_port"   => Integer(ENV["RUNQ_PORT"] || runq_config["port"]),
+  "runweb_host" => ENV["RUNWEB_HOST"] || "localhost",
+  "runweb_port" => Integer(ENV["RUNWEB_PORT"] || runweb_config["port"])
 }
 
 def update instance, instance_config

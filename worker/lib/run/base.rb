@@ -52,6 +52,10 @@ module Run
     # run-specific parameters.
     attr_reader :batch_index
     
+    attr_reader :runweb_host
+    
+    attr_reader :runweb_port
+    
     # Engine-specific opts from local config.
     attr_reader :engine_opts
 
@@ -61,12 +65,15 @@ module Run
     # to 1.0 will not cause confusion).
     attr_reader :progress
 
-    def initialize worker_event_queue, log, param, batch_index, engine_opts
-      @worker_event_queue = worker_event_queue
-      @log = log
-      @param = param
-      @batch_index = batch_index
-      @engine_opts = engine_opts
+    def initialize h
+      @worker_event_queue = h[:event_queue] || raise
+      @log                = h[:log]         || raise
+      @param              = h[:param]       || raise
+      @batch_index        = h[:batch_index] || raise
+      @runweb_host        = h[:runweb_host] || raise
+      @runweb_port        = h[:runweb_port] || raise
+      @engine_opts        = h[:engine_opts] || raise
+      
       @progress = :waiting
     end
 

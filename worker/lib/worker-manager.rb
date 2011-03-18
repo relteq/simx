@@ -19,8 +19,9 @@ class WorkerManager
   # (as a top-level key in the hash).
   attr_reader :instance_name
   
-  # Contains string keys: log_file, log_level, runq_host, runq_port, workers,
-  # instance_name. The value at workers has keys run_class, count, group, etc.
+  # Contains string keys: log_file, log_level, runq_host, runq_port,
+  # runweb_host, runweb_port, workers, nstance_name. The value at workers has
+  # ikeys run_class, count, group, etc.
   attr_reader :config
   
   class << self
@@ -82,8 +83,13 @@ class WorkerManager
       worker_set["count"].times do
         w = worker_set.dup # note shallow copy
         w.delete "count"
+        
         w["runq_host"] = config["runq_host"]
         w["runq_port"] = config["runq_port"]
+        
+        w["runweb_host"] = config["runweb_host"]
+        w["runweb_port"] = config["runweb_port"]
+        
         w["logdev"] = config["log_file"]
         threads << Thread.new(w) do |worker_spec|
           run_worker worker_spec

@@ -93,8 +93,6 @@ module Run
       output_xml = File.read(File.join(@dir, output_xml_file))
       
       ### Worker should not know about this stuff.
-      runweb_port = Integer(ENV["RUNWEB_PORT"] || 9097)
-      runweb_host = ENV["RUNWEB_HOST"] || 'relreq-db.dyndns.com'
       runweb_user = ENV["RUNWEB_USER"] || "relteq"
       runweb_password = ENV["RUNWEB_PASSWORD"] || "topl5678"
 
