@@ -93,21 +93,20 @@ module Run
       output_xml = File.read(File.join(@dir, output_xml_file))
       
       ### Worker should not know about this stuff.
-      RUNWEB_PORT = Integer(ENV["RUNWEB_PORT"] || 9097)
-      RUNWEB_HOST = ENV["RUNWEB_HOST"] || 'relreq-db.dyndns.com'
-      RUNWEB_USER = ENV["RUNWEB_USER"] || "relteq"
-      RUNWEB_PASSWORD = ENV["RUNWEB_PASSWORD"] || "topl5678"
+      runweb_port = Integer(ENV["RUNWEB_PORT"] || 9097)
+      runweb_host = ENV["RUNWEB_HOST"] || 'relreq-db.dyndns.com'
+      runweb_user = ENV["RUNWEB_USER"] || "relteq"
+      runweb_password = ENV["RUNWEB_PASSWORD"] || "topl5678"
 
       expiry = 60 # seconds
       ext = "xml"
 
       url = "http://" +
-        "#{RUNWEB_USER}:#{RUNWEB_PASSWORD}@"
-        "#{RUNWEB_HOST}:#{RUNWEB_PORT}/store?" +
+        "#{runweb_host}:#{runweb_port}/store?" +
         "expiry=#{expiry}&ext=#{ext}"
 
       log.info "requesting storage from #{url}"
-      rsrc = RestClient::Resource.new(url, RUNWEB_USER, RUNWEB_PASSWORD)
+      rsrc = RestClient::Resource.new(url, runweb_user, runweb_password)
       output_xml_url = rsrc.post output_xml, :content_type => :xml
       ## ok to go thru runweb?
       ## maybe a separate service, so runweb is not blocked?

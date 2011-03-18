@@ -67,7 +67,7 @@ task :stat
 
 include Daemon
 
-task :remote => ["remote:update", "remote:restart"]
+task :remote => %w{ remote:stop remote:update remote:start }
 
 remote_files = FileList[
   "rakefile",

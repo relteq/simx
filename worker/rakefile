@@ -80,7 +80,8 @@ instances.each do |instance|
   end
 
   desc "update and restart #{instance}"
-  task instance => ["#{instance}:update", "#{instance}:restart"]
+  task instance => [
+    "#{instance}:stop", "#{instance}:update", "#{instance}:start"]
 end
 
 desc "alias for local:run"
@@ -216,8 +217,8 @@ def do_run instance, instance_config
   sh "ruby",
       "-C", exec_dir,
       "-I", File.expand_path(libdir),
-      "-r", File.expand_path(svr_name),
-      "-e", "WorkerManager.run",
+      ## don't use -r; damn rubygems
+      "-e", "require '#{File.expand_path(svr_name)}'; WorkerManager.run",
       cfg_yml
 end
 
@@ -245,8 +246,7 @@ def do_start instance, instance_config
 
     args = [
       "-I", File.expand_path(libdir),
-      "-r", File.expand_path(svr_name),
-      "-e", "WorkerManager.run",
+      "-e", "require '#{File.expand_path(svr_name)}'; WorkerManager.run",
       cfg_yml
     ]
     

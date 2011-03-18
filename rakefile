@@ -42,7 +42,7 @@ delegated_tasks = [:start, :stop, :restart, :stat]
 #== Tasks
 
 desc "update and restart remote daemons, #{dest_host}:#{dest_path}"
-task :remote => %w{ remote:update remote:restart }
+task :remote => %w{ remote:stop remote:update remote:start }
 
 namespace :remote do
   desc "update to #{dest_host}:#{dest_path}, including subdirs"
