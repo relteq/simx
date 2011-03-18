@@ -1,0 +1,20 @@
+The end-to-end procedure for calibration is as follows:
+
+client sends data (xml) to runweb, requesting s3 storage(*)
+  with expiry param
+
+runweb stores it under md5hash of the data, returns url to it
+
+client requests calibration of that url
+
+calibrator runs and uses (*) again for output xml
+
+calibrator sends url as result value in finish message to runq
+
+client polls runweb for status of batch
+  url: /batch/n/done
+
+when batch done, client reads result
+  url: /batch/n/run/0/result
+
+result is url to calibrated xml
