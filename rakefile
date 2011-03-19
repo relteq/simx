@@ -75,6 +75,9 @@ end
 desc "install local cronjob to start daemons after reboot"
 task :crontab
 
+desc "stop daemons and remove var"
+task :clean
+
 ##desc "puts needed gems in #{GEMDIR} dir"
 ##task GEMDIR
 
@@ -82,6 +85,10 @@ task :crontab
 ##file GEMENV
 
 #== Implementation
+
+task :clean => [:stop, "workers:stop"] do
+  rm_rf "var"
+end
 
 namespace :remote do
   task :update do
