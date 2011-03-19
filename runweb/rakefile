@@ -42,6 +42,8 @@ FileUtils.mkdir_p sock_dir
 
 #== Tasks
 
+ops = %w{ start stop restart stat watch log }
+
 desc "update and restart remote daemon, #{dest_host}:#{port}"
 task :remote
 
@@ -49,7 +51,7 @@ namespace :remote do
   desc "update to #{dest_host}:#{dest_path}"
   task :update
   
-  [:start, :stop, :restart, :stat].each do |name|
+  ops.each do |name|
     desc "#{name} remote daemon"
     task name
   end
@@ -70,6 +72,12 @@ task :stop
 desc "status of daemon"
 task :stat
 
+desc "watch new log entries of daemon"
+task :watch
+
+desc "browse logs of daemon"
+task :log
+
 #== Implementation
 
 include Daemon
@@ -89,7 +97,7 @@ namespace :remote do
        " #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
   end
   
-  [:start, :stop, :restart, :stat].each do |name|
+  ops.each do |name|
     task name do
       sh "ssh #{dest_host} 'cd #{dest_path} && rake #{name}'"
     end
@@ -157,3 +165,11 @@ task :stat do
 end
 
 task :restart => [:stop, :start]
+
+task :watch do
+  sh "tail -F #{log_file}"
+end
+
+task :log do
+  sh "less +G --follow-name #{log_file}"
+end
