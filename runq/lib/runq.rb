@@ -8,7 +8,6 @@ require 'logger'
 require 'fileutils'
 require 'timeout'
 require 'thread'
-require 'thwait'
 
 require 'simx/mtcp'
 require 'runq/db'
@@ -56,10 +55,6 @@ module Runq
       @socket_for_worker ||= {}
     end
     
-    def thread_wait
-      @thread_wait ||= ThreadsWait.new
-    end
-
     def parse_argv argv
       @production = argv.delete("--production")
       
@@ -84,7 +79,7 @@ module Runq
     end
     
     def run
-      log; database; request_queue; socket_for_worker; thread_wait
+      log; database; request_queue; socket_for_worker
         # prevent race cond before starting threads
       
       log.level = @log_level
@@ -103,15 +98,13 @@ module Runq
       svr_thread = Thread.new do
         run_server_thread
       end
+      svr_thread.abort_on_exception = true
       
       req_thread = Thread.new do
         run_request_queue_thread
       end
       
-      @thread_wait.join_nowait svr_thread, req_thread
-      @thread_wait.all_waits do |thread|
-        thread.join
-      end
+      req_thread.join
       
     rescue Interrupt, SignalException
       log.info "#{self} exiting"
@@ -130,7 +123,7 @@ module Runq
           th = Thread.new(sock) do |s|
             run_recv_thread s
           end
-          @thread_wait.join_nowait th
+          th.abort_on_exception = true
         end
       end
     rescue => e
