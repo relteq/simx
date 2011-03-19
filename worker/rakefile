@@ -50,7 +50,7 @@ FileUtils.mkdir_p sock_dir
 #== Tasks
 
 instances = config.keys # unique set of names for all the worker deployments
-ops = %w{ update run start stop restart stat crontab }
+ops = %w{ update crontab run start stop restart stat log watch }
 
 desc "update and restart all workers specified in #{config_file}"
 task :all => ["all:update", "all:restart"]
@@ -85,20 +85,10 @@ instances.each do |instance|
     "#{instance}:stop", "#{instance}:update", "#{instance}:start"]
 end
 
-desc "alias for local:run"
-task :run     => "local:run"
-
-desc "alias for local:start"
-task :start   => "local:start"
-
-desc "alias for local:stop"
-task :stop    => "local:stop"
-
-desc "alias for local:restart"
-task :restart => "local:restart"
-
-desc "alias for local:stat"
-task :stat    => "local:stat"
+(ops - %w{ update cron }).each do |op|
+  desc "alias for local:#{op}"
+  task op => "local:#{op}"
+end
 
 #== Implementation
 
@@ -182,6 +172,22 @@ def stat instance, instance_config
     do_stat instance, instance_config
   else
     do_remote "stat", instance, instance_config
+  end
+end
+
+def watch instance, instance_config
+  if is_local? instance_config
+    do_watch instance, instance_config
+  else
+    do_remote "watch", instance, instance_config
+  end
+end
+
+def log instance, instance_config
+  if is_local? instance_config
+    do_log instance, instance_config
+  else
+    do_remote "log", instance, instance_config
   end
 end
 
@@ -292,5 +298,13 @@ def do_crontab instance, instance_config
       pipe.puts ct, cron_cmd
     end
   end
+end
+
+def do_watch instance, instance_config
+  sh "tail -F #{log_file}"
+end
+
+def do_log instance, instance_config
+  sh "less +G --follow-name #{log_file}"
 end
 
