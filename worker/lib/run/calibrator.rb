@@ -105,7 +105,8 @@ module Run
 
       log.info "requesting storage from #{url}"
       rsrc = RestClient::Resource.new(url, runweb_user, runweb_password)
-      output_xml_url = rsrc.post output_xml, :content_type => :xml
+      response = rsrc.post output_xml, :content_type => :xml
+      output_xml_url = response.to_s
       ## ok to go thru runweb?
       ## maybe a separate service, so runweb is not blocked?
 
