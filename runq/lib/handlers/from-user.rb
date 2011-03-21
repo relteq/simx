@@ -19,7 +19,7 @@ module Runq
     def respond obj
       msg = obj.to_yaml
       sock.send_message msg
-      log.info "Sent to user:\n#{msg}"
+      log.debug "Sent to user:\n#{msg}"
     end
 
     def respond_ok msg, h={}

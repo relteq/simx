@@ -72,7 +72,7 @@ module Run
       @batch_index        = h[:batch_index] || raise
       @runweb_host        = h[:runweb_host] || raise
       @runweb_port        = h[:runweb_port] || raise
-      @engine_opts        = h[:engine_opts] || raise
+      @engine_opts        = h[:engine_opts]
       
       @progress = :waiting
     end

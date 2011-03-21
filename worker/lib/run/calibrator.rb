@@ -24,6 +24,10 @@ module Run
     def initialize *args
       super
       @aurora_config = param["aurora_config"]
+      
+      unless engine_opts
+        raise ArgumentError, "missing engine_opts"
+      end
 
       @jar_file = engine_opts["jar_file"] or
         raise ArgumentError, "missing jar_file"
@@ -106,7 +110,7 @@ module Run
       log.info "requesting storage from #{url}"
       rsrc = RestClient::Resource.new(url, runweb_user, runweb_password)
       response = rsrc.post output_xml, :content_type => :xml
-      output_xml_url = response.body.to_s
+      output_xml_url = "#{response.body}"
       ## ok to go thru runweb?
       ## maybe a separate service, so runweb is not blocked?
 

@@ -155,9 +155,9 @@ end
 task :restart => [:stop, :start]
 
 task :watch do
-  sh "tail -F #{log_file}"
+  system "tail -F #{log_file}" # system to suppress error on INT
 end
 
 task :log do
-  sh "less +G --follow-name #{log_file}"
+  system "less +G --follow-name #{log_file}" # system to suppress error on INT
 end

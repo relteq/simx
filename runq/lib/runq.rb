@@ -163,10 +163,6 @@ module Runq
       Timeout.timeout REQUEST_TIMEOUT do
         req.handle
       end
-    rescue WorkerDisconnected => e
-      log.warn "Request queue thread for worker #{e.worker_id}: #{e}"
-      sock = socket_for_worker.delete e.worker_id
-      sock.close if sock and not sock.closed?
     rescue Timeout::Error
       log.warn "Timed out while handling request #{req} from " +
         req.sock.peeraddr.inspect
@@ -395,12 +391,12 @@ module Runq
       
       if not worker
         log.error "Worker #{worker_id} does not exist. Perhaps db was cleared?"
-        return
+        return false
       end
       
       if worker[:run_id]
         log.error "Worker #{worker_id} already has a run"
-        return
+        return false
       end
       
       # no race cond here because there is only one thread in db
@@ -414,10 +410,17 @@ module Runq
       run = matching_runs.first ## fairer order based on timestamp?
       if run
         send_run_to_worker run, worker
+        return true
       else
         log.info "No matching runs for worker #{worker_id}."
-        false
+        return false
       end
+      
+    rescue WorkerDisconnected => e
+      log.warn "Worker #{e.worker_id} disconnected: #{e}"
+      sock = socket_for_worker.delete e.worker_id
+      sock.close if sock and not sock.closed?
+      return false
     end
     
     # A run has been requested, so try to find a matching worker.
@@ -436,10 +439,18 @@ module Runq
       worker = matching_workers.first ## fairer order?
       if worker
         send_run_to_worker run, worker
+        return true
       else
         log.info "No matching workers for run #{run_id}."
-        false
+        return false
       end
+      
+    rescue WorkerDisconnected => e
+      log.warn "Worker #{e.worker_id} disconnected: #{e}"
+      sock = socket_for_worker.delete e.worker_id
+      sock.close if sock and not sock.closed?
+      log.info "Retrying dispatch_run"
+      retry
     end
 
     def have_match worker, run
@@ -463,6 +474,10 @@ module Runq
       batch = database[:batches].where(:id => batch_id).first
       worker_id = worker[:id]
       param = YAML.load(batch[:param]) ## cache this per batch
+      
+      log.info "sending run #{run_id} from batch #{batch_id} to " +
+        "worker #{worker_id}"
+      log.debug "run params: #{param.to_yaml}"
       
       msg = Request::RunqAssignRun.new(
         :param        => param,

@@ -301,10 +301,9 @@ def do_crontab instance, instance_config
 end
 
 def do_watch instance, instance_config
-  sh "tail -F #{log_file}"
+  system "tail -F #{log_file}" # system to suppress error on INT
 end
 
 def do_log instance, instance_config
-  sh "less +G --follow-name #{log_file}"
+  system "less +G --follow-name #{log_file}" # system to suppress error on INT
 end
-
