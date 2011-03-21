@@ -237,32 +237,32 @@ end
 
 # checks if a run is done
 # returns YAML string "--- true" or "--- false".
-get "/batch/:batch_id/run/:run_id/done" do
+get "/batch/:batch_id/run/:run_idx/done" do
   protected!
   batch_id = Integer(params[:batch_id])
-  run_id = Integer(params[:run_id])
-  LOGGER.info "Run done request, batch_id=#{batch_id}, run_id=#{run_id}"
+  run_idx = Integer(params[:run_idx])
+  LOGGER.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
-  run = resp["runs"][run_id] ### handle nil
+  run = resp["runs"][run_idx] ### handle nil
   (run[:frac_complete] == 1.0).to_yaml
   ### these responses are not consistent with the "status"=>"ok" stuff
 end
 
 # when run done, read result
-get "/batch/:batch_id/run/:run_id/result" do
+get "/batch/:batch_id/run/:run_idx/result" do
   protected!
   batch_id = Integer(params[:batch_id])
-  run_id = Integer(params[:run_id])
-  LOGGER.info "Run done request, batch_id=#{batch_id}, run_id=#{run_id}"
+  run_idx = Integer(params[:run_idx])
+  LOGGER.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
-  run = resp["runs"][run_id] ### handle nil
+  run = resp["runs"][run_idx] ### handle nil
   if run[:frac_complete] == 1.0
     run[:data]
   else
     status 500 ## this isn't really right
-    return "not finished: batch_id=#{batch_id}, run_id=#{run_id}"
+    return "not finished: batch_id=#{batch_id}, run_idx=#{run_idx}"
   end
 end
 
