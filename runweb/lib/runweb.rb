@@ -261,8 +261,9 @@ get "/batch/:batch_id/run/:run_idx/result" do
   if run[:frac_complete] == 1.0
     run[:data]
   else
-    status 500 ## this isn't really right
-    return "not finished: batch_id=#{batch_id}, run_idx=#{run_idx}"
+    # note: /^not finished/ is used by network editor to test for failure
+    return "not finished: batch_id=#{batch_id}, run_idx=#{run_idx}, " +
+      run[:data] ## ok?
   end
 end
 

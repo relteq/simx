@@ -322,12 +322,13 @@ module Runq
       )
       
       runs = database[:runs].where(:id => worker[:run_id])
-      #runs.update(
+      runs.update(
         # leave the frac_complete intact of a record of last update
         #
         # leave the worker_id intact as record of who did the run
         # and to signify that the run is not waiting to start
-      #)
+        :data => message
+      )
       run = runs.first
       
       batches = database[:batches].where(:id => run[:batch_id])
