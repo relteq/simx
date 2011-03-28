@@ -8,22 +8,38 @@ module Run
   class Calibrator < Base
     # Param hash sent from user via runq. Keys are:
     #
-    #   aurora_config
+    #   aurora_config:  <url to aurora xml file OR actual xml string>
+    #   sensor_data:                      
+    #     district:   n                   
+    #     year:       y (integer)         
+    #     month:      m (integer, 1..12)  
+    #     day:        d (integer)         
     #
     attr_reader :param
     
     # xml string
     attr_reader :aurora_config
     
+    # hash with keys district, year, month, day
+    attr_reader :sensor_data
+    
     # path to jar file of calibrator
     attr_reader :jar_file
     
-    # path to sensor file
-    attr_reader :sensor_file
+    # path to sensor dir
+    attr_reader :sensor_dir
 
+    # path to sensor file
+    def sensor_file
+      File.join(sensor_dir,
+        "d%02d_text_station_5min_%d_%02d_%02d.txt" %
+        sensor_data.values_at(*%w{ district year month day }))
+    end
+    
     def initialize *args
       super
       @aurora_config = param["aurora_config"]
+      @sensor_data = param["sensor_data"]
       
       unless engine_opts
         raise ArgumentError, "missing engine_opts"
@@ -32,8 +48,8 @@ module Run
       @jar_file = engine_opts["jar_file"] or
         raise ArgumentError, "missing jar_file"
 
-      @sensor_file = engine_opts["sensor_file"] or
-        raise ArgumentError, "missing sensor_file"
+      @sensor_dir = engine_opts["sensor_dir"] or
+        raise ArgumentError, "missing sensor_dir"
     end
     
     def run
