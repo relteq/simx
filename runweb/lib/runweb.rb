@@ -125,6 +125,7 @@ USERS = [
 
 helpers do
   def protected!
+return ### otherwise, flash credentials don't work??
     response['WWW-Authenticate'] = %(Basic realm="the TOPL Project") and \
     throw(:halt,
           [401, "Not authorized at #{request.env["REMOTE_ADDR"]}\n"]) and \
@@ -148,6 +149,26 @@ Sinatra.register Sinatra::Async
 
 get '/' do
   index_page
+end
+
+# See http://kb2.adobe.com/cps/142/tn_14213.html
+get '/crossdomain.xml' do
+  ## this should just be a static page
+  return <<-END
+    <?xml version="1.0"?>
+    <!DOCTYPE cross-domain-policy SYSTEM
+     "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
+    <cross-domain-policy>
+      <allow-access-from domain="vii.path.berkeley.edu" />
+      <allow-access-from domain="path.berkeley.edu" />
+      <allow-access-from domain="berkeley.edu" />
+      <allow-access-from domain="relteqsystems.com" />
+      <allow-access-from domain="relteq-dev.heroku.com" />
+      <allow-access-from domain="relteq-devel.heroku.com" />
+      <allow-access-from domain="relteq-staging.heroku.com" />
+      <allow-access-from domain="relteq.heroku.com" />
+    </cross-domain-policy>
+  END
 end
 
 # StartBatch. Body is yaml hash with string keys:
