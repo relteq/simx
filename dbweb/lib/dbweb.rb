@@ -3,6 +3,8 @@ require 'sinatra/async'
 require 'yaml'
 require 'logger'
 
+require ''
+
 class MyLogger < Logger
   alias write << # Stupid! See http://groups.google.com/group/rack-devel/browse_thread/thread/ffec93533180e98a
 end
@@ -67,8 +69,11 @@ helpers do
         :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
       )
       
-      @s3 = true
+      @s3 = true ## should we rescue s3 errors somewhere and set @s3=nil ?
     end
+  end
+  
+  def import_xml xml_data
   end
 end
 
@@ -133,127 +138,51 @@ get '/crossdomain.xml' do
   END
 end
 
-# Import.
-
-# StartBatch. Body is yaml hash with string keys:
+# Import
 #
-#  name:           test123
-#  engine:         dummy
-#  group:          topl
-#  user:           topl
-#  n_runs:         3
-#  param:          10
-#
-# See README for more details.
-#
-post '/batch/new' do
+# use /import to import xml data passed by http
+# use /import_url to import xml data from a url
+
+# /import
+# body is the xml data
+# returns [table, id].to_yaml, where table is name of table of top-level
+# object of the xml (e.g. scenario) and id is its id in the db.
+apost "/import" do
   protected!
-  s = request.body.read
-  LOGGER.info "StartBatch request:\n#{s}"
-  h = YAML.load(s)
-  req = Runq::Request::StartBatch.new h
-  resp = send_request_and_recv_response req
-  resp.to_yaml
-end
 
-# UserStatus
-get '/user/:id' do
-  protected!
-  id = Integer(params[:id])
-  LOGGER.info "UserStatus request, id=#{id}"
-  req = Runq::Request::UserStatus.new :user_id => id
-  resp = send_request_and_recv_response req
-  resp.to_yaml
-end
-
-# BatchStatus
-get '/batch/:id' do
-  protected!
-  id = Integer(params[:id])
-  LOGGER.info "BatchStatus request, id=#{id}"
-  req = Runq::Request::BatchStatus.new :batch_id => id
-  resp = send_request_and_recv_response req
-  resp.to_yaml
-end
-
-# BatchList
-get %r{^/batch(?:es)?$} do
-  protected!
-  LOGGER.info "BatchList request"
-  req = Runq::Request::BatchList.new
-  resp = send_request_and_recv_response req
-  resp.to_yaml
-    ## check for error and use that to distinguish between error here or
-    ## in the runq daemon
-end
-
-# WorkerList
-get %r{^/workers?$} do
-  protected!
-  LOGGER.info "WorkerList request"
-  req = Runq::Request::WorkerList.new
-  resp = send_request_and_recv_response req
-  resp.to_yaml
-end
-
-### WorkerStatus
-
-### RunStatus
-
-# checks if batch is all done
-# returns YAML string "--- true" or "--- false".
-get "/batch/:batch_id/done" do
-  protected!
-  batch_id = Integer(params[:batch_id])
-  LOGGER.info "Batch done request, batch_id=#{batch_id}"
-  req = Runq::Request::BatchStatus.new :batch_id => batch_id
-  resp = send_request_and_recv_response req
-  batch = resp["batch"]
-  if batch
-    n_runs = batch[:n_runs]
-    n_complete = batch[:n_complete]
-    (n_runs == n_complete).to_yaml
-  else
-    status 404
-    return "no such batch"
-    ### these responses are not consistent with the "status"=>"ok" stuff
+  EM.defer do
+    xml_data = request.body.read
+    LOGGER.info "importing #{xml_data.size} bytes of xml data"
+    table, id = import_xml(xml_data)
+    LOGGER.info "finished importing"
+    body [table, id].to_yaml
   end
 end
 
-# checks if a run is done
-# returns YAML string "--- true" or "--- false".
-get "/batch/:batch_id/run/:run_idx/done" do
+# /import_url
+# body is the url
+# returns [table, id].to_yaml, where table is name of table of top-level
+# object of the xml (e.g. scenario) and id is its id in the db.
+apost "/import_url" do
   protected!
-  batch_id = Integer(params[:batch_id])
-  run_idx = Integer(params[:run_idx])
-  LOGGER.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
-  req = Runq::Request::BatchStatus.new :batch_id => batch_id
-  resp = send_request_and_recv_response req
-  run = resp["runs"][run_idx] ### handle nil
-  (run[:frac_complete] == 1.0).to_yaml
-  ### these responses are not consistent with the "status"=>"ok" stuff
-end
 
-# when run done, read result
-get "/batch/:batch_id/run/:run_idx/result" do
-  protected!
-  batch_id = Integer(params[:batch_id])
-  run_idx = Integer(params[:run_idx])
-  LOGGER.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
-  req = Runq::Request::BatchStatus.new :batch_id => batch_id
-  resp = send_request_and_recv_response req
-  run = resp["runs"][run_idx] ### handle nil
-  if run[:frac_complete] == 1.0
-    run[:data]
-  else
-    # note: /^not finished/ is used by network editor to test for failure
-    return "not finished: batch_id=#{batch_id}, run_idx=#{run_idx}, " +
-      run[:data] ## ok?
+  EM.defer do
+    xml_url = request.body.read
+    LOGGER.info "importing url: #{xml_url.inspect}"
+    xml_data = open(xml_url) {|f| f.read} ###
+    LOGGER.info "read #{xml_data.size} bytes of xml data"
+    table, id = import_xml(xml_data)
+    LOGGER.info "finished importing: #{xml_url.inspect}"
+    body [table, id].to_yaml
   end
 end
 
-# /store?expiry=100&ext=xml
+
+# Export
 #
+# use /export to export xml data via http
+# use /export_s3 to export xml data to s3, returning the key
+
 # Request s3 storage; returns the s3 key, which is
 # a md5 hash of the data, plus the specified file extension, if any, which
 # s3 uses to make a content-type header. Expiry is in seconds. Default is
