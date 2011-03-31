@@ -166,6 +166,15 @@ task :log do
   system "less +G --follow-name #{log_file}" # system to suppress error on INT
 end
 
-task :test do
-  sh "cd test && ruby test.rb"
+task :test => ["test:import", "test:export"]
+  ## check that round trip is ok (how?)
+
+namespace :test do
+  task :import do
+    sh "cd test && ruby test-import.rb"
+  end
+
+  task :export do
+    sh "cd test && ruby test-export.rb"
+  end
 end

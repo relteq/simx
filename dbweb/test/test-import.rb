@@ -10,7 +10,9 @@ $LOAD_PATH.unshift libdir
 
 datadir = File.join(topdir, 'var/data')
 FileUtils.mkdir_p datadir
-DB = Sequel.sqlite(File.join(datadir, 'test.db'))
+db_filename = File.join(datadir, 'test.db')
+FileUtils.rm_f db_filename
+DB = Sequel.sqlite(db_filename)
 #DB.loggers << Logger.new($stderr)
 
 test_doc = File.join(topdir, "dbweb/doc/short.xml")

@@ -3,7 +3,7 @@ require 'sinatra/async'
 require 'yaml'
 require 'logger'
 
-require ''
+require 'db/import/scenario'
 
 class MyLogger < Logger
   alias write << # Stupid! See http://groups.google.com/group/rack-devel/browse_thread/thread/ffec93533180e98a
@@ -74,6 +74,8 @@ helpers do
   end
   
   def import_xml xml_data
+    ###
+    [table, id]
   end
 end
 
