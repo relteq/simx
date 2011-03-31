@@ -7,6 +7,9 @@ runq:
 runweb:
   port: 9097
   log level: debug
+dbweb:
+  port: 9098
+  log level: debug
 worker:
   config file: dev.yaml
   log level: debug

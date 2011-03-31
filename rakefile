@@ -34,6 +34,7 @@ remote_files = FileList[
 daemon_dirs = %w{
   runq
   runweb
+  dbweb
 }
 
 # tasks that can be delegated to all of the daemon_dirs

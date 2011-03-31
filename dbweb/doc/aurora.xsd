@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="AuroraRNM">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="network" />
+        <xs:element ref="settings" />
+        <xs:element ref="InitialDensityProfile" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="SRProfile" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="CapacityProfile" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="EventList" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="DemandProfile" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="DirectionsCache" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="IntersectionCache" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="network">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="description" minOccurs="0" />
+        <xs:element ref="position" minOccurs="0" />
+        <xs:element ref="MonitorList" minOccurs="0" />
+        <xs:element ref="NodeList" />
+        <xs:element ref="LinkList" />
+        <xs:element ref="ODList" />
+        <xs:element ref="SensorList" minOccurs="0" />
+      </xs:all>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="controlled" type="xs:boolean" use="required" />
+      <xs:attribute name="top" type="xs:boolean" use="required" />
+      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="settings">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="display" />
+        <xs:element ref="VehicleTypes" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="DemandProfile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="demand" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="InitialDensityProfile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="density" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SRProfile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="splitratios" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="CapacityProfile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="capacity" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="EventList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="event" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="description" type="xs:string" />
+
+  <xs:element name="postmile" type="xs:decimal" />
+
+  <xs:element name="MonitorList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="monitor" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="NodeList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice>
+          <xs:element ref="node" maxOccurs="unbounded" />
+          <xs:element ref="network" maxOccurs="unbounded" />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="LinkList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="link" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ODList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="od" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SensorList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="sensor" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="sensor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="position" minOccurs="0" />
+        <xs:element ref="links" minOccurs="0" />
+      </xs:sequence>
+      
+      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="description" type="xs:string" use="optional"
+       default="" />
+       
+      <xs:attribute name="display_lat" type="xs:decimal" use="required" />
+      <xs:attribute name="display_lng" type="xs:decimal" use="required" />
+      
+      <xs:attribute name="length" type="xs:decimal" use="optional"
+       default="0.0" />
+      <xs:attribute name="offset_in_link" type="xs:decimal" use="optional"
+       default="0.0" />
+      <xs:attribute name="data_id" type="xs:string" use="optional"
+       default="" />
+
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="loop|radar|camera|sensys"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+
+      <xs:attribute name="link_type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="ML|HV|OR|FR"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      
+      <xs:attribute name="vds" type="xs:string" use="optional"
+       default="" />
+      <xs:attribute name="hwy_name" type="xs:string" use="optional"
+       default="" />
+      <xs:attribute name="hwy_dir" type="xs:string" use="optional"
+       default="" />
+      <xs:attribute name="postmile" type="xs:decimal" use="optional"
+       default="0.0" />
+      <xs:attribute name="lanes" type="xs:string" use="optional"
+       default="" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="monitor">
+    <xs:complexType mixed="true">
+      <xs:choice>
+        <xs:sequence>
+          <xs:element ref="monitored" minOccurs="0" />
+          <xs:element ref="controlled" minOccurs="0" />
+          <xs:element ref="controller" minOccurs="0" />
+        </xs:sequence>
+        <xs:sequence>
+          <xs:element ref="LinkPairs" />
+        </xs:sequence>
+      </xs:choice>
+      <xs:attribute name="name" type="xs:string" use="optional" default="" />
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="C|E|Z"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="monitored">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="links" minOccurs="0" />
+        <xs:element ref="nodes" minOccurs="0" />
+        <xs:element ref="monitors" minOccurs="0" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="controlled">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="links" minOccurs="0" />
+        <xs:element ref="nodes" minOccurs="0" />
+        <xs:element ref="monitors" minOccurs="0" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="links">
+    <xs:complexType mixed="true">
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default="," />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="link" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="nodes">
+    <xs:complexType mixed="true">
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default="," />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="node" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="monitors">
+    <xs:complexType mixed="true">
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default="," />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="monitor" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="LinkPairs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="pair" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="pair">
+    <xs:complexType>
+      <xs:attribute name="outlink" type="xs:string" use="required" />
+      <xs:attribute name="inlink" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="node">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="description" minOccurs="0" />
+        <xs:element ref="postmile" minOccurs="0" />
+        <xs:element ref="outputs" />
+        <xs:element ref="inputs" />
+        <xs:element ref="splitratios" minOccurs="0" />
+        <xs:element ref="position" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="F|H|S|P|O"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="link">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="description" minOccurs="0" />
+        <xs:element ref="begin" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="end" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="fd" />
+        <xs:element ref="density" />
+        <xs:element ref="dynamics" />
+        <xs:element ref="position" />
+        <xs:element ref="demand" minOccurs="0" />
+        <xs:element ref="capacity" minOccurs="0" />
+        <xs:element ref="qmax" />
+      </xs:all>
+      <xs:attribute name="name" type="xs:string" use="optional" />
+      <xs:attribute name="lanes" type="xs:decimal" use="required" />
+      <xs:attribute name="length" type="xs:decimal" use="required" />
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="FW|HW|HOV|HOT|HV|ETC|OR|FR|IC|ST|D"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="record" type="xs:boolean" use="optional" default="false" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="od">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="PathList" />
+      </xs:sequence>
+      <xs:attribute name="begin" type="xs:string" use="required" />
+      <xs:attribute name="end" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="outputs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="output" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="inputs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="input" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="position">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="point" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="begin">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="end">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="fd">
+    <xs:complexType>
+      <xs:attribute name="densityCritical" type="xs:string" use="required" />
+      <xs:attribute name="flowMax" type="xs:string" use="required" />
+      <xs:attribute name="densityJam" type="xs:string" use="required" />
+      <xs:attribute name="capacityDrop" use="optional" default="0.0">
+        <xs:simpleType>
+          <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0.0"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="density">
+    <xs:complexType mixed="true">
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default=":" />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="xs:decimal" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dynamics">
+    <xs:complexType>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="CTM"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="demand">
+    <xs:complexType mixed="true">
+      <xs:attribute name="knob" type="xs:decimal" use="required" />
+      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default=",:" />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="xs:string" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="qmax" type="xs:decimal" />
+
+  <xs:element name="PathList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="path" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="output">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="input">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="splitratios" minOccurs="0" />
+        <xs:element ref="controller" minOccurs="0" />
+        <xs:element ref="weavingfactors" minOccurs="0" />
+      </xs:all>
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="path">
+    <xs:complexType mixed="true">
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default="," />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="link" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="display">
+    <xs:complexType>
+      <xs:attribute name="timeMax" type="xs:decimal" use="required" />
+      <xs:attribute name="tsMax" type="xs:integer" use="required" />
+      <xs:attribute name="timeout" type="xs:integer" use="required" />
+      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="tsInitial" type="xs:integer" use="optional"
+        default="0" />
+      <xs:attribute name="timeInitial" type="xs:decimal" use="optional"
+        default="0.0" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="VehicleTypes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="vtype" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="vtype">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="weight" type="xs:decimal" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="event">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="demand" minOccurs="0" />
+        <xs:element ref="description" minOccurs="0" />
+        <xs:element ref="fd" minOccurs="0" />
+        <xs:element ref="srm" minOccurs="0" />
+        <xs:element ref="qmax" minOccurs="0" />
+        <xs:element ref="lkid" minOccurs="0" />
+        <xs:element ref="controller" minOccurs="0" />
+        <xs:element ref="wfm" minOccurs="0" />
+        <xs:element ref="control" minOccurs="0" />
+      </xs:choice>
+      <xs:attribute name="tstamp" type="xs:decimal" use="required" />
+      <xs:attribute name="neid" type="xs:string" use="required" />
+      <xs:attribute name="enabled" type="xs:boolean" use="required" />
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="FD|DEMAND|QLIM|SRM|WFM|SCONTROL|NCONTROL|CCONTROL|TCONTROL|MONITOR"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="lkid" type="xs:string" />
+
+  <xs:element name="wfm">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="weavingfactors" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="control">
+    <xs:complexType>
+      <xs:attribute name="mainline" type="xs:boolean" use="required" />
+      <xs:attribute name="queue" type="xs:boolean" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="point">
+    <xs:complexType>
+      <xs:attribute name="x" type="xs:decimal" use="required" />
+      <xs:attribute name="y" type="xs:decimal" use="required" />
+      <xs:attribute name="z" type="xs:decimal" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="splitratios">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="srm" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default=",:" />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="xs:decimal" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="controller">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="components" minOccurs="0" />
+        <xs:element ref="zones" minOccurs="0" />
+        <xs:element ref="onramps" minOccurs="0" />
+        <xs:element ref="parameters" minOccurs="0" />
+        <xs:element ref="limits" minOccurs="0" />
+        <xs:element ref="qcontroller" minOccurs="0" />
+      </xs:all>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="ALINEA|TOD|TR|VSLTOD|SIMPLESIGNAL|PRETIMED|ACTUADED|SYNCHRONIZED|SWARM|HERO|SLAVE"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="usesensors" type="xs:boolean" use="optional" default="false" />
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="components">
+    <xs:complexType>
+      <xs:attribute name="swarm1" type="xs:boolean" use="required" />
+      <xs:attribute name="swarm2a" type="xs:boolean" use="required" />
+      <xs:attribute name="swarm2b" type="xs:boolean" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="zones">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="zone" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="zone">
+    <xs:complexType>
+      <xs:attribute name="bottlenecklink" type="xs:string" use="required" />
+      <xs:attribute name="onramplinks" type="xs:string" use="required" />
+      <xs:attribute name="sat_den_multiplier" type="xs:decimal" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="onramps">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="onramp" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="onramp">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="gain_Alinea" type="xs:decimal" use="required" />
+      <xs:attribute name="gain_Hero" type="xs:decimal" use="required" />
+      <xs:attribute name="activation_threshold" type="xs:decimal" use="required" />
+      <xs:attribute name="deactivation_threshold" type="xs:decimal" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="weavingfactors">
+    <xs:complexType mixed="true">
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default="," />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="xs:decimal" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="parameter">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="parameters">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="limits">
+    <xs:complexType>
+      <xs:attribute name="cmin" type="xs:decimal" use="required" />
+      <xs:attribute name="cmax" type="xs:decimal" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="qcontroller">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="QUEUEOVERRIDE|PROPORTIONAL|PI"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="srm">
+    <xs:complexType mixed="true">
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default=";,:" />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="xs:decimal" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="capacity">
+    <xs:complexType mixed="true">
+      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default="," />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="xs:decimal" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="DirectionsCache">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="DirectionsCacheEntry" minOccurs="0"
+         maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="IntersectionCache">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="IntersectionCacheEntry" minOccurs="0"
+         maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="DirectionsCacheEntry">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="From" />
+        <xs:element ref="To" />
+        <xs:element ref="EncodedPolyline" />
+      </xs:all>
+      <xs:attribute name="avoidHighways" type="xs:boolean" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="IntersectionCacheEntry">
+    <xs:complexType>
+      <xs:attribute name="qlat" type="xs:decimal" use="required" />
+      <xs:attribute name="qlng" type="xs:decimal" use="required" />
+      <xs:attribute name="lat" type="xs:decimal" use="required" />
+      <xs:attribute name="lng" type="xs:decimal" use="required" />
+      <xs:attribute name="street1" type="xs:string" use="required" />
+      <xs:attribute name="street2" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="From">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="ALatLng" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="To">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="ALatLng" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ALatLng">
+    <xs:complexType>
+      <xs:attribute name="lat" type="xs:decimal" use="required" />
+      <xs:attribute name="lng" type="xs:decimal" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="EncodedPolyline">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="Points" />
+        <xs:element ref="Levels" />
+      </xs:all>
+      <xs:attribute name="zoomFactor" type="xs:decimal" use="required" />
+      <xs:attribute name="numLevels" type="xs:decimal" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Points" type="xs:string" />
+  <xs:element name="Levels" type="xs:string" />
+
+</xs:schema>
