@@ -62,7 +62,7 @@ DB.table_exists? :nodes or DB.create_table :nodes do
   decimal   :postmile
   text      :type ## validate
   
-  float     :x
+  float     :x ### should we automatically convert to lat lng
   float     :y
   float     :z
 

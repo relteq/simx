@@ -145,6 +145,10 @@ end
 # use /import to import xml data passed by http
 # use /import_url to import xml data from a url
 
+## option to async import: need to poll
+
+### add user, group, project id params
+
 # /import
 # body is the xml data
 # returns [table, id].to_yaml, where table is name of table of top-level
