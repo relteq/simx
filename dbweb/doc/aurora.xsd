@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.0">
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:element name="AuroraRNM">
+  <xs:element name="scenario">
     <xs:complexType>
       <xs:all>
         <xs:element ref="network" />
@@ -12,9 +11,8 @@
         <xs:element ref="CapacityProfile" minOccurs="0" maxOccurs="1" />
         <xs:element ref="EventList" minOccurs="0" maxOccurs="1" />
         <xs:element ref="DemandProfile" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="DirectionsCache" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="IntersectionCache" minOccurs="0" maxOccurs="1" />
-      </xs:sequence>
+      </xs:all>
+      <xs:attribute name="schemaVersion" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
@@ -28,11 +26,13 @@
         <xs:element ref="LinkList" />
         <xs:element ref="ODList" />
         <xs:element ref="SensorList" minOccurs="0" />
+        <xs:element ref="DirectionsCache" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="IntersectionCache" minOccurs="0" maxOccurs="1" />
       </xs:all>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="controlled" type="xs:boolean" use="required" />
       <xs:attribute name="top" type="xs:boolean" use="required" />
-      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
@@ -42,6 +42,13 @@
       <xs:sequence>
         <xs:element ref="display" />
         <xs:element ref="VehicleTypes" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="units" minOccurs="1" maxOccurs="1">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:pattern value="US|Metric" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -283,7 +290,7 @@
       <xs:attribute name="type" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:pattern value="F|H|S|P|O"/>
+            <xs:pattern value="F|H|S|P|O|D"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -295,12 +302,11 @@
     <xs:complexType>
       <xs:all>
         <xs:element ref="description" minOccurs="0" />
-        <xs:element ref="begin" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="end" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="begin" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="end" minOccurs="1" maxOccurs="1" />
         <xs:element ref="fd" />
         <xs:element ref="density" />
         <xs:element ref="dynamics" />
-        <xs:element ref="position" />
         <xs:element ref="demand" minOccurs="0" />
         <xs:element ref="capacity" minOccurs="0" />
         <xs:element ref="qmax" />
@@ -356,13 +362,13 @@
 
   <xs:element name="begin">
     <xs:complexType>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="node_id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
   <xs:element name="end">
     <xs:complexType>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="node_id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
@@ -405,8 +411,8 @@
   <xs:element name="demand">
     <xs:complexType mixed="true">
       <xs:attribute name="knob" type="xs:decimal" use="required" />
-      <xs:attribute name="tp" type="xs:decimal" use="required" />
-      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="dt" type="xs:decimal" use="required" />
+      <xs:attribute name="link_id" type="xs:string" use="optional" default="" />
       <xs:attribute name="delims"
        type="xs:string" use="optional" default=",:" />
       <xs:attribute name="cellType"
@@ -426,7 +432,7 @@
 
   <xs:element name="output">
     <xs:complexType>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="link_id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
@@ -437,7 +443,7 @@
         <xs:element ref="controller" minOccurs="0" />
         <xs:element ref="weavingfactors" minOccurs="0" />
       </xs:all>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="link_id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
@@ -456,7 +462,7 @@
       <xs:attribute name="timeMax" type="xs:decimal" use="required" />
       <xs:attribute name="tsMax" type="xs:integer" use="required" />
       <xs:attribute name="timeout" type="xs:integer" use="required" />
-      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="tsInitial" type="xs:integer" use="optional"
         default="0" />
       <xs:attribute name="timeInitial" type="xs:decimal" use="optional"
@@ -491,7 +497,7 @@
         <xs:element ref="controller" minOccurs="0" />
         <xs:element ref="wfm" minOccurs="0" />
         <xs:element ref="control" minOccurs="0" />
-      </xs:choice>
+      </xs:all>
       <xs:attribute name="tstamp" type="xs:decimal" use="required" />
       <xs:attribute name="neid" type="xs:string" use="required" />
       <xs:attribute name="enabled" type="xs:boolean" use="required" />
@@ -524,9 +530,10 @@
 
   <xs:element name="point">
     <xs:complexType>
-      <xs:attribute name="x" type="xs:decimal" use="required" />
-      <xs:attribute name="y" type="xs:decimal" use="required" />
-      <xs:attribute name="z" type="xs:decimal" use="required" />
+      <xs:attribute name="lat" type="xs:decimal" use="required" />
+      <xs:attribute name="lng" type="xs:decimal" use="required" />
+      <xs:attribute name="elevation" type="xs:decimal" use="optional"
+       default="0" />
     </xs:complexType>
   </xs:element>
 
@@ -535,8 +542,8 @@
       <xs:sequence>
         <xs:element ref="srm" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="id" type="xs:string" use="optional" default="" />
-      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="node_id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="delims"
        type="xs:string" use="optional" default=",:" />
       <xs:attribute name="cellType"
@@ -561,7 +568,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="usesensors" type="xs:boolean" use="optional" default="false" />
     </xs:complexType>
   </xs:element>
@@ -665,8 +672,8 @@
 
   <xs:element name="capacity">
     <xs:complexType mixed="true">
-      <xs:attribute name="id" type="xs:string" use="required" />
-      <xs:attribute name="tp" type="xs:decimal" use="required" />
+      <xs:attribute name="link_id" type="xs:string" use="required" />
+      <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="delims"
        type="xs:string" use="optional" default="," />
       <xs:attribute name="cellType"

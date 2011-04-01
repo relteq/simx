@@ -1,174 +1,171 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<AuroraRNM>
-  <network name="My Network" controlled="true" top="true" tp="1" id="-1">
+<scenario schemaVersion="1.0.0" >
+  <network name="My Network" controlled="true" top="true" dt="1" id="-1">
     <description>Created by TOPL flash app version 0.2.142</description>
     <position>
-      <point x="-122.29371339082718" y="-37.8640328440588" z="0"/>
+      <point lng="-122.29371339082718" lat="37.8640328440588" />
     </position>
     <MonitorList/>
     <NodeList>
       <node name="Node 1" type="S" id="1">
         <outputs/>
         <inputs/>
-        <splitratios tp="0.08333333333333333"></splitratios>
+        <splitratios dt="0.08333333333333333"></splitratios>
         <position>
-          <point x="-122.29111433029176" y="-37.85117239046442" z="0"/>
+          <point lng="-122.29111433029176" lat="37.85117239046442" />
         </position>
       </node>
       <node name="Node 2" type="S" id="2">
         <outputs/>
         <inputs/>
-        <splitratios tp="0.08333333333333333"></splitratios>
+        <splitratios dt="0.08333333333333333"></splitratios>
         <position>
-          <point x="-122.2998583316803" y="-37.867596929343975" z="0"/>
+          <point lng="-122.2998583316803" lat="37.867596929343975" />
         </position>
       </node>
       <node name="Node 3" type="S" id="3">
         <outputs>
-          <output id="5"/>
+          <output link_id="5"/>
         </outputs>
         <inputs/>
-        <splitratios tp="0.08333333333333333"></splitratios>
+        <splitratios dt="0.08333333333333333"></splitratios>
         <position>
-          <point x="-122.29155421257019" y="-37.86734283851613" z="0"/>
+          <point lng="-122.29155421257019" lat="37.86734283851613" />
         </position>
       </node>
       <node name="Node 4" type="S" id="4">
         <outputs/>
         <inputs>
-          <input id="5">
-            <splitratios tp="0"></splitratios>
+          <input link_id="5">
+            <splitratios dt="0"></splitratios>
             <weavingfactors></weavingfactors>
           </input>
         </inputs>
-        <splitratios tp="0.08333333333333333"></splitratios>
+        <splitratios dt="0.08333333333333333"></splitratios>
         <position>
-          <point x="-122.29232668876648" y="-37.870019217910674" z="0"/>
+          <point lng="-122.29232668876648" lat="37.870019217910674" />
         </position>
       </node>
     </NodeList>
     <LinkList>
       <link name="3 -> 4" lanes="1" length="1002.631372712809" type="ST" id="5">
-        <begin id="3"/>
-        <end id="4"/>
+        <begin node_id="3"/>
+        <end node_id="4"/>
         <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
         <density>0</density>
         <dynamics type="CTM"/>
-        <position>
-          <point x="0" y="0" z="0"/>
-          <point x="0" y="0" z="0"/>
-        </position>
-        <demand knob="0" tp="0"></demand>
-        <capacity id="null" tp="0"></capacity>
+        <demand knob="0" dt="0"></demand>
+        <capacity link_id="null" dt="0"></capacity>
         <qmax>100</qmax>
       </link>
     </LinkList>
     <ODList/>
     <SensorList/>
+    <DirectionsCache>
+      <DirectionsCacheEntry avoidHighways="false">
+        <From>
+          <ALatLng lat="37.86734283851613" lng="-122.29155421257019"/>
+        </From>
+        <To>
+          <ALatLng lat="37.870019217910674" lng="-122.29232668876648"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>}}bfF|`liVsOjD</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="true">
+        <From>
+          <ALatLng lat="37.86734283851613" lng="-122.29155421257019"/>
+        </From>
+        <To>
+          <ALatLng lat="37.870019217910674" lng="-122.29232668876648"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>}}bfF|`liVsOjD</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="true">
+        <From>
+          <ALatLng lat="37.86734283851613" lng="-122.29155421257019"/>
+        </From>
+        <To>
+          <ALatLng lat="37.867865" lng="-122.291695"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>}}bfF|`liVaBZ</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="true">
+        <From>
+          <ALatLng lat="37.867865" lng="-122.291695"/>
+        </From>
+        <To>
+          <ALatLng lat="37.868177" lng="-122.291809"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>eacfFzaliV{@T</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="true">
+        <From>
+          <ALatLng lat="37.868177" lng="-122.291809"/>
+        </From>
+        <To>
+          <ALatLng lat="37.869066" lng="-122.292076"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>accfFpbliVsDx@</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="true">
+        <From>
+          <ALatLng lat="37.869066" lng="-122.292076"/>
+        </From>
+        <To>
+          <ALatLng lat="37.869177" lng="-122.29212"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>uhcfFjdliVQD</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="true">
+        <From>
+          <ALatLng lat="37.869177" lng="-122.29212"/>
+        </From>
+        <To>
+          <ALatLng lat="37.870019217910674" lng="-122.29232668876648"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>kicfFrdliVeDt@</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+    </DirectionsCache>
+    <IntersectionCache>
+      <IntersectionCacheEntry qlat="37.86735" qlng="-122.29150000000001" lat="37.867276" lng="-122.29151" street1="San Pablo Ave" street2="Cowper St"/>
+      <IntersectionCacheEntry qlat="37.87001" qlng="-122.29236000000002" lat="37.870426" lng="-122.292636" street1="San Pablo Ave" street2="Hearst Ave"/>
+      <IntersectionCacheEntry qlat="37.86868" qlng="-122.29193000000001" lat="37.869066" lng="-122.292076" street1="University Ave" street2="San Pablo Ave"/>
+      <IntersectionCacheEntry qlat="37.869538" qlng="-122.292218" lat="37.869148" lng="-122.292263" street1="San Pablo Ave" street2="University Ave"/>
+      <IntersectionCacheEntry qlat="37.86801500036705" qlng="-122.29171500011869" lat="37.867865" lng="-122.291695" street1="San Pablo Ave" street2="Addison St"/>
+      <IntersectionCacheEntry qlat="37.869124868499405" qlng="-122.29209371043838" lat="37.869177" lng="-122.29212" street1="San Pablo Ave" street2="University Ave"/>
+      <IntersectionCacheEntry qlat="37.869774" qlng="-122.29228900000001" lat="37.869148" lng="-122.292263" street1="San Pablo Ave" street2="University Ave"/>
+      <IntersectionCacheEntry qlat="37.86834750036705" qlng="-122.29182250011868" lat="37.868177" lng="-122.291809" street1="Addison St" street2="San Pablo Ave"/>
+      <IntersectionCacheEntry qlat="37.86761040965988" qlng="-122.29158419259682" lat="37.867837" lng="-122.29183" street1="San Pablo Ave" street2="Addison St"/>
+    </IntersectionCache>
   </network>
   <settings>
-    <display timeMax="24" tsMax="100000" timeout="1000" tp="0.08333333333333333"/>
+    <display timeMax="24" tsMax="100000" timeout="1000" dt="0.08333333333333333"/>
     <VehicleTypes>
       <vtype name="General" weight="1"/>
       <vtype name="Truck" weight="5"/>
     </VehicleTypes>
+    <units>US</units>
   </settings>
   <EventList/>
-  <DirectionsCache>
-    <DirectionsCacheEntry avoidHighways="false">
-      <From>
-        <ALatLng lat="37.86734283851613" lng="-122.29155421257019"/>
-      </From>
-      <To>
-        <ALatLng lat="37.870019217910674" lng="-122.29232668876648"/>
-      </To>
-      <EncodedPolyline zoomFactor="2" numLevels="18">
-        <Points>}}bfF|`liVsOjD</Points>
-        <Levels>PP</Levels>
-      </EncodedPolyline>
-    </DirectionsCacheEntry>
-    <DirectionsCacheEntry avoidHighways="true">
-      <From>
-        <ALatLng lat="37.86734283851613" lng="-122.29155421257019"/>
-      </From>
-      <To>
-        <ALatLng lat="37.870019217910674" lng="-122.29232668876648"/>
-      </To>
-      <EncodedPolyline zoomFactor="2" numLevels="18">
-        <Points>}}bfF|`liVsOjD</Points>
-        <Levels>PP</Levels>
-      </EncodedPolyline>
-    </DirectionsCacheEntry>
-    <DirectionsCacheEntry avoidHighways="true">
-      <From>
-        <ALatLng lat="37.86734283851613" lng="-122.29155421257019"/>
-      </From>
-      <To>
-        <ALatLng lat="37.867865" lng="-122.291695"/>
-      </To>
-      <EncodedPolyline zoomFactor="2" numLevels="18">
-        <Points>}}bfF|`liVaBZ</Points>
-        <Levels>PP</Levels>
-      </EncodedPolyline>
-    </DirectionsCacheEntry>
-    <DirectionsCacheEntry avoidHighways="true">
-      <From>
-        <ALatLng lat="37.867865" lng="-122.291695"/>
-      </From>
-      <To>
-        <ALatLng lat="37.868177" lng="-122.291809"/>
-      </To>
-      <EncodedPolyline zoomFactor="2" numLevels="18">
-        <Points>eacfFzaliV{@T</Points>
-        <Levels>PP</Levels>
-      </EncodedPolyline>
-    </DirectionsCacheEntry>
-    <DirectionsCacheEntry avoidHighways="true">
-      <From>
-        <ALatLng lat="37.868177" lng="-122.291809"/>
-      </From>
-      <To>
-        <ALatLng lat="37.869066" lng="-122.292076"/>
-      </To>
-      <EncodedPolyline zoomFactor="2" numLevels="18">
-        <Points>accfFpbliVsDx@</Points>
-        <Levels>PP</Levels>
-      </EncodedPolyline>
-    </DirectionsCacheEntry>
-    <DirectionsCacheEntry avoidHighways="true">
-      <From>
-        <ALatLng lat="37.869066" lng="-122.292076"/>
-      </From>
-      <To>
-        <ALatLng lat="37.869177" lng="-122.29212"/>
-      </To>
-      <EncodedPolyline zoomFactor="2" numLevels="18">
-        <Points>uhcfFjdliVQD</Points>
-        <Levels>PP</Levels>
-      </EncodedPolyline>
-    </DirectionsCacheEntry>
-    <DirectionsCacheEntry avoidHighways="true">
-      <From>
-        <ALatLng lat="37.869177" lng="-122.29212"/>
-      </From>
-      <To>
-        <ALatLng lat="37.870019217910674" lng="-122.29232668876648"/>
-      </To>
-      <EncodedPolyline zoomFactor="2" numLevels="18">
-        <Points>kicfFrdliVeDt@</Points>
-        <Levels>PP</Levels>
-      </EncodedPolyline>
-    </DirectionsCacheEntry>
-  </DirectionsCache>
-  <IntersectionCache>
-    <IntersectionCacheEntry qlat="37.86735" qlng="-122.29150000000001" lat="37.867276" lng="-122.29151" street1="San Pablo Ave" street2="Cowper St"/>
-    <IntersectionCacheEntry qlat="37.87001" qlng="-122.29236000000002" lat="37.870426" lng="-122.292636" street1="San Pablo Ave" street2="Hearst Ave"/>
-    <IntersectionCacheEntry qlat="37.86868" qlng="-122.29193000000001" lat="37.869066" lng="-122.292076" street1="University Ave" street2="San Pablo Ave"/>
-    <IntersectionCacheEntry qlat="37.869538" qlng="-122.292218" lat="37.869148" lng="-122.292263" street1="San Pablo Ave" street2="University Ave"/>
-    <IntersectionCacheEntry qlat="37.86801500036705" qlng="-122.29171500011869" lat="37.867865" lng="-122.291695" street1="San Pablo Ave" street2="Addison St"/>
-    <IntersectionCacheEntry qlat="37.869124868499405" qlng="-122.29209371043838" lat="37.869177" lng="-122.29212" street1="San Pablo Ave" street2="University Ave"/>
-    <IntersectionCacheEntry qlat="37.869774" qlng="-122.29228900000001" lat="37.869148" lng="-122.292263" street1="San Pablo Ave" street2="University Ave"/>
-    <IntersectionCacheEntry qlat="37.86834750036705" qlng="-122.29182250011868" lat="37.868177" lng="-122.291809" street1="Addison St" street2="San Pablo Ave"/>
-    <IntersectionCacheEntry qlat="37.86761040965988" qlng="-122.29158419259682" lat="37.867837" lng="-122.29183" street1="San Pablo Ave" street2="Addison St"/>
-  </IntersectionCache>
-</AuroraRNM>
+</scenario>
