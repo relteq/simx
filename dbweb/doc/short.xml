@@ -48,7 +48,7 @@
       </node>
     </NodeList>
     <LinkList>
-      <link name="3 -> 4" lanes="1" length="1002.631372712809" type="ST" id="5">
+      <link name="3 -> 4" lanes="1" length="0.189892305438032" type="ST" id="5">
         <begin node_id="3"/>
         <end node_id="4"/>
         <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
