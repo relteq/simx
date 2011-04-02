@@ -45,12 +45,37 @@ module Aurora
       end
     end
 
+    # Convert length in xml file to length for insertion in database.
     def import_length len
       case units
       when "US"
         len
       when "Metric"
         len * 0.62137119 # km to miles
+      else
+        raise "Bad units: #{units}"
+      end
+    end
+
+    # Convert speed in xml file to speed for insertion in database.
+    def import_speed spd
+      case units
+      when "US"
+        spd
+      when "Metric"
+        spd * 0.62137119 # kph to mph
+      else
+        raise "Bad units: #{units}"
+      end
+    end
+
+    # Convert density in xml file to density for insertion in database.
+    def import_density den
+      case units
+      when "US"
+        den
+      when "Metric"
+        den * 1.609344 # v/km to v/mile
       else
         raise "Bad units: #{units}"
       end
