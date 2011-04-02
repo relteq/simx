@@ -25,7 +25,7 @@ module Aurora
     # +src+ can be io, string, etc.
     def parse src
       ## optionally validate
-      Nokogiri.XML(src).xpath("/AuroraRNM")[0]
+      Nokogiri.XML(src).xpath("/scenario")[0]
     end
   end
   extend Parser
@@ -50,7 +50,7 @@ module Aurora
       @scenario_xml = parse(src)
       
       DB.transaction do
-        @scenario = Scenario.import_xml(scenario_xml)
+        @scenario = Scenario.from_xml(scenario_xml)
       end
       
       #pp @node_id_map

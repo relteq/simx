@@ -5,40 +5,42 @@ require 'db/import/link'
 
 module Aurora
   class Network
-    def self.import_xml network_xml
+    def self.from_xml network_xml, scenario
       network = create
-      
+      network.import_xml network_xml, scenario
+      network.save
+      network
+    end
+    
+    def import_xml network_xml, scenario
       descs = network_xml.xpath("description").map {|desc| desc.text}
-      network.description = descs.join("\n")
+      self.description = descs.join("\n")
 
       network_xml.xpath("position/point").each do |point_xml|
-        network.x = point_xml["x"]
-        network.y = point_xml["y"]
-        network.z = point_xml["z"]
+        self.lat = point_xml["lat"]
+        self.lng = point_xml["lng"]
+        self.elevation = point_xml["elevation"] if point_xml["elevation"]
       end
       
-      network.name        = network_xml["name"]
-      network.controlled  = (network_xml["controlled"] == "true") ##?
-      network.top         = (network_xml["top"] == "true") ##?
-      network.tp          = Float(network_xml["tp"])
+      self.name        = network_xml["name"]
+      self.controlled  = (network_xml["controlled"] == "true") ##?
+      self.top         = (network_xml["top"] == "true") ##?
+      self.dt          = Float(network_xml["dt"])
       
       ## do we do anything special with id="-1"?
       
       network_xml.xpath("NodeList/node").each do |node_xml|
-        node = Node.import_xml(node_xml)
-        network.add_node node
+        node = Node.from_xml(node_xml, scenario)
+        add_node node
       end
 
       network_xml.xpath("LinkList/link").each do |link_xml|
-        link = Link.import_xml(link_xml)
-        network.add_link link
+        link = Link.from_xml(link_xml, scenario)
+        add_link link
       end
       
       ## caches (dir and int)
-      ## clear out obsolete entries
-
-      network.save
-      network
+      ## ignore obsolete entries
     end
   end
 end

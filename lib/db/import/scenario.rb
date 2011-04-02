@@ -5,20 +5,37 @@ require 'db/import/network'
 
 module Aurora
   class Scenario
-    def self.import_xml scenario_xml
+    def self.from_xml scenario_xml
       scenario = create
-
-      scenario_xml.xpath("settings/VehicleTypes/vtype").each do |vtype|
-        scenario.add_vehicle_type VehicleType.import_xml(vtype)
+      scenario.import_xml scenario_xml
+      scenario.save
+      scenario
+    end
+    
+    def import_xml scenario_xml
+      scenario_xml.xpath("settings/VehicleTypes/vtype").each do |vtype_xml|
+        add_vehicle_type VehicleType.from_xml(vtype_xml, self)
+      end
+      
+      scenario_xml.xpath("settings/units").each do |units|
+        self.units = units.text # US or Metric
       end
 
       scenario_xml.xpath("network").each do |network_xml|
-        network = Network.import_xml(network_xml)
-        network.add_scenario scenario
+        network = Network.from_xml(network_xml, self)
+        network.add_scenario self
       end
-      
-      scenario.save
-      scenario
+    end
+
+    def import_length len
+      case units
+      when "US"
+        len
+      when "Metric"
+        len * 0.62137119 # km to miles
+      else
+        raise "Bad units: #{units}"
+      end
     end
   end
 end

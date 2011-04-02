@@ -5,28 +5,31 @@ require 'db/model/link'
 
 module Aurora
   class Link
-    def self.import_xml link_xml
+    def self.from_xml link_xml, scenario
       link = create
-      
-      link.name = link_xml["name"]
-      link.type = link_xml["type"]
-      link.lanes = Integer(link_xml["lanes"])
-      link.length = Float(link_xml["length"])
+      link.import_xml link_xml, scenario
+      link.save
+      link
+    end
+    
+    def import_xml link_xml, scenario
+      self.name = link_xml["name"]
+      self.type = link_xml["type"]
+      self.lanes = Integer(link_xml["lanes"])
+      self.length = Float(link_xml["length"])
       
       descs = link_xml.xpath("description").map {|desc| desc.text}
-      link.description = descs.join("\n")
+      self.description = descs.join("\n")
       
-      begin_id = link_xml.xpath("begin").first["id"]
-      end_id = link_xml.xpath("end").first["id"]
+      begin_id = link_xml.xpath("begin").first["node_id"]
+      end_id = link_xml.xpath("end").first["node_id"]
       
+      ### need to apply id translation
       begin_node = Node[:id => begin_id]
       end_node = Node[:id => end_id]
       
-      begin_node.add_output link
-      end_node.add_input link
-      
-      link.save
-      link
+      begin_node.add_output self
+      end_node.add_input self
     end
   end
 end
