@@ -3,8 +3,26 @@ require 'db/model/scenario'
 require 'db/import/vehicle-type'
 require 'db/import/network'
 
+### use timestamp plugin
+
 module Aurora
   class Scenario
+    # Translation tables from xml ID to database ID.
+    attr_reader :network_id_for_xml_id
+    attr_reader :sensor_id_for_xml_id
+    attr_reader :monitor_id_for_xml_id
+    attr_reader :node_id_for_xml_id
+    attr_reader :link_id_for_xml_id
+    
+    def initialize(*)
+      super
+      @network_id_for_xml_id  = {}
+      @sensor_id_for_xml_id   = {}
+      @monitor_id_for_xml_id  = {}
+      @node_id_for_xml_id     = {}
+      @link_id_for_xml_id     = {}
+    end
+    
     def self.from_xml scenario_xml
       scenario = create
       scenario.import_xml scenario_xml

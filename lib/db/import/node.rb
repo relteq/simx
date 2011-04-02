@@ -13,6 +13,8 @@ module Aurora
     end
     
     def import_xml node_xml, scenario
+      scenario.node_id_for_xml_id[node_xml["id"]] = id
+
       self.name = node_xml["name"]
       self.type = node_xml["type"]
       

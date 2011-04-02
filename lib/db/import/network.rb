@@ -13,6 +13,8 @@ module Aurora
     end
     
     def import_xml network_xml, scenario
+      scenario.network_id_for_xml_id[network_xml["id"]] = id
+
       descs = network_xml.xpath("description").map {|desc| desc.text}
       self.description = descs.join("\n")
 

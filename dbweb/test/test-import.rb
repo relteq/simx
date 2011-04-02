@@ -144,8 +144,9 @@ Aurora.import(File.read(test_doc))
 
 #pp DB[:scenarios].all
 #pp DB[:networks].all
-#pp DB[:vehicle_types].all
 #pp DB[:nodes].all
+#pp DB[:links].all
+#pp DB[:vehicle_types].all
 
 pp Aurora::Scenario[:id=>1]
 pp Aurora::Scenario[:id=>1].network

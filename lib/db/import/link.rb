@@ -13,6 +13,8 @@ module Aurora
     end
     
     def import_xml link_xml, scenario
+      scenario.link_id_for_xml_id[link_xml["id"]] = id
+
       self.name = link_xml["name"]
       self.type = link_xml["type"]
       self.lanes = Integer(link_xml["lanes"])
@@ -21,12 +23,11 @@ module Aurora
       descs = link_xml.xpath("description").map {|desc| desc.text}
       self.description = descs.join("\n")
       
-      begin_id = link_xml.xpath("begin").first["node_id"]
-      end_id = link_xml.xpath("end").first["node_id"]
+      begin_id_xml = link_xml.xpath("begin").first["node_id"]
+      end_id_xml = link_xml.xpath("end").first["node_id"]
       
-      ### need to apply id translation
-      begin_node = Node[:id => begin_id]
-      end_node = Node[:id => end_id]
+      begin_node = Node[:id => scenario.node_id_for_xml_id[begin_id_xml]]
+      end_node = Node[:id => scenario.node_id_for_xml_id[end_id_xml]]
       
       begin_node.add_output self
       end_node.add_input self
