@@ -1,6 +1,10 @@
 ## eventually use migrations instead
 
-DB.table_exists? :scenarios or DB.create_table :scenarios do
+def create_table? t, db = DB, &bl
+  db.table_exists? t or db.create_table t, &bl
+end
+
+create_table? :scenarios do
   primary_key :id
   
   text :units
@@ -16,7 +20,7 @@ DB.table_exists? :scenarios or DB.create_table :scenarios do
   foreign_key :network_id, :networks
 end
 
-DB.table_exists? :networks or DB.create_table :networks do
+create_table? :networks do
   primary_key :id
   
   float     :lat
@@ -41,7 +45,7 @@ DB.table_exists? :networks or DB.create_table :networks do
   foreign_key :parent_id, :networks, :key => :id
 end
 
-DB.table_exists? :vehicle_types or DB.create_table :vehicle_types do
+create_table? :vehicle_types do
   primary_key :id
 
   text      :name
@@ -53,7 +57,7 @@ DB.table_exists? :vehicle_types or DB.create_table :vehicle_types do
   ## constraints?
 end
 
-DB.table_exists? :nodes or DB.create_table :nodes do
+create_table? :nodes do
   primary_key :id
   
   text      :name
@@ -68,8 +72,7 @@ DB.table_exists? :nodes or DB.create_table :nodes do
   foreign_key :network_id, :networks
 end
 
-DB.table_exists? :split_ratio_profiles or
-    DB.create_table :split_ratio_profiles do
+create_table? :split_ratio_profiles do
   primary_key :id
   
   ## srm?
@@ -80,7 +83,7 @@ DB.table_exists? :split_ratio_profiles or
   foreign_key :node_id, :nodes
 end
 
-DB.table_exists? :links or DB.create_table :links do
+create_table? :links do
   primary_key :id
   
   text      :name
