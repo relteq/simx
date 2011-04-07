@@ -283,7 +283,6 @@
         <xs:element ref="postmile" minOccurs="0" />
         <xs:element ref="outputs" />
         <xs:element ref="inputs" />
-        <xs:element ref="splitratios" minOccurs="0" />
         <xs:element ref="position" />
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required" />
@@ -307,7 +306,6 @@
         <xs:element ref="fd" />
         <xs:element ref="density" />
         <xs:element ref="dynamics" />
-        <xs:element ref="demand" minOccurs="0" />
         <xs:element ref="capacity" minOccurs="0" />
         <xs:element ref="qmax" />
       </xs:all>
