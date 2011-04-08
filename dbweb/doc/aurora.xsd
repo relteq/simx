@@ -7,10 +7,10 @@
         <xs:element ref="network" />
         <xs:element ref="settings" />
         <xs:element ref="InitialDensityProfile" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="SRProfile" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="CapacityProfile" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="EventList" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="DemandProfile" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="SplitratioProfileSet" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="CapacityProfileSet" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="EventSet" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="DemandProfileSet" minOccurs="0" maxOccurs="1" />
       </xs:all>
       <xs:attribute name="schemaVersion" type="xs:string" use="required" />
     </xs:complexType>
@@ -30,7 +30,8 @@
         <xs:element ref="IntersectionCache" minOccurs="0" maxOccurs="1" />
       </xs:all>
       <xs:attribute name="name" type="xs:string" use="required" />
-      <xs:attribute name="controlled" type="xs:boolean" use="required" />
+      <xs:attribute name="ml_control" type="xs:boolean" use="required" />
+      <xs:attribute name="q_control" type="xs:boolean" use="required" />
       <xs:attribute name="top" type="xs:boolean" use="required" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="id" type="xs:string" use="required" />
@@ -53,7 +54,7 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="DemandProfile">
+  <xs:element name="DemandProfileSet">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="demand" minOccurs="0" maxOccurs="unbounded" />
@@ -69,7 +70,7 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="SRProfile">
+  <xs:element name="SplitratioProfileSet">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="splitratios" maxOccurs="unbounded" />
@@ -77,7 +78,7 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="CapacityProfile">
+  <xs:element name="CapacityProfileSet">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="capacity" maxOccurs="unbounded" />
@@ -85,7 +86,7 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="EventList">
+  <xs:element name="EventSet">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="event" minOccurs="0" maxOccurs="unbounded" />
@@ -304,7 +305,6 @@
         <xs:element ref="begin" minOccurs="1" maxOccurs="1" />
         <xs:element ref="end" minOccurs="1" maxOccurs="1" />
         <xs:element ref="fd" />
-        <xs:element ref="density" />
         <xs:element ref="dynamics" />
         <xs:element ref="capacity" minOccurs="0" />
         <xs:element ref="qmax" />
