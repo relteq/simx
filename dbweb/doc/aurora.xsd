@@ -11,6 +11,7 @@
         <xs:element ref="CapacityProfileSet" minOccurs="0" maxOccurs="1" />
         <xs:element ref="EventSet" minOccurs="0" maxOccurs="1" />
         <xs:element ref="DemandProfileSet" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="ControllerSet" minOccurs="0" maxOccurs="1" />
       </xs:all>
       <xs:attribute name="schemaVersion" type="xs:string" use="required" />
     </xs:complexType>
@@ -90,6 +91,14 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="event" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ControllerSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="controller" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -290,7 +299,7 @@
       <xs:attribute name="type" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:pattern value="F|H|S|P|O|D"/>
+            <xs:pattern value="F|H|S|P|O|T"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -306,7 +315,6 @@
         <xs:element ref="end" minOccurs="1" maxOccurs="1" />
         <xs:element ref="fd" />
         <xs:element ref="dynamics" />
-        <xs:element ref="capacity" minOccurs="0" />
         <xs:element ref="qmax" />
       </xs:all>
       <xs:attribute name="name" type="xs:string" use="optional" />
@@ -568,6 +576,7 @@
       </xs:attribute>
       <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="usesensors" type="xs:boolean" use="optional" default="false" />
+      <xs:attribute name="neid" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
   

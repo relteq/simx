@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scenario schemaVersion="1.0.0" >
-  <network name="My Network" controlled="true" top="true" dt="1" id="-1">
+  <network name="My Network" ml_control="false" q_control="false" top="true" dt="1" id="-1">
     <description>Created by TOPL flash app version 0.2.142</description>
     <position>
       <point lng="-122.29371339082718" lat="37.8640328440588" />
@@ -10,7 +10,6 @@
       <node name="Node 1" type="S" id="1">
         <outputs/>
         <inputs/>
-        <splitratios dt="0.08333333333333333"></splitratios>
         <position>
           <point lng="-122.29111433029176" lat="37.85117239046442" />
         </position>
@@ -18,7 +17,6 @@
       <node name="Node 2" type="S" id="2">
         <outputs/>
         <inputs/>
-        <splitratios dt="0.08333333333333333"></splitratios>
         <position>
           <point lng="-122.2998583316803" lat="37.867596929343975" />
         </position>
@@ -28,7 +26,6 @@
           <output link_id="5"/>
         </outputs>
         <inputs/>
-        <splitratios dt="0.08333333333333333"></splitratios>
         <position>
           <point lng="-122.29155421257019" lat="37.86734283851613" />
         </position>
@@ -41,7 +38,6 @@
             <weavingfactors></weavingfactors>
           </input>
         </inputs>
-        <splitratios dt="0.08333333333333333"></splitratios>
         <position>
           <point lng="-122.29232668876648" lat="37.870019217910674" />
         </position>
@@ -52,10 +48,7 @@
         <begin node_id="3"/>
         <end node_id="4"/>
         <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
-        <density>0</density>
         <dynamics type="CTM"/>
-        <demand knob="0" dt="0"></demand>
-        <capacity link_id="null" dt="0"></capacity>
         <qmax>100</qmax>
       </link>
     </LinkList>
@@ -167,5 +160,4 @@
     </VehicleTypes>
     <units>US</units>
   </settings>
-  <EventList/>
 </scenario>

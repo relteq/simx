@@ -6,23 +6,37 @@ end
 
 create_table? :scenarios do
   primary_key :id
-  
-  text :units
 
-  ## ignore display
+  string :name
+  text :description
   
-  ## InitialDensityProfile
-  ## SRProfile
-  ## CapacityProfile
-  ## EventList
-  ## DemandProfile
+  float :dt
+  float :begin_time
+  float :duration
   
+  string :units ## validate: US | Metric
+
+  ## ignore display?
+
   foreign_key :network_id, :networks
+  
+  foreign_key :ic_set_id, :initial_condition_sets
+  foreign_key :dp_set_id, :demand_profile_sets
+  foreign_key :cp_set_id, :capacity_profile_sets
+  foreign_key :srp_set_id, :splitratio_profile_sets
+  foreign_key :event_set_id, :event_sets
+  foreign_key :ctrl_set_id, :controller_sets
 end
 
 create_table? :networks do
   primary_key :id
   
+  text      :name
+  text      :description
+  float     :dt
+  boolean   :ml_control
+  boolean   :q_control
+
   float     :lat
   float     :lng
   float     :elevation, :default => 0
@@ -33,12 +47,6 @@ create_table? :networks do
   ## ods
   ## sensors
   
-  text      :name
-  text      :description
-  boolean   :controlled
-  boolean   :top ## redundant?
-  float     :dt
-
   ## DirectionsCache
   ## IntersectionCache
 
