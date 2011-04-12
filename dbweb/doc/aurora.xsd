@@ -4,6 +4,7 @@
   <xs:element name="scenario">
     <xs:complexType>
       <xs:all>
+        <xs:element ref="description" minOccurs="0" />
         <xs:element ref="network" />
         <xs:element ref="settings" />
         <xs:element ref="InitialDensityProfile" minOccurs="0" maxOccurs="1" />
@@ -13,6 +14,8 @@
         <xs:element ref="DemandProfileSet" minOccurs="0" maxOccurs="1" />
         <xs:element ref="ControllerSet" minOccurs="0" maxOccurs="1" />
       </xs:all>
+      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="schemaVersion" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
@@ -33,7 +36,6 @@
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="ml_control" type="xs:boolean" use="required" />
       <xs:attribute name="q_control" type="xs:boolean" use="required" />
-      <xs:attribute name="top" type="xs:boolean" use="required" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
@@ -505,7 +507,9 @@
         <xs:element ref="control" minOccurs="0" />
       </xs:all>
       <xs:attribute name="tstamp" type="xs:decimal" use="required" />
-      <xs:attribute name="neid" type="xs:string" use="required" />
+      <xs:attribute name="node_id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="link_id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="network_id" type="xs:string" use="optional" default="" />
       <xs:attribute name="enabled" type="xs:boolean" use="required" />
       <xs:attribute name="type" use="required">
         <xs:simpleType>
@@ -544,16 +548,12 @@
   </xs:element>
 
   <xs:element name="splitratios">
-    <xs:complexType mixed="true">
+    <xs:complexType>
       <xs:sequence>
         <xs:element ref="srm" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
       <xs:attribute name="node_id" type="xs:string" use="optional" default="" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
-      <xs:attribute name="delims"
-       type="xs:string" use="optional" default=",:" />
-      <xs:attribute name="cellType"
-       type="xs:string" use="optional" default="xs:decimal" />
     </xs:complexType>
   </xs:element>
 
@@ -576,7 +576,9 @@
       </xs:attribute>
       <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="usesensors" type="xs:boolean" use="optional" default="false" />
-      <xs:attribute name="neid" type="xs:string" use="required" />
+      <xs:attribute name="node_id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="link_id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="network_id" type="xs:string" use="optional" default="" />
     </xs:complexType>
   </xs:element>
   
