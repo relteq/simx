@@ -26,6 +26,7 @@
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="position" minOccurs="0" />
         <xs:element ref="MonitorList" minOccurs="0" />
+        <xs:element ref="NetworkList" />
         <xs:element ref="NodeList" />
         <xs:element ref="LinkList" />
         <xs:element ref="ODList" />
@@ -117,13 +118,18 @@
     </xs:complexType>
   </xs:element>
 
+  <xs:element name="NetworkList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="network" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
   <xs:element name="NodeList">
     <xs:complexType>
       <xs:sequence>
-        <xs:choice>
-          <xs:element ref="node" maxOccurs="unbounded" />
-          <xs:element ref="network" maxOccurs="unbounded" />
-        </xs:choice>
+        <xs:element ref="node" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
