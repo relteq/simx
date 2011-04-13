@@ -468,10 +468,8 @@
   <xs:element name="display">
     <xs:complexType>
       <xs:attribute name="timeMax" type="xs:decimal" use="required" />
-      <xs:attribute name="tsMax" type="xs:integer" use="required" />
       <xs:attribute name="timeout" type="xs:integer" use="required" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
-      <xs:attribute name="tsInitial" type="xs:integer" use="optional"
         default="0" />
       <xs:attribute name="timeInitial" type="xs:decimal" use="optional"
         default="0.0" />
