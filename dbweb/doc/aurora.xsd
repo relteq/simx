@@ -39,6 +39,7 @@
       <xs:attribute name="q_control" type="xs:boolean" use="required" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="network_id" type="xs:string" use="optional" />
     </xs:complexType>
   </xs:element>
 

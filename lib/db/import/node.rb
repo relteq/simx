@@ -5,8 +5,10 @@ require 'db/import/split-ratio-profile'
 
 module Aurora
   class Node
+    include Aurora
+    
     def self.from_xml node_xml, scenario
-      node = create
+      node = import_network_element_id(node_xml["id"], scenario.network)
       node.import_xml node_xml, scenario
       node.save
       node
@@ -14,6 +16,8 @@ module Aurora
     
     def import_xml node_xml, scenario
       scenario.node_id_for_xml_id[node_xml["id"]] = id
+      
+      ### subnetwork_id -- add_node can do this
 
       self.name = node_xml["name"]
       self.type = node_xml["type"]
@@ -21,23 +25,23 @@ module Aurora
       descs = node_xml.xpath("description").map {|desc| desc.text}
       self.description = descs.join("\n")
       
-      node_xml.xpath("postmile").each do |postmile|
-        self.postmile = Float(postmile.text)
-        ## warn on multiple assignment in this and similar cases
-      end
-
       node_xml.xpath("position/point").each do |point_xml|
-        self.lat = point_xml["lat"]
-        self.lng = point_xml["lng"]
-        self.elevation = point_xml["elevation"] if point_xml["elevation"]
+        self.lat = Float(point_xml["lat"])
+        self.lng = Float(point_xml["lng"])
+        if point_xml["elevation"]
+          self.elevation = Float(point_xml["elevation"])
+        end
       end
       
-      node_xml.xpath("splitratios").each do |splitratios_xml|
-        srp = SplitRatioProfile.from_xml(splitratios_xml, scenario)
-        add_split_ratio_profile srp
-      end
-      
-      ## outputs and inputs, not for topology but for split, weaving
+      # Note: we scan the NodeList section before the LinkList section,
+      # so store these here for Link#import_xml to use later.
+      scenario.output_link_ids_for_node_id[id] =
+        node_xml.xpath("outputs/output").map {|xml| xml["link_id"]}
+      scenario.input_link_ids_for_node_id[id] =
+        node_xml.xpath("inputs/input").map {|xml| xml["link_id"]}
+      scenario.weaving_factors_for_node_id[id] =
+        node_xml.xpath("inputs/input").map {|xml|
+          xml.xpath("weavingfactors").first}
     end
   end
 end

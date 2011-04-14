@@ -5,35 +5,43 @@ require 'db/import/link'
 
 module Aurora
   class Network
-    def self.from_xml network_xml, scenario
-      network = create
-      network.import_xml network_xml, scenario
+    include Aurora
+    
+    def self.from_xml network_xml, scenario, parent = nil
+      network = import_id(network_xml["id"])
+      network.import_xml network_xml, scenario, parent
       network.save
       network
     end
     
-    def import_xml network_xml, scenario
+    def import_xml network_xml, scenario, parent = nil
       scenario.network_id_for_xml_id[network_xml["id"]] = id
+
+      self.name         = network_xml["name"]
 
       descs = network_xml.xpath("description").map {|desc| desc.text}
       self.description = descs.join("\n")
 
+      self.dt           = Float(network_xml["dt"])
+      self.ml_control   = import_boolean(network_xml["ml_control"])
+      self.q_control    = import_boolean(network_xml["q_control"])
+
       network_xml.xpath("position/point").each do |point_xml|
-        self.lat = point_xml["lat"]
-        self.lng = point_xml["lng"]
-        self.elevation = point_xml["elevation"] if point_xml["elevation"]
+        self.lat = Float(point_xml["lat"])
+        self.lng = Float(point_xml["lng"])
+        if point_xml["elevation"]
+          self.elevation = Float(point_xml["elevation"])
+        end
       end
-      
-      self.name        = network_xml["name"]
-      self.controlled  = (network_xml["controlled"] == "true") ##?
-      self.top         = (network_xml["top"] == "true") ##?
-      self.dt          = Float(network_xml["dt"])
-      
-      ## do we do anything special with id="-1"?
-      
+            
       network_xml.xpath("NodeList/node").each do |node_xml|
         node = Node.from_xml(node_xml, scenario)
         add_node node
+      end
+
+      network_xml.xpath("NodeList/network").each do |subnetwork_xml|
+        subnetwork = Network.from_xml(subnetwork_xml, scenario, self)
+        add_children subnetwork
       end
 
       network_xml.xpath("LinkList/link").each do |link_xml|
@@ -41,7 +49,10 @@ module Aurora
         add_link link
       end
       
-      ## caches (dir and int)
+      ## MonitorList, ODList, SensorList
+      ## DirectionsCache
+      ## IntersectionCache
+
       ## ignore obsolete entries
     end
   end

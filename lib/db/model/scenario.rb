@@ -1,6 +1,8 @@
 module Aurora
   class Scenario < Sequel::Model
-    ##many to one :project
+    plugin :validation_helpers
+
+    many_to_one :project
 
     many_to_one :network
     
