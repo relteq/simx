@@ -571,6 +571,7 @@
         <xs:element ref="parameters" minOccurs="0" />
         <xs:element ref="limits" minOccurs="0" />
         <xs:element ref="qcontroller" minOccurs="0" />
+        <xs:element ref="table" minOccurs="0" />
       </xs:all>
       <xs:attribute name="type" use="required">
         <xs:simpleType>
@@ -584,6 +585,15 @@
       <xs:attribute name="node_id" type="xs:string" use="optional" default="" />
       <xs:attribute name="link_id" type="xs:string" use="optional" default="" />
       <xs:attribute name="network_id" type="xs:string" use="optional" default="" />
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="table">
+    <xs:complexType mixed="true">
+      <xs:attribute name="delims"
+       type="xs:string" use="optional" default=";,:" />
+      <xs:attribute name="cellType"
+       type="xs:string" use="optional" default="xs:string" />
     </xs:complexType>
   </xs:element>
   
