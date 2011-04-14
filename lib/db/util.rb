@@ -102,10 +102,11 @@ module AuroraModelClassMethods
   end
   
   # As import_id, but for nodes, links, etc. Assigns the (network_id, id)
-  # composite primary key.
+  # composite primary key. The +network+ must be the top level network
+  # that contains the new model element.
   def import_network_element_id s, network
     import_id s do |model|
-      model.network_id = network.id
+      model.network_id = network.network_id
       model.id ||= get_uniq_id # autoincrement doesn't work on composite key
     end
   end

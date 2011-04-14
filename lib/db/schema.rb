@@ -102,7 +102,7 @@ create_table? :nodes do
   
   text        :name
   text        :description
-  decimal     :postmile
+  float       :postmile
   text        :type
   check       :type => %w{ F H S P O T }
   
@@ -144,29 +144,191 @@ create_table? :links do
   integer     :end_order # ordinal of this link among all with same end
 end
 
-create_table? :splitratio_profile_set do
-  primary_key :id
+create_table? :routes do
+  foreign_key :network_id, :networks, :key => :network_id, :null => false
+  integer     :id, :null => false
+  primary_key [:network_id, :id]
+  
+  foreign_key :parent_id, :networks, :null => false
   
   text        :description
+end
+
+create_table? :route_links do
+  foreign_key :network_id, :networks, :key => :network_id, :null => false
+  integer     :id, :null => false
+  primary_key [:network_id, :id]
+
+  foreign_key :route_id, :routes, :null => false
+  foreign_key :link_id, :links, :null => false
   
-  # For editing. This does not restrict the networks that this set
-  # may be associated with through a scenario. (There's no constraint
-  # that the network of the scenario is the network of the scenario's
-  # splitratio_profile_set.)
+  integer     :order
+end
+
+# The following tables are edited externally to the networks, and can be mixed
+# and matched with networks when specifying a scenario.
+
+# Note on set tables:
+#
+# The network_id is for editing. This does not restrict the networks that this
+# set may be associated with through a scenario. (There's no constraint
+# that the network of the scenario is the network of the scenario's
+# splitratio_profile_set.)
+
+create_table? :splitratio_profile_sets do
+  primary_key :id
+  text        :description
   foreign_key :network_id, :networks, :key => :network_id, :null => false
 end
+
+create_table? :capacity_profile_sets do
+  primary_key :id
+  text        :description
+  foreign_key :network_id, :networks, :key => :network_id, :null => false
+end
+
+create_table? :demand_profile_sets do
+  primary_key :id
+  text        :description
+  foreign_key :network_id, :networks, :key => :network_id, :null => false
+end
+
+create_table? :initial_condition_sets do
+  primary_key :id
+  text        :description
+  foreign_key :network_id, :networks, :key => :network_id, :null => false
+end
+
+create_table? :event_sets do
+  primary_key :id
+  text        :description
+  foreign_key :network_id, :networks, :key => :network_id, :null => false
+end
+
+create_table? :controller_sets do
+  primary_key :id
+  text        :description
+  foreign_key :network_id, :networks, :key => :network_id, :null => false
+end
+
+# Note on profile, event, and similar tables:
+#
+# Note node_id (or link_id) is only half of the composite primary key on nodes.
+# You also need to know the network ID. However, do not use the
+# splitratio_profile_set network_id, because that is only for editing purposes.
+# The network ID for node lookup must come from the scenario.
 
 create_table? :splitratio_profiles do
   primary_key :id
   
-  decimal     :dt
+  float       :dt
+  check       {dt > 0}
+
   text        :profile # xml text of form <srm>...</srm><srm>...</srm>...
   
-  foreign_key :srp_set_id,    :splitratio_profile_sets, :null => false
-
-  # Note this is only half of the composite primary key on nodes. You also
-  # need to know the network ID. However, do not use the splitratio_profile_set
-  # network_id, because that is only for editing purposes. The network
-  # ID for node lookup must come from the scenario.
+  foreign_key :srp_set_id, :splitratio_profile_sets, :null => false
   foreign_key :node_id, :nodes, :null => false
 end
+
+create_table? :capacity_profiles do
+  primary_key :id
+  
+  float       :dt
+  check       {dt > 0}
+
+  text        :profile # xml text
+  
+  foreign_key :cp_set_id, :capacity_profile_sets, :null => false
+  foreign_key :link_id, :links, :null => false
+end
+
+create_table? :demand_profiles do
+  primary_key :id
+  
+  float       :dt
+  check       {dt > 0}
+
+  text        :profile # xml text
+  
+  foreign_key :dp_set_id, :demand_profile_sets, :null => false
+  foreign_key :link_id, :links, :null => false
+end
+
+create_table? :initial_conditions do
+  primary_key :id
+  
+  text        :density
+  
+  foreign_key :ic_set_id, :initial_condition_sets, :null => false
+  foreign_key :link_id, :links, :null => false
+end
+
+create_table? :network_events do
+  primary_key :id
+  
+  string      :type
+  float       :time
+  text        :parameters
+  
+  foreign_key :eset_id, :event_sets, :null => false
+  foreign_key :network_id, :networks, :null => false
+end
+
+create_table? :node_events do
+  primary_key :id
+  
+  string      :type
+  float       :time
+  text        :parameters
+  
+  foreign_key :eset_id, :event_sets, :null => false
+  foreign_key :node_id, :nodes, :null => false
+end
+
+create_table? :link_events do
+  primary_key :id
+  
+  string      :type
+  float       :time
+  text        :parameters
+  
+  foreign_key :eset_id, :event_sets, :null => false
+  foreign_key :link_id, :links, :null => false
+end
+
+create_table? :network_controllers do
+  primary_key :id
+  
+  string      :type
+  float       :dt
+  check       {dt > 0}
+  text        :parameters
+  
+  foreign_key :cset_id, :controller_sets, :null => false
+  foreign_key :network_id, :networks, :null => false
+end
+
+create_table? :node_controllers do
+  primary_key :id
+  
+  string      :type
+  float       :dt
+  check       {dt > 0}
+  text        :parameters
+  
+  foreign_key :cset_id, :controller_sets, :null => false
+  foreign_key :node_id, :nodes, :null => false
+end
+
+create_table? :link_controllers do
+  primary_key :id
+  
+  string      :type
+  float       :dt
+  check       {dt > 0}
+  text        :parameters
+  
+  foreign_key :cset_id, :controller_sets, :null => false
+  foreign_key :link_id, :links, :null => false
+end
+
