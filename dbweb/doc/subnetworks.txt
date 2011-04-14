@@ -1,0 +1,64 @@
+
+What I realized about networks is that, since in some ways they are treated like nodes and links, we have to use a composite key for them, too. Specifically:
+
+- a (sub)network can be referred to from outside the top level network ("tln") by things like events and controllers;
+
+- a (sub)network can be pasted not just within but also outside the context of the tln that it was created in.
+
+As with nodes and links, pasting from one tln to another tln should create a "congruence" between the original and the pasted copy. This preserves the user's intent to treat the two as the same, for the purpose of assigning events, controllers, etc.
+
+The good news, from the point of applications that work with a scenario or network (aurora java apps, network editor), is that this makes almost no difference--there's an extra xml attr in tln, and we just preserve it when we load/save from the database. The network editor will also have to understand the copy/paste semantic difference outlined above.
+
+The xml schema only needs one change:
+
+  <xs:element name="network">
+  ...
+      <xs:attribute name="network_id" type="xs:string" use="optional" />
+
+It's optional because it only needs to be given for the tln. That same network_id is shared by all nodes, links, and subnetworks under the tln.
+
+(I'm not quite sure "network_id" is the best name. I thought about "global_id" or "network_global_id" or something, but that seems confusing for other reasons. So I'm sticking with network_id for now.)
+
+I'm updating the database schema and import/export to handle this correctly.
+
+Btw, this notion of "congruence" can be made precise. To explain, here's an example using nodes, but it's the same with links or (sub)networks.
+
+In the database, each row in the nodes table is uniquely identified by
+
+  (nid, id)
+  
+The nid belongs to the tln containing the node (perhaps there is a subnetwork hierarchy between them; nid is the ancestral tln). The id distinguishes this node from others under that tln.
+
+Now, consider the projection map onto each coordinate.
+
+Projecting onto nid defines a congruence (equivalence relation of pairs that map to the same point in the range of the function) whose congruence classes are the networks. These classes are the fundamental units of editing: the network editor operates on one of these classes as a time, and it operates on the whole congruence class. When you're operating inside one class, there's only one nid, so you can pretty much ignore it. That's why the node xml doesn't need a nid attr.
+
+Projecting onto the id coordinate defines a congruence that cuts across networks and represents (a) the user's notion of sameness, (b) the concept of compatibility for the purpose of defining a scenario by picking and choosing from lists of networks, event sets, etc., and (c) the heritage of a node as it gets pasted around into different tlns. (Pasting into a different tln changes only the nid, not the id. Pasting within the same tln could ask the user if they want to paste with a new id.)
+
+A nice consequence of this "heritage" idea is that users can merge changes back in to their origin, as in the following example:
+
+1. user copies network 1 to network 2.
+
+2. user edits network 2, changing some attrs of node 13.
+
+3. user realizes that this change should be in network 1 as well. Rather than perform the same edits on network 1, the user can copy node 13 from network 2 and paste it on top of node 13 on network 1 (I guess there will be an alert asking "do you want to paste over or create new?").
+
+This may not seem like much value for just editing one node, but think about larger scale bulk edits.
+
+This all works out because these two nodes (rows in the nodes table) have the same id, but different nid. Referential integrity within the tln is preserved (e.g., input and output links in network 1 refer to node 13, so nothing changes from their point of view). Referential integrity outside the tln is preserved (e.g., events and controllers that refer to node 13 in either network 1 or network 2, depending on the scenario.) We're copying and pasting _within_ a congruence class (unless the user says otherwise in response to the alert).
+
+One more thing about pasting and heritage--there's also the use case in which the user explicitly does not want congruence:
+
+1. user creates node 13 in network 1
+
+2. user creates a new node, id=N, in network 2
+
+3. user copies node N from network 2 to network 1
+
+4. by default, the resulting node in network 1 should be different from any existing node in network 1.
+
+How do we assign the id N to the node in network 2? The user has not indicated that then node is congruent to node 13 or any other node, so we must give that node a unique ID among all known nodes. Not just a unique pair (nid, id), but truly globally unique in the second coordinate, to prevent conflicts as noted in step 4.
+
+This is easy to do, and I've already got it working--I just maintain a table in the database with one row and column which autoincrements, and use it to assign ids when the nodes being saved has one of those non-numeric ids we talked about.
+
+(This is orthogonal to the question of whether nodes and links _within_ a tln need to have two distinct namespaces for their IDs, as you requested. There's no problem with that, since it's not possible to paste a node over a link. So it is fine if the user saves a network that has node id=13 and link id=13. However, this situation will not arise organically, but only if the user explicitly sets those IDs before saving.)
