@@ -34,7 +34,6 @@
         <outputs/>
         <inputs>
           <input link_id="5">
-            <splitratios dt="0"></splitratios>
             <weavingfactors></weavingfactors>
           </input>
         </inputs>
