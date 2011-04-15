@@ -39,7 +39,7 @@ create_table? :scenarios do
   foreign_key :ic_set_id,     :initial_condition_sets
   foreign_key :dp_set_id,     :demand_profile_sets
   foreign_key :cp_set_id,     :capacity_profile_sets
-  foreign_key :srp_set_id,    :splitratio_profile_sets
+  foreign_key :srp_set_id,    :split_ratio_profile_sets
   foreign_key :event_set_id,  :event_sets
   foreign_key :ctrl_set_id,   :controller_sets
 end
@@ -237,9 +237,9 @@ end
 # The network_id is for editing. This does not restrict the networks that this
 # set may be associated with through a scenario. (There's no constraint
 # that the network of the scenario is the network of the scenario's
-# splitratio_profile_set.)
+# split_ratio_profile_set.)
 
-create_table? :splitratio_profile_sets do
+create_table? :split_ratio_profile_sets do
   primary_key :id
   text        :description
   foreign_key :network_id, :tlns, :null => false
@@ -279,10 +279,10 @@ end
 #
 # The node_id (or link_id) is only half of the composite primary key on nodes.
 # You also need to know the network ID. However, do not use the
-# splitratio_profile_set network_id, because that is only for editing purposes.
+# split_ratio_profile_set network_id, because that is only for editing purposes.
 # The network ID for node lookup must come from the scenario.
 
-create_table? :splitratio_profiles do
+create_table? :split_ratio_profiles do
   primary_key :id
   
   float       :dt
@@ -290,7 +290,7 @@ create_table? :splitratio_profiles do
 
   text        :profile # xml text of form <srm>...</srm><srm>...</srm>...
   
-  foreign_key :srp_set_id, :splitratio_profile_sets, :null => false
+  foreign_key :srp_set_id, :split_ratio_profile_sets, :null => false
   integer     :node_id, :null => false
 end
 
