@@ -44,25 +44,38 @@ create_table? :scenarios do
   foreign_key :ctrl_set_id,   :controller_sets
 end
 
+# The next section defines the subcomponents of networks (as opposed to the
+# various profile sets, event sets, and controller sets, which are in the
+# scenario). These tables use a composite key:
+#
+#   (network_id, id)
+#
+# The network_id refers to a unique top level network and its contents. It is
+# shared by all rows created for subnetworks, nodes, links, etc. coming from
+# the xml being imported as part of one network.
+#
+# The id (second half of the composite key) is unique only among elements of the
+# same type within the same top level network. This is so that events that refer
+# to a subnetwork can port to variants, for example. There are many foreign keys
+# that refer to this kind of id; these foreign keys are incomplete and can only
+# reference a row when combined with a network_id. When the reference is
+# internal to the network (e.g. parent_id, begin_id), we just use the same
+# network_id. When the reference is external (e.g. from an event), we
+# combine with the network_id specified by the scenario.
+#
+# See dbweb/doc/subnetworks.txt for details.
+
 create_table? :networks do
-  # networks, like nodes and links, have composite primary key:
-  #   [network_id, id]
-  # so that events that refer to a subnetwork can port to variants.
-  # The network_id is a global id that will be shared by all rows for 
-  # networks, nodes, links, etc. coming from the xml being imported.
-  # This ID is serialized in the xml as "network_id", but only in the top
-  # network.
-  # See dbweb/doc/subnetworks.txt for details.
+  # Serialized in xml as "network_id", but only in the top level network.
   integer     :network_id, :null => false
 
   # This should usually be 1 for the top network. But, really, parent_id==nil
   # is the way to tell whether a network is top.
-  # This ID is serialized in the xml as "id".
+  # Serialized in xml as "id".
   integer     :id, :null => false
 
   primary_key [:network_id, :id]
   
-  # note: non-unique foreign_key
   foreign_key :parent_id, :networks, :null => true
   
   text        :name
@@ -95,9 +108,8 @@ create_table? :nodes do
   integer     :id, :null => false
   primary_key [:network_id, :id]
 
-  # This id is the parent network to which the node belongs. This is a local
-  # ID which is preserved when pasting the subnetwork/node. This ID is
-  # serialized in xml implicitly using the hierarchy.
+  # Parent network to which the node belongs. Preserved when pasting the
+  # node. Serialized in xml implicitly using the hierarchy.
   foreign_key :parent_id, :networks, :null => false
   
   text        :name
@@ -111,12 +123,10 @@ create_table? :nodes do
 end
 
 create_table? :links do
-  # See above.
   foreign_key :network_id, :networks, :key => :network_id, :null => false
   integer     :id, :null => false
   primary_key [:network_id, :id]
-  
-  # See above.
+
   foreign_key :parent_id, :networks, :null => false
   
   text        :name
@@ -137,11 +147,9 @@ create_table? :links do
   # Applies to end node.
   text        :weaving_factors
   
-  # note: non-unique foreign_key
   foreign_key :begin_id, :nodes, :null => false
   integer     :begin_order # ordinal of this link among all with same begin
   
-  # note: non-unique foreign_key
   foreign_key :end_id, :nodes, :null => false
   integer     :end_order # ordinal of this link among all with same end
 end
@@ -238,9 +246,9 @@ create_table? :controller_sets do
   foreign_key :network_id, :networks, :key => :network_id, :null => false
 end
 
-# Note on profile, event, and similar tables:
+# Note on profile, event, and controller tables:
 #
-# Note node_id (or link_id) is only half of the composite primary key on nodes.
+# The node_id (or link_id) is only half of the composite primary key on nodes.
 # You also need to know the network ID. However, do not use the
 # splitratio_profile_set network_id, because that is only for editing purposes.
 # The network ID for node lookup must come from the scenario.
