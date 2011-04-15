@@ -1,7 +1,6 @@
 require 'db/model/node'
 
 require 'db/import/network'
-require 'db/import/split-ratio-profile'
 
 module Aurora
   class Node

@@ -1,8 +1,5 @@
 require 'db/model/link'
 
-#require 'db/import/demand-profile'
-#require 'db/import/capacity-profile'
-
 module Aurora
   class Link
     include Aurora

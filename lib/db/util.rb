@@ -95,7 +95,7 @@ module AuroraModelClassMethods
     begin
       create do |model|
         model.id = id
-        yield model
+        yield model if block_given?
       end
     rescue Sequel::DatabaseError ## or should we just assume transaction?
       if self[:id => id] ### :network_id too?
