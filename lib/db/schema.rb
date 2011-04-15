@@ -154,7 +154,7 @@ create_table? :links do
   string      :fd
   double      :qmax
   string      :dynamics, :default => "CTM"
-  check       :dynamics => %w{ CTM }
+  check       :dynamics => Aurora::DYNAMICS
   
   # Applies to end node.
   text        :weaving_factors
@@ -220,7 +220,7 @@ create_table? :sensors do
   check       :type => Aurora::SENSOR_TYPES
   
   string      :link_type
-  check       :link_type => Aurora::LINK_TYPES
+  check       :link_type => Aurora::SENSOR_LINK_TYPES
   
   text        :parameters
 
@@ -331,6 +331,7 @@ create_table? :network_events do
   primary_key :id
   
   string      :type
+  check       :type => Aurora::EVENT_TYPES
   float       :time
   check       {time >= 0}
   text        :parameters
@@ -343,6 +344,7 @@ create_table? :node_events do
   primary_key :id
   
   string      :type
+  check       :type => Aurora::EVENT_TYPES
   float       :time
   check       {time >= 0}
   text        :parameters
@@ -355,6 +357,7 @@ create_table? :link_events do
   primary_key :id
   
   string      :type
+  check       :type => Aurora::EVENT_TYPES
   float       :time
   check       {time >= 0}
   text        :parameters
@@ -367,6 +370,7 @@ create_table? :network_controllers do
   primary_key :id
   
   string      :type
+  check       :type => Aurora::CONTROL_TYPES
   float       :dt
   check       {dt > 0}
   text        :parameters
@@ -379,6 +383,7 @@ create_table? :node_controllers do
   primary_key :id
   
   string      :type
+  check       :type => Aurora::CONTROL_TYPES
   float       :dt
   check       {dt > 0}
   text        :parameters
@@ -391,6 +396,7 @@ create_table? :link_controllers do
   primary_key :id
   
   string      :type
+  check       :type => Aurora::CONTROL_TYPES
   float       :dt
   check       {dt > 0}
   text        :parameters

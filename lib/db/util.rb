@@ -17,10 +17,17 @@ end
 module Aurora
   module_function
   
-  UNITS         = %w{ US Metric }
-  NODE_TYPES    = %w{ F H S P O T }
-  LINK_TYPES    = %w{ FW HW HOV HOT HV ETC OR FR IC ST D }
-  SENSOR_TYPES  = %w{ loop radar camera sensys }
+  UNITS             = %w{ US Metric }
+  NODE_TYPES        = %w{ F H S P O T }
+  LINK_TYPES        = %w{ FW HW HOV HOT HV ETC OR FR IC ST D }
+  SENSOR_TYPES      = %w{ loop radar camera sensys }
+  SENSOR_LINK_TYPES = %w{ ML HV OR FR }
+  EVENT_TYPES       = %w{ FD DEMAND QLIM SRM WFM SCONTROL NCONTROL CCONTROL
+                          TCONTROL MONITOR }
+  CONTROLLER_TYPES  = %w{ ALINEA TOD TR VSLTOD SIMPLESIGNAL PRETIMED ACTUADED
+                          SYNCHRONIZED SWARM HERO SLAVE }
+  QCONTROLLER_TYPES = %w{ QUEUEOVERRIDE PROPORTIONAL PI }
+  DYNAMICS          = %w{ CTM }
 
   # Convert length in xml file to length for insertion in database.
   def import_length len
