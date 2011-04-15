@@ -370,7 +370,7 @@ create_table? :network_controllers do
   primary_key :id
   
   string      :type
-  check       :type => Aurora::CONTROL_TYPES
+  check       :type => Aurora::CONTROLLER_TYPES
   float       :dt
   check       {dt > 0}
   text        :parameters
@@ -383,7 +383,7 @@ create_table? :node_controllers do
   primary_key :id
   
   string      :type
-  check       :type => Aurora::CONTROL_TYPES
+  check       :type => Aurora::CONTROLLER_TYPES
   float       :dt
   check       {dt > 0}
   text        :parameters
@@ -396,7 +396,7 @@ create_table? :link_controllers do
   primary_key :id
   
   string      :type
-  check       :type => Aurora::CONTROL_TYPES
+  check       :type => Aurora::CONTROLLER_TYPES
   float       :dt
   check       {dt > 0}
   text        :parameters
