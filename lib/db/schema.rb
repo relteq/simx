@@ -30,7 +30,7 @@ create_table? :scenarios do
   check        {duration >= 0}
   
   string      :units
-  check       :units => %w{ US Metric }
+  check       :units => Aurora::UNITS
 
   # This is really a reference to all the nodes, links, subnetworks, etc.
   # that belong to one network.
@@ -102,9 +102,8 @@ create_table? :nodes do
   
   text        :name
   text        :description
-  float       :postmile
   text        :type
-  check       :type => %w{ F H S P O T }
+  check       :type => Aurora::NODE_TYPES
   
   float       :lat
   float       :lng
@@ -125,7 +124,10 @@ create_table? :links do
   integer     :lanes
   float       :length
   text        :type
-  check       :type => %w{ FW HW HOV HOT HV ETC OR FR IC ST D }
+
+  check       {lanes >= 0}
+  check       {length >= 0}
+  check       :type => Aurora::LINK_TYPES
   
   string      :fd
   double      :qmax
@@ -163,6 +165,31 @@ create_table? :route_links do
   foreign_key :link_id, :links, :null => false
   
   integer     :order
+end
+
+create_table? :sensors do
+  foreign_key :network_id, :networks, :key => :network_id, :null => false
+  integer     :id, :null => false
+  primary_key [:network_id, :id]
+
+  foreign_key :parent_id, :networks, :null => false
+
+  foreign_key :link_id, :links, :null => true
+
+  float       :offset
+  check       {offset >= 0}
+
+  string      :type
+  check       :type => Aurora::SENSOR_TYPES
+  
+  string      :link_type
+  check       :link_type => Aurora::LINK_TYPES
+  
+  text        :parameters
+
+  float       :lat
+  float       :lng
+  float       :elevation, :default => 0
 end
 
 # The following tables are edited externally to the networks, and can be mixed
@@ -268,6 +295,7 @@ create_table? :network_events do
   
   string      :type
   float       :time
+  check       {time >= 0}
   text        :parameters
   
   foreign_key :eset_id, :event_sets, :null => false
@@ -279,6 +307,7 @@ create_table? :node_events do
   
   string      :type
   float       :time
+  check       {time >= 0}
   text        :parameters
   
   foreign_key :eset_id, :event_sets, :null => false
@@ -290,6 +319,7 @@ create_table? :link_events do
   
   string      :type
   float       :time
+  check       {time >= 0}
   text        :parameters
   
   foreign_key :eset_id, :event_sets, :null => false

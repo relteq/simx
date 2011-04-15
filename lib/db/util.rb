@@ -17,6 +17,11 @@ end
 module Aurora
   module_function
   
+  UNITS         = %w{ US Metric }
+  NODE_TYPES    = %w{ F H S P O T }
+  LINK_TYPES    = %w{ FW HW HOV HOT HV ETC OR FR IC ST D }
+  SENSOR_TYPES  = %w{ loop radar camera sensys }
+
   # Convert length in xml file to length for insertion in database.
   def import_length len
     len = Float(len)
