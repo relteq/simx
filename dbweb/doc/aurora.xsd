@@ -26,13 +26,13 @@
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="position" minOccurs="0" />
         <xs:element ref="MonitorList" minOccurs="0" />
-        <xs:element ref="NetworkList" />
-        <xs:element ref="NodeList" />
-        <xs:element ref="LinkList" />
-        <xs:element ref="ODList" />
+        <xs:element ref="NetworkList" minOccurs="0" />
+        <xs:element ref="NodeList" minOccurs="0" />
+        <xs:element ref="LinkList" minOccurs="0" />
+        <xs:element ref="ODList" minOccurs="0" />
         <xs:element ref="SensorList" minOccurs="0" />
-        <xs:element ref="DirectionsCache" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="IntersectionCache" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="DirectionsCache" minOccurs="0" />
+        <xs:element ref="IntersectionCache" minOccurs="0" />
       </xs:all>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="ml_control" type="xs:boolean" use="required" />
@@ -45,17 +45,17 @@
 
   <xs:element name="settings">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="display" />
-        <xs:element ref="VehicleTypes" minOccurs="0" maxOccurs="unbounded" />
-        <xs:element name="units" minOccurs="1" maxOccurs="1">
+      <xs:all>
+        <xs:element ref="display" minOccurs="0" />
+        <xs:element ref="VehicleTypes" minOccurs="0" />
+        <xs:element name="units" minOccurs="1">
           <xs:simpleType>
             <xs:restriction base="xs:string">
               <xs:pattern value="US|Metric" />
             </xs:restriction>
           </xs:simpleType>
         </xs:element>
-      </xs:sequence>
+      </xs:all>
     </xs:complexType>
   </xs:element>
 
@@ -130,7 +130,7 @@
   <xs:element name="NodeList">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="node" maxOccurs="unbounded" />
+        <xs:element ref="node" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -138,7 +138,7 @@
   <xs:element name="LinkList">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="link" maxOccurs="unbounded" />
+        <xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -455,8 +455,6 @@
   <xs:element name="input">
     <xs:complexType>
       <xs:all>
-        <xs:element ref="splitratios" minOccurs="0" />
-        <xs:element ref="controller" minOccurs="0" />
         <xs:element ref="weavingfactors" minOccurs="0" maxOccurs="1" />
       </xs:all>
       <xs:attribute name="link_id" type="xs:string" use="required" />
