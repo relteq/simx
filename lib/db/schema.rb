@@ -7,7 +7,7 @@
 require 'sequel'
 require 'db/util'
 
-create_next_uniq_id_table
+create_next_uniq_id_table ## obsolete
 
 # For testing, this is a stub.
 create_table? :projects do
@@ -60,6 +60,45 @@ create_table? :tlns do
   primary_key :id
 end
 
+# The next set of tables just keep track of ids. Each id in one of these tables
+# corresponds to a whole family of nodes (or links or ...) that all have the
+# same id, but different network_id. This id is used as the second part of the
+# composite key in the node table. The main reason for these tables is so that
+# tables like split_ratio_profiles have a way to refer to a node family, rather
+# than a specific node, by foreign key. (Actually, this is not true for routes
+# and sensors.)
+#
+# These tables also provides a convenient way to generate new ids that are
+# unique across all nodes. This makes it possible, when pasting from one network
+# to another, to overwrite an element of the same family while preserving
+# elements of different families.
+#
+# The name "family" is intended to emphasize that nodes of the same family
+# either are descendants of a common ancestor by way of copying and pasting or
+# duplication or have been explicitly given a commmon identity by the user or
+# application.
+
+# Note that network_family.id is orthogonal to tln.id.
+create_table? :network_families do
+  primary_key :id
+end
+
+create_table? :node_families do
+  primary_key :id
+end
+
+create_table? :link_families do
+  primary_key :id
+end
+
+create_table? :route_families do
+  primary_key :id
+end
+
+create_table? :sensor_families do
+  primary_key :id
+end
+
 # The next section defines the subcomponents of networks (as opposed to the
 # various profile sets, event sets, and controller sets, which are in the
 # scenario). These tables use a composite key:
@@ -88,7 +127,7 @@ create_table? :networks do
   # This should usually be 1 for the top network. But, really, parent_id==nil
   # is the way to tell whether a network is top.
   # Serialized in xml as "id".
-  integer     :id, :null => false
+  foreign_key :id, :network_families, :null => false
 
   primary_key [:network_id, :id]
   
@@ -113,7 +152,7 @@ create_table? :nodes do
   # the immediate parent network. This is a global ID which changes when
   # pasting the node into a different network. Not serialized in xml.
   foreign_key :network_id, :tlns, :null => false
-  integer     :id, :null => false
+  foreign_key :id, :node_families, :null => false
   primary_key [:network_id, :id]
 
   # Parent network to which the node belongs. Preserved when pasting the
@@ -134,7 +173,7 @@ end
 
 create_table? :links do
   foreign_key :network_id, :tlns, :null => false
-  integer     :id, :null => false
+  foreign_key :id, :link_families, :null => false
   primary_key [:network_id, :id]
 
   integer     :parent_id
@@ -173,7 +212,7 @@ end
 
 create_table? :routes do
   foreign_key :network_id, :tlns, :null => false
-  integer     :id, :null => false
+  foreign_key :id, :route_families, :null => false
   primary_key [:network_id, :id]
   
   integer     :parent_id
@@ -185,14 +224,14 @@ end
 
 create_table? :route_links do
   foreign_key :network_id, :tlns, :null => false
-  integer     :id, :null => false
-  primary_key [:network_id, :id]
-
   integer     :route_id
+  integer     :link_id
+
+  primary_key [:network_id, :route_id, :link_id]
+
   foreign_key [:network_id, :route_id], :routes,
               :key => [:network_id, :id], :null => false
 
-  integer     :link_id
   foreign_key [:network_id, :link_id], :links,
               :key => [:network_id, :id], :null => false
   
@@ -201,7 +240,7 @@ end
 
 create_table? :sensors do
   foreign_key :network_id, :tlns, :null => false
-  integer     :id, :null => false
+  foreign_key :id, :sensor_families, :null => false
   primary_key [:network_id, :id]
 
   integer     :parent_id
@@ -211,7 +250,6 @@ create_table? :sensors do
   integer     :link_id
   foreign_key [:network_id, :link_id], :links,
               :key => [:network_id, :id], :null => false
-
 
   float       :offset
   check       {offset >= 0}
@@ -229,15 +267,16 @@ create_table? :sensors do
   float       :elevation, :default => 0
 end
 
-# The following tables are edited externally to the networks, and can be mixed
-# and matched with networks when specifying a scenario.
+# The following tables, including various sets, profiles, events, and
+# controllers, are edited externally to the networks. They can be mixed and
+# matched with networks when specifying a scenario.
 
 # Note on set tables:
 #
 # The network_id is for editing. This does not restrict the networks that this
-# set may be associated with through a scenario. (There's no constraint
-# that the network of the scenario is the network of the scenario's
-# split_ratio_profile_set.)
+# set may be associated with through a scenario. There's no constraint that the
+# network of the scenario be identical to the network of the scenario's
+# split_ratio_profile_set.
 
 create_table? :split_ratio_profile_sets do
   primary_key :id
@@ -278,9 +317,10 @@ end
 # Note on profile, event, and controller tables:
 #
 # The node_id (or link_id) is only half of the composite primary key on nodes.
-# You also need to know the network ID. However, do not use the
-# split_ratio_profile_set network_id, because that is only for editing purposes.
-# The network ID for node lookup must come from the scenario.
+# It tells you the familiy of the node, but not the specific node. To get the
+# specific node, you also need to know the top level network ID. However, do not
+# use the split_ratio_profile_set network_id, because that is only for editing
+# purposes. The network ID for node lookup must come from the scenario.
 
 create_table? :split_ratio_profiles do
   primary_key :id
@@ -291,7 +331,7 @@ create_table? :split_ratio_profiles do
   text        :profile # xml text of form <srm>...</srm><srm>...</srm>...
   
   foreign_key :srp_set_id, :split_ratio_profile_sets, :null => false
-  integer     :node_id, :null => false
+  foreign_key :node_id, :node_families, :null => false
 end
 
 create_table? :capacity_profiles do
@@ -303,7 +343,7 @@ create_table? :capacity_profiles do
   text        :profile # xml text
   
   foreign_key :cp_set_id, :capacity_profile_sets, :null => false
-  integer     :link_id, :null => false
+  foreign_key :link_id, :link_families, :null => false
 end
 
 create_table? :demand_profiles do
@@ -315,7 +355,7 @@ create_table? :demand_profiles do
   text        :profile # xml text
   
   foreign_key :dp_set_id, :demand_profile_sets, :null => false
-  integer     :link_id, :null => false
+  foreign_key :link_id, :link_families, :null => false
 end
 
 create_table? :initial_conditions do
@@ -324,7 +364,7 @@ create_table? :initial_conditions do
   text        :density
   
   foreign_key :ic_set_id, :initial_condition_sets, :null => false
-  integer     :link_id, :null => false
+  foreign_key :link_id, :link_families, :null => false
 end
 
 create_table? :network_events do
@@ -337,7 +377,7 @@ create_table? :network_events do
   text        :parameters
   
   foreign_key :eset_id, :event_sets, :null => false
-  integer     :network_id, :null => false
+  foreign_key :network_id, :network_families, :null => false
 end
 
 create_table? :node_events do
@@ -350,7 +390,7 @@ create_table? :node_events do
   text        :parameters
   
   foreign_key :eset_id, :event_sets, :null => false
-  integer     :node_id, :null => false
+  foreign_key :node_id, :node_families, :null => false
 end
 
 create_table? :link_events do
@@ -363,7 +403,7 @@ create_table? :link_events do
   text        :parameters
   
   foreign_key :eset_id, :event_sets, :null => false
-  integer     :link_id, :null => false
+  foreign_key :link_id, :link_families, :null => false
 end
 
 create_table? :network_controllers do
@@ -376,7 +416,7 @@ create_table? :network_controllers do
   text        :parameters
   
   foreign_key :cset_id, :controller_sets, :null => false
-  integer     :network_id, :null => false
+  foreign_key :network_id, :network_families, :null => false
 end
 
 create_table? :node_controllers do
@@ -389,7 +429,7 @@ create_table? :node_controllers do
   text        :parameters
   
   foreign_key :cset_id, :controller_sets, :null => false
-  integer     :node_id, :null => false
+  foreign_key :node_id, :node_families, :null => false
 end
 
 create_table? :link_controllers do
@@ -402,6 +442,5 @@ create_table? :link_controllers do
   text        :parameters
   
   foreign_key :cset_id, :controller_sets, :null => false
-  integer     :link_id, :null => false
+  foreign_key :link_id, :link_families, :null => false
 end
-

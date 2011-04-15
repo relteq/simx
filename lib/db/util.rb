@@ -8,7 +8,7 @@ end
 # Distinctly created (not copied) entities remain distinct
 # in the database, so that they can be copied and pasted alongside
 # each other. See AuroraModelClassMethods#get_uniq_id.
-def create_next_uniq_id_table db = DB
+def create_next_uniq_id_table db = DB ## obsolete
   create_table? :next_uniq_id, db do
     primary_key :id
   end
@@ -123,7 +123,7 @@ module AuroraModelClassMethods
     end
   end
 
-  def get_uniq_id db = DB
+  def get_uniq_id db = DB ## obsolete
     uniq_id = db[:next_uniq_id].insert
     db[:next_uniq_id].where(:id => uniq_id - 1).delete
     uniq_id
