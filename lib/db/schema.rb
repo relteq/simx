@@ -367,7 +367,7 @@ create_table? :initial_conditions do
   foreign_key :link_id, :link_families, :null => false
 end
 
-create_table? :network_events do
+create_table? :events do
   primary_key :id
   
   string      :type
@@ -377,70 +377,52 @@ create_table? :network_events do
   text        :parameters
   
   foreign_key :eset_id, :event_sets, :null => false
+end
+
+create_table? :network_events do
+  foreign_key :event_id, :events, :null => false
   foreign_key :network_id, :network_families, :null => false
+  primary_key [:event_id, :network_id]
 end
 
 create_table? :node_events do
-  primary_key :id
-  
-  string      :type
-  check       :type => Aurora::EVENT_TYPES
-  float       :time
-  check       {time >= 0}
-  text        :parameters
-  
-  foreign_key :eset_id, :event_sets, :null => false
+  foreign_key :event_id, :events, :null => false
   foreign_key :node_id, :node_families, :null => false
+  primary_key [:event_id, :node_id]
 end
 
 create_table? :link_events do
+  foreign_key :event_id, :events, :null => false
+  foreign_key :link_id, :link_families, :null => false
+  primary_key [:event_id, :link_id]
+end
+
+create_table? :controllers do
   primary_key :id
   
   string      :type
-  check       :type => Aurora::EVENT_TYPES
-  float       :time
-  check       {time >= 0}
+  check       :type => Aurora::CONTROLLER_TYPES
+  float       :dt
+  check       {dt > 0}
   text        :parameters
   
-  foreign_key :eset_id, :event_sets, :null => false
-  foreign_key :link_id, :link_families, :null => false
+  foreign_key :cset_id, :controller_sets, :null => false
 end
 
 create_table? :network_controllers do
-  primary_key :id
-  
-  string      :type
-  check       :type => Aurora::CONTROLLER_TYPES
-  float       :dt
-  check       {dt > 0}
-  text        :parameters
-  
-  foreign_key :cset_id, :controller_sets, :null => false
+  foreign_key :controller_id, :controllers, :null => false
   foreign_key :network_id, :network_families, :null => false
+  primary_key [:controller_id, :network_id]
 end
 
 create_table? :node_controllers do
-  primary_key :id
-  
-  string      :type
-  check       :type => Aurora::CONTROLLER_TYPES
-  float       :dt
-  check       {dt > 0}
-  text        :parameters
-  
-  foreign_key :cset_id, :controller_sets, :null => false
+  foreign_key :controller_id, :controllers, :null => false
   foreign_key :node_id, :node_families, :null => false
+  primary_key [:controller_id, :node_id]
 end
 
 create_table? :link_controllers do
-  primary_key :id
-  
-  string      :type
-  check       :type => Aurora::CONTROLLER_TYPES
-  float       :dt
-  check       {dt > 0}
-  text        :parameters
-  
-  foreign_key :cset_id, :controller_sets, :null => false
+  foreign_key :controller_id, :controllers, :null => false
   foreign_key :link_id, :link_families, :null => false
+  primary_key [:controller_id, :link_id]
 end
