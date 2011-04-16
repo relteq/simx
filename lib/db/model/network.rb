@@ -1,10 +1,9 @@
-require 'db/model/scenario'
 module Aurora
-  class NetworkFamily < Sequel::Model
+  class NetworkFamily
     one_to_many :networks
   end
   
-  class Network < Sequel::Model
+  class Network
     many_to_one :tln, :key => :network_id
     many_to_one :network_family
 

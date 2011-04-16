@@ -1,5 +1,5 @@
 module Aurora
-  class ControllerSet < Sequel::Model
+  class ControllerSet
     # for editing; does not restrict combination with other scenario.network
     many_to_one :tln, :key => :network_id
     

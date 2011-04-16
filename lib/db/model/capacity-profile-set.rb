@@ -1,5 +1,5 @@
 module Aurora
-  class CapacityProfileSet < Sequel::Model
+  class CapacityProfileSet
     # for editing; does not restrict combination with other scenario.network
     many_to_one :tln, :key => :network_id
     

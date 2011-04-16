@@ -1,5 +1,5 @@
 module Aurora
-  class SplitRatioProfileSet < Sequel::Model
+  class SplitRatioProfileSet
     # for editing; does not restrict combination with other scenario.network
     many_to_one :tln, :key => :network_id
     

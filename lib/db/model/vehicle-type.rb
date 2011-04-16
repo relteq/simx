@@ -1,5 +1,5 @@
 module Aurora
-  class VehicleType < Sequel::Model
+  class VehicleType
     many_to_one :scenario
   end
 end

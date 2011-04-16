@@ -1,5 +1,5 @@
 module Aurora
-  class InitialConditionSet < Sequel::Model
+  class InitialConditionSet
     # for editing; does not restrict combination with other scenario.network
     many_to_one :tln, :key => :network_id
     
