@@ -131,9 +131,8 @@ create_table? :networks do
 
   primary_key [:network_id, :id]
   
-  integer     :parent_id
-  foreign_key [:network_id, :parent_id], :networks,
-              :key => [:network_id, :id], :null => false
+  integer     :parent_id, :null => true
+  foreign_key [:network_id, :parent_id], :networks, :key => [:network_id, :id]
   
   text        :name
   text        :description
@@ -157,9 +156,8 @@ create_table? :nodes do
 
   # Parent network to which the node belongs. Preserved when pasting the
   # node. Serialized in xml implicitly using the hierarchy.
-  integer     :parent_id
-  foreign_key [:network_id, :parent_id], :networks,
-              :key => [:network_id, :id], :null => false
+  integer     :parent_id, :null => false
+  foreign_key [:network_id, :parent_id], :networks, :key => [:network_id, :id]
   
   text        :name
   text        :description
@@ -176,9 +174,8 @@ create_table? :links do
   foreign_key :id, :link_families, :null => false
   primary_key [:network_id, :id]
 
-  integer     :parent_id
-  foreign_key [:network_id, :parent_id], :networks,
-              :key => [:network_id, :id], :null => false
+  integer     :parent_id, :null => false
+  foreign_key [:network_id, :parent_id], :networks, :key => [:network_id, :id]
   
   text        :name
   text        :description
@@ -198,13 +195,11 @@ create_table? :links do
   # Applies to end node.
   text        :weaving_factors
   
-  integer     :begin_id
-  foreign_key [:network_id, :begin_id], :nodes,
-              :key => [:network_id, :id], :null => false
+  integer     :begin_id, :null => false
+  foreign_key [:network_id, :begin_id], :nodes, :key => [:network_id, :id]
 
-  integer     :end_id
-  foreign_key [:network_id, :end_id], :nodes,
-              :key => [:network_id, :id], :null => false
+  integer     :end_id, :null => false
+  foreign_key [:network_id, :end_id], :nodes, :key => [:network_id, :id]
 
   integer     :begin_order  # ordinal of this link among all with same begin
   integer     :end_order    # ordinal of this link among all with same end
@@ -215,27 +210,25 @@ create_table? :routes do
   foreign_key :id, :route_families, :null => false
   primary_key [:network_id, :id]
   
-  integer     :parent_id
-  foreign_key [:network_id, :parent_id], :networks,
-              :key => [:network_id, :id], :null => false
+  integer     :parent_id, :null => false
+  foreign_key [:network_id, :parent_id], :networks, :key => [:network_id, :id]
   
   text        :description
 end
 
 create_table? :route_links do
   foreign_key :network_id, :tlns, :null => false
-  integer     :route_id
-  integer     :link_id
+  integer     :route_id, :null => false
+  integer     :link_id, :null => false
 
   primary_key [:network_id, :route_id, :link_id]
 
-  foreign_key [:network_id, :route_id], :routes,
-              :key => [:network_id, :id], :null => false
-
-  foreign_key [:network_id, :link_id], :links,
-              :key => [:network_id, :id], :null => false
+  foreign_key [:network_id, :route_id], :routes, :key => [:network_id, :id]
+  foreign_key [:network_id, :link_id], :links, :key => [:network_id, :id]
   
-  integer     :order
+  integer     :order, :null => false
+  check       {order >= 0}
+  unique      [:network_id, :route_id, :order]
 end
 
 create_table? :sensors do
@@ -243,13 +236,11 @@ create_table? :sensors do
   foreign_key :id, :sensor_families, :null => false
   primary_key [:network_id, :id]
 
-  integer     :parent_id
-  foreign_key [:network_id, :parent_id], :networks,
-              :key => [:network_id, :id], :null => false
+  integer     :parent_id, :null => false
+  foreign_key [:network_id, :parent_id], :networks, :key => [:network_id, :id]
 
-  integer     :link_id
-  foreign_key [:network_id, :link_id], :links,
-              :key => [:network_id, :id], :null => false
+  integer     :link_id, :null => true
+  foreign_key [:network_id, :link_id], :links, :key => [:network_id, :id]
 
   float       :offset
   check       {offset >= 0}
@@ -382,19 +373,19 @@ end
 create_table? :network_events do
   foreign_key :event_id, :events, :null => false
   foreign_key :network_id, :network_families, :null => false
-  primary_key [:event_id, :network_id]
+  primary_key :event_id
 end
 
 create_table? :node_events do
   foreign_key :event_id, :events, :null => false
   foreign_key :node_id, :node_families, :null => false
-  primary_key [:event_id, :node_id]
+  primary_key :event_id
 end
 
 create_table? :link_events do
   foreign_key :event_id, :events, :null => false
   foreign_key :link_id, :link_families, :null => false
-  primary_key [:event_id, :link_id]
+  primary_key :event_id
 end
 
 create_table? :controllers do
