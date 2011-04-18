@@ -1,5 +1,3 @@
-require 'db/model/splitratio-profile'
-
 module Aurora
   class SplitratioProfile
     def self.from_xml splitratios_xml, scenario

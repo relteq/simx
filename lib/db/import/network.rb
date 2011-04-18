@@ -1,5 +1,3 @@
-require 'db/model/network'
-
 require 'db/import/node'
 require 'db/import/link'
 
@@ -7,15 +5,40 @@ module Aurora
   class Network
     include Aurora
     
-    def self.from_xml network_xml, scenario, parent = nil
-      network = import_id(network_xml["id"])
-      network.import_xml network_xml, scenario, parent
-      network.save
-      network
+    def self.create_from_xml network_xml, ctx, parent = nil
+      create_with_id network_xml["id"] do |nw|
+        nw.id ||= NetworkFamily.create.id
+
+        ### ctx.network_id_for_xml_id
+        scenario = ctx.scenario
+
+        if parent
+          nw.tln = scenario.tln
+
+        else # this network "is" a tln
+          network_id = import_id(network_xml["network_id"])
+
+          if network_id
+            tln = Tln[network_id]
+            if not tln
+              raise "xml specified nonexistent network_id: #{network_id}" ##
+            end
+            nw.tln = tln
+          else
+            nw.tln = Tln.create
+          end
+          
+          if scenario.tln and scenario.tln != nw.tln
+            raise "wrong tln"
+          end
+        end
+
+        nw.import_xml network_xml, ctx, parent
+      end
     end
     
-    def import_xml network_xml, scenario, parent = nil
-      scenario.network_id_for_xml_id[network_xml["id"]] = id
+    def import_xml network_xml, ctx, parent = nil
+      ctx.network_id_for_xml_id[network_xml["id"]] = id
 
       self.name         = network_xml["name"]
 
@@ -33,27 +56,27 @@ module Aurora
           self.elevation = Float(point_xml["elevation"])
         end
       end
-            
+      
       network_xml.xpath("NodeList/node").each do |node_xml|
-        node = Node.from_xml(node_xml, scenario)
-        add_node node
+#        node = Node.create_from_xml(node_xml, ctx)
+#        add_node node
       end
 
-      network_xml.xpath("NodeList/network").each do |subnetwork_xml|
-        subnetwork = Network.from_xml(subnetwork_xml, scenario, self)
-        add_children subnetwork
+      network_xml.xpath("NetworkList/network").each do |subnetwork_xml|
+#        subnetwork = Network.create_from_xml(subnetwork_xml, ctx, self)
+#        add_children subnetwork
       end
 
       network_xml.xpath("LinkList/link").each do |link_xml|
-        link = Link.from_xml(link_xml, scenario)
-        add_link link
+#        link = Link.create_from_xml(link_xml, ctx)
+#        add_link link
       end
       
-      ## MonitorList, ODList, SensorList
+      ### route
+      ### sensor
+
       ## DirectionsCache
       ## IntersectionCache
-
-      ## ignore obsolete entries
     end
   end
 end

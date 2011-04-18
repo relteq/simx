@@ -1,12 +1,10 @@
-require 'db/model/node'
-
 require 'db/import/network'
 
 module Aurora
   class Node
     include Aurora
     
-    def self.from_xml node_xml, scenario
+    def self.create_from_xml node_xml, scenario
       node = import_network_element_id(node_xml["id"], scenario.network)
       node.import_xml node_xml, scenario
       node.save

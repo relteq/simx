@@ -17,7 +17,10 @@ DB = Sequel.sqlite(db_filename)
 
 test_doc = File.join(topdir, "dbweb/doc/short.xml")
 
+# create tables if they don't exist
 require 'db/schema'
+
+require 'db/model/aurora'
 require 'db/import/scenario'
 
 module Aurora
@@ -48,7 +51,7 @@ module Aurora
       @scenario_xml = parse(src)
       
       DB.transaction do
-        @scenario = Scenario.from_xml(scenario_xml)
+        @scenario = Scenario.create_from_xml(scenario_xml)
       end
       
       return scenario[:id]
@@ -69,15 +72,18 @@ Aurora.import(File.read(test_doc))
 #pp DB[:links].all
 #pp DB[:vehicle_types].all
 
-pp Aurora::Scenario[:id=>1]
-pp Aurora::Scenario[:id=>1].network
-pp Aurora::Scenario[:id=>1].vehicle_types
-pp Aurora::Scenario[:id=>1].network.nodes
-pp Aurora::Scenario[:id=>1].network.links
+sc = Aurora::Scenario[1]
+pp sc
+pp sc.vehicle_types
+
+nw = Aurora::Scenario[1].network
+pp nw
+pp nw.nodes
+pp nw.links
 
 ### how to make this work?
 ###pp Aurora::Scenario[:id=>1].network.nodes[:id => 1].split_ratio_profiles
 
 #pp Aurora::Node[:id => 1].split_ratio_profiles
 puts
-pp Aurora::Node[:id => 3].outputs
+##pp Aurora::Node[:id => 3].outputs

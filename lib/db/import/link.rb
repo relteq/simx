@@ -1,10 +1,8 @@
-require 'db/model/link'
-
 module Aurora
   class Link
     include Aurora
     
-    def self.from_xml link_xml, scenario
+    def self.create_from_xml link_xml, scenario
       link = import_network_element_id(link_xml["id"], scenario.network)
       link.import_xml link_xml, scenario
       link.save

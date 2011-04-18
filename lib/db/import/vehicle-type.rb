@@ -1,15 +1,13 @@
-require 'db/model/vehicle-type'
-
 module Aurora
   class VehicleType
-    def self.from_xml vtype_xml, scenario
-      vt = create
-      vt.import_xml vtype_xml, scenario
-      vt.save
-      vt
+    def self.create_from_xml vtype_xml, ctx
+      create do |vtype|
+        vtype.scenario = ctx.scenario
+        vtype.import_xml vtype_xml, ctx
+      end
     end
 
-    def import_xml vtype_xml, scenario
+    def import_xml vtype_xml, ctx
       self.name   = vtype_xml["name"]
       self.weight = Float(vtype_xml["weight"])
     end

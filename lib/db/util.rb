@@ -84,24 +84,23 @@ module Aurora
 end
 
 module AuroraModelClassMethods
+  def import_id s
+    s && Integer(s) rescue nil
+  end
+  
   # Creates and return an instance with ID parsed from s. If s is not
   # parsable as an integer, the instance will be assigned a new id.
   # Yields model to block in the context of create, after id assigned:
   #
-  #  import_id s do |model|
+  #  create_with_id s do |model|
   #    model.name = "foo_#{model.id}"
   #  end
   #
-  def import_id s
-    unless s and /\S/ === s
-      raise "#{self}: missing id attr" ## InvalidXmlError ?
-    end
-
-    id = (Integer(s) rescue nil)
-
+  def create_with_id s
+    id = import_id(s)
     begin
       create do |model|
-        model.id = id
+        model.id = id if id
         yield model if block_given?
       end
     rescue Sequel::DatabaseError ## or should we just assume transaction?
@@ -113,11 +112,11 @@ module AuroraModelClassMethods
     end
   end
   
-  # As import_id, but for nodes, links, etc. Assigns the (network_id, id)
+  # As create_with_id, but for nodes, links, etc. Assigns the (network_id, id)
   # composite primary key. The +network+ must be the top level network
   # that contains the new model element.
   def import_network_element_id s, network
-    import_id s do |model|
+    create_with_id s do |model|
       model.network_id = network.network_id
       model.id ||= get_uniq_id # autoincrement doesn't work on composite key
     end
