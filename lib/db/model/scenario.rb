@@ -2,7 +2,9 @@ module Aurora
   class Scenario
     many_to_one :project
 
-    many_to_one :tln
+    many_to_one :tln, :key => :tln_id
+    many_to_one :network_family, :key => :network_family_id
+    many_to_one :network, :key => [:tln_id, :network_family_id]
     
     many_to_one :srp_set,   :class => SplitRatioProfileSet
     many_to_one :cp_set,    :class => CapacityProfileSet

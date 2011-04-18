@@ -32,10 +32,11 @@ create_table? :scenarios do
   string      :units
   check       :units => Aurora::UNITS
 
-  # This is really a reference to all the nodes, links, subnetworks, etc.
-  # that belong to one network.
-  foreign_key :network_id,    :tlns, :null => false
-  
+  foreign_key :tln_id,        :tlns, :null => false
+  foreign_key :network_family_id, :network_families, :null => false
+  foreign_key [:tln_id, :network_family_id], :networks,
+                :key => [:network_id, :id]
+
   foreign_key :ic_set_id,     :initial_condition_sets
   foreign_key :dp_set_id,     :demand_profile_sets
   foreign_key :cp_set_id,     :capacity_profile_sets
@@ -372,19 +373,19 @@ end
 
 create_table? :network_events do
   foreign_key :event_id, :events, :null => false
-  foreign_key :network_id, :network_families, :null => false
+  foreign_key :network_family_id, :network_families, :null => false
   primary_key :event_id
 end
 
 create_table? :node_events do
   foreign_key :event_id, :events, :null => false
-  foreign_key :node_id, :node_families, :null => false
+  foreign_key :node_family_id, :node_families, :null => false
   primary_key :event_id
 end
 
 create_table? :link_events do
   foreign_key :event_id, :events, :null => false
-  foreign_key :link_id, :link_families, :null => false
+  foreign_key :link_family_id, :link_families, :null => false
   primary_key :event_id
 end
 
@@ -402,18 +403,18 @@ end
 
 create_table? :network_controllers do
   foreign_key :controller_id, :controllers, :null => false
-  foreign_key :network_id, :network_families, :null => false
-  primary_key [:controller_id, :network_id]
+  foreign_key :network_family_id, :network_families, :null => false
+  primary_key :controller_id
 end
 
 create_table? :node_controllers do
   foreign_key :controller_id, :controllers, :null => false
-  foreign_key :node_id, :node_families, :null => false
-  primary_key [:controller_id, :node_id]
+  foreign_key :node_family_id, :node_families, :null => false
+  primary_key :controller_id
 end
 
 create_table? :link_controllers do
   foreign_key :controller_id, :controllers, :null => false
-  foreign_key :link_id, :link_families, :null => false
-  primary_key [:controller_id, :link_id]
+  foreign_key :link_family_id, :link_families, :null => false
+  primary_key :controller_id
 end

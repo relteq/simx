@@ -1,11 +1,14 @@
 module Aurora
   class NetworkFamily
     one_to_many :networks
+    one_to_many :scenario, :key => :network_family_id
   end
   
   class Network
     many_to_one :tln, :key => :network_id
     many_to_one :network_family
+
+    one_to_many :scenario, :key => [:tln_id, :network_family_id]
 
     many_to_one :parent,      :class => self, :key => [:network_id, :parent_id]
     one_to_many :subnetworks, :class => self, :key => [:network_id, :parent_id]

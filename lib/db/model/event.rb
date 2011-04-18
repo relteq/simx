@@ -9,16 +9,16 @@ module Aurora
 
   class NetworkEvent
     many_to_one :event, :key => :event_id
-    many_to_one :network_family, :key => :network_id
+    many_to_one :network_family, :key => :network_family_id
   end
 
   class NodeEvent
     many_to_one :event, :key => :event_id
-    many_to_one :node_family, :key => :node_id
+    many_to_one :node_family, :key => :node_family_id
   end
 
   class LinkEvent
     many_to_one :event, :key => :event_id
-    many_to_one :link_family, :key => :link_id
+    many_to_one :link_family, :key => :link_family_id
   end
 end
