@@ -11,34 +11,34 @@ module Aurora
   class Route < Sequel::Model; end
   class Sensor < Sequel::Model; end
 
-  class Scenario < Sequel::Model
-  class VehicleType < Sequel::Model
-  class Tln < Sequel::Model
-  class Project < Sequel::Model
+  class Scenario < Sequel::Model; end
+  class VehicleType < Sequel::Model; end
+  class Tln < Sequel::Model; end
+  class Project < Sequel::Model; end
 
-  class SplitRatioProfileSet < Sequel::Model
-  class SplitRatioProfile < Sequel::Model
+  class SplitRatioProfileSet < Sequel::Model; end
+  class SplitRatioProfile < Sequel::Model; end
 
-  class CapacityProfileSet < Sequel::Model
-  class CapacityProfile < Sequel::Model
+  class CapacityProfileSet < Sequel::Model; end
+  class CapacityProfile < Sequel::Model; end
 
-  class DemandProfileSet < Sequel::Model
-  class DemandProfile < Sequel::Model
+  class DemandProfileSet < Sequel::Model; end
+  class DemandProfile < Sequel::Model; end
 
-  class InitialConditionSet < Sequel::Model
-  class InitialCondition < Sequel::Model
+  class InitialConditionSet < Sequel::Model; end
+  class InitialCondition < Sequel::Model; end
 
-  class EventSet < Sequel::Model
-  class Event < Sequel::Model
-  class NetworkEvent < Sequel::Model
-  class NodeEvent < Sequel::Model
-  class LinkEvent < Sequel::Model
+  class EventSet < Sequel::Model; end
+  class Event < Sequel::Model; end
+  class NetworkEvent < Sequel::Model; end
+  class NodeEvent < Sequel::Model; end
+  class LinkEvent < Sequel::Model; end
 
-  class ControllerSet < Sequel::Model
-  class Controller < Sequel::Model
-  class NetworkController < Sequel::Model
-  class NodeController < Sequel::Model
-  class LinkController < Sequel::Model
+  class ControllerSet < Sequel::Model; end
+  class Controller < Sequel::Model; end
+  class NetworkController < Sequel::Model; end
+  class NodeController < Sequel::Model; end
+  class LinkController < Sequel::Model; end
 end
 
 dir = File.expand_path(File.dirname(__FILE__))
