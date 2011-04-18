@@ -7,15 +7,16 @@ module Aurora
     
     def self.create_from_xml network_xml, ctx, parent = nil
       create_with_id network_xml["id"] do |nw|
-        if not nw.id
+        if nw.id
+          NetworkFamily[nw.id] or
+            raise "xml specified nonexistent network_id: #{nw.id}" ##
+        else
           nf = nw.network_family = NetworkFamily.create
           ctx.network_family_id_for_xml_id[network_xml["id"]] = nf.id
         end
         
-        scenario = ctx.scenario
-
         if parent
-          nw.tln = scenario.tln
+          nw.tln = parent.tln
 
         else # this network "is" a tln
           network_id = import_id(network_xml["network_id"])
@@ -32,7 +33,7 @@ module Aurora
             ctx.tln_id_for_xml_id[network_xml["network_id"]] = tln.id
           end
           
-          if scenario.tln and scenario.tln != nw.tln
+          if ctx.scenario.tln and ctx.scenario.tln != nw.tln
             raise "wrong tln"
           end
         end
@@ -58,22 +59,23 @@ module Aurora
           self.elevation = Float(point_xml["elevation"])
         end
       end
-      
+
       network_xml.xpath("NodeList/node").each do |node_xml|
-#        node = Node.create_from_xml(node_xml, ctx)
-#        add_node node
+        ctx.defer do
+          Node.create_from_xml(node_xml, ctx, self)
+        end
       end
 
+      network_xml.xpath("LinkList/link").each do |link_xml|
+#        link = Link.create_from_xml(link_xml, ctx, self)
+#        add_link link
+      end
+      
       network_xml.xpath("NetworkList/network").each do |subnetwork_xml|
 #        subnetwork = Network.create_from_xml(subnetwork_xml, ctx, self)
 #        add_children subnetwork
       end
 
-      network_xml.xpath("LinkList/link").each do |link_xml|
-#        link = Link.create_from_xml(link_xml, ctx)
-#        add_link link
-      end
-      
       network_xml.xpath("ODList/od/PathList/path").each do |path_xml|
         ### create route
       end

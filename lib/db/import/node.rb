@@ -4,18 +4,22 @@ module Aurora
   class Node
     include Aurora
     
-    def self.create_from_xml node_xml, scenario
-      node = import_network_element_id(node_xml["id"], scenario.network)
-      node.import_xml node_xml, scenario
-      node.save
-      node
+    def self.create_from_xml node_xml, ctx, parent
+      create_with_id node_xml["id"] do |nd|
+        if nd.id
+          NodeFamily[nd.id] or
+            raise "xml specified nonexistent node_id: #{nd.id}" ##
+        else
+          nf = nd.node_family = NodeFamily.create
+          ctx.node_family_id_for_xml_id[node_xml["id"]] = nf.id
+        end
+        
+        nd.parent = parent
+        nd.import_xml node_xml, ctx
+      end
     end
     
     def import_xml node_xml, scenario
-      scenario.node_id_for_xml_id[node_xml["id"]] = id
-      
-      ### subnetwork_id -- add_node can do this
-
       self.name = node_xml["name"]
       self.type = node_xml["type"]
       
