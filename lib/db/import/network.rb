@@ -7,9 +7,11 @@ module Aurora
     
     def self.create_from_xml network_xml, ctx, parent = nil
       create_with_id network_xml["id"] do |nw|
-        nw.id ||= NetworkFamily.create.id
-
-        ### ctx.network_id_for_xml_id
+        if not nw.id
+          nf = nw.network_family = NetworkFamily.create
+          ctx.network_family_id_for_xml_id[network_xml["id"]] = nf.id
+        end
+        
         scenario = ctx.scenario
 
         if parent
@@ -24,8 +26,10 @@ module Aurora
               raise "xml specified nonexistent network_id: #{network_id}" ##
             end
             nw.tln = tln
+          
           else
-            nw.tln = Tln.create
+            tln = nw.tln = Tln.create
+            ctx.tln_id_for_xml_id[network_xml["network_id"]] = tln.id
           end
           
           if scenario.tln and scenario.tln != nw.tln
@@ -38,8 +42,6 @@ module Aurora
     end
     
     def import_xml network_xml, ctx, parent = nil
-      ctx.network_id_for_xml_id[network_xml["id"]] = id
-
       self.name         = network_xml["name"]
 
       descs = network_xml.xpath("description").map {|desc| desc.text}
@@ -72,8 +74,13 @@ module Aurora
 #        add_link link
       end
       
-      ### route
-      ### sensor
+      network_xml.xpath("ODList/od/PathList/path").each do |path_xml|
+        ### create route
+      end
+      
+      network_xml.xpath("SensorList/sensor").each do |sensor_xml|
+        ### create sensor
+      end
 
       ## DirectionsCache
       ## IntersectionCache
