@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scenario schemaVersion="1.0.0" id="1" name="short">
-  <network name="My Network" ml_control="false" q_control="false" dt="1" id="-1">
+  <network name="My Network" ml_control="false" q_control="false" dt="1" id="1a">
     <description>Created by TOPL flash app version 0.2.142</description>
     <position>
       <point lng="-122.29371339082718" lat="37.8640328440588" />
