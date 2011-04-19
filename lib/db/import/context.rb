@@ -37,6 +37,13 @@ module Aurora
       @deferred = []
     end
     
+    def get_link_id link_xml_id
+      link_xml_id or raise ArgumentError
+      link_family_id_for_xml_id[link_xml_id] || Integer(link_xml_id)
+    rescue ArgumentError
+      raise "invalid link id: #{link_xml_id.inspect}"
+    end
+    
     def defer &action
       @deferred << action
     end

@@ -17,24 +17,36 @@
     
     <NodeList>
       <node name="Node 1" type="S" id="add1">
-        <outputs/>
+        <outputs>
+          <output link_id="add5"/>
+        </outputs>
         <inputs/>
         <position>
           <point lng="-122.29111433029176" lat="37.85117239046442" />
         </position>
       </node>
       <node name="Node 2" type="S" id="add2">
-        <outputs/>
-        <inputs/>
+        <outputs>
+          <output link_id="add6"/>
+        </outputs>
+        <inputs>
+          <input link_id="add5">
+            <weavingfactors></weavingfactors>
+          </input>
+        </inputs>
         <position>
           <point lng="-122.2998583316803" lat="37.867596929343975" />
         </position>
       </node>
       <node name="Node 3" type="S" id="add3">
         <outputs>
-          <output link_id="add5"/>
+          <output link_id="add7"/>
         </outputs>
-        <inputs/>
+        <inputs>
+          <input link_id="add6">
+            <weavingfactors></weavingfactors>
+          </input>
+        </inputs>
         <position>
           <point lng="-122.29155421257019" lat="37.86734283851613" />
         </position>
@@ -42,7 +54,7 @@
       <node name="Node 4" type="S" id="add4">
         <outputs/>
         <inputs>
-          <input link_id="add5">
+          <input link_id="add7">
             <weavingfactors></weavingfactors>
           </input>
         </inputs>
@@ -53,7 +65,23 @@
     </NodeList>
     
     <LinkList>
-      <link name="3 -> 4" lanes="1" length="0.189892305438032" type="ST" id="add5">
+      <link name="1 -> 2" lanes="1" length="0.189892305438032" type="ST" id="add5">
+        <begin node_id="add1"/>
+        <end node_id="add2"/>
+        <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
+        <dynamics type="CTM"/>
+        <qmax>100</qmax>
+      </link>
+
+      <link name="2 -> 3" lanes="1" length="0.189892305438032" type="ST" id="add6">
+        <begin node_id="add2"/>
+        <end node_id="add3"/>
+        <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
+        <dynamics type="CTM"/>
+        <qmax>100</qmax>
+      </link>
+
+      <link name="3 -> 4" lanes="1" length="0.189892305438032" type="ST" id="add7">
         <begin node_id="add3"/>
         <end node_id="add4"/>
         <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
@@ -68,9 +96,18 @@
         <position>
           <point lng="-122.29" lat="37.86" />
         </position>
+      </network>
     </NetworkList>
 
-    <ODList/>
+    <ODList>
+      <od begin="add1" end="add4">
+        <PathList>
+          <path name="Freeway mainline route">
+            add5, add6, add7
+          </path>
+        </PathList>
+      </od>
+    </ODList>
     
     <SensorList/>
     

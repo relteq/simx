@@ -8,12 +8,19 @@ topdir = File.expand_path("../..")
 libdir = File.join(topdir, "lib")
 $LOAD_PATH.unshift libdir
 
-datadir = File.join(topdir, 'var/data')
-FileUtils.mkdir_p datadir
-db_filename = File.join(datadir, 'test.db')
-FileUtils.rm_f db_filename
-DB = Sequel.sqlite(db_filename)
-DB.loggers << Logger.new($stderr) if ENV["LOGTEST"] ##?
+if ENV["SQLITEFILE"] ##
+  datadir = File.join(topdir, 'var/data')
+  FileUtils.mkdir_p datadir
+  db_filename = File.join(datadir, 'test.db')
+  FileUtils.rm_f db_filename
+  DB = Sequel.sqlite(db_filename)
+else
+  DB = Sequel.sqlite
+end
+
+if ENV["LOGTEST"] ##?
+  DB.loggers << Logger.new($stderr)
+end
 
 test_doc = File.join(topdir, "dbweb/doc/short.xml")
 
@@ -72,21 +79,26 @@ Aurora.import(File.read(test_doc))
 #pp DB[:links].all
 #pp DB[:vehicle_types].all
 
-sc = Aurora::Scenario[1]
-pp sc
-pp sc.vehicle_types
-
-nw = Aurora::Scenario[1].network
-pp nw
-pp nw.nodes
-pp nw.links
+#sc = Aurora::Scenario[1]
+#pp sc
+#pp sc.vehicle_types
+#
+#nw = Aurora::Scenario[1].network
+#pp nw
+#pp nw.nodes
+#pp nw.links
 
 puts
-nw.nodes.each do |node|
-  if node.inputs.size > 0
-    pp [node, node.inputs]
-  end
-end
+rt = Aurora::Route.first
+pp rt
+pp rt.links
+
+#puts
+#nw.nodes.each do |node|
+#  if node.inputs.size > 0
+#    pp [node, node.inputs]
+#  end
+#end
 
 ### how to make this work?
 ###pp Aurora::Scenario[:id=>1].network.nodes[:id => 1].split_ratio_profiles

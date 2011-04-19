@@ -214,7 +214,7 @@ create_table? :routes do
   integer     :parent_id, :null => false
   foreign_key [:network_id, :parent_id], :networks, :key => [:network_id, :id]
   
-  text        :description
+  string      :name
 end
 
 create_table? :route_links do

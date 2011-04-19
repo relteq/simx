@@ -1,5 +1,6 @@
 require 'db/import/node'
 require 'db/import/link'
+require 'db/import/route'
 
 module Aurora
   class Network
@@ -79,8 +80,10 @@ module Aurora
         end
       end
 
-      network_xml.xpath("ODList/od/PathList/path").each do |path_xml|
-        ### create route
+      network_xml.xpath("ODList/od/PathList/path").each do |route_xml|
+        ctx.defer do
+          Route.create_from_xml(route_xml, ctx, self)
+        end
       end
       
       network_xml.xpath("SensorList/sensor").each do |sensor_xml|
