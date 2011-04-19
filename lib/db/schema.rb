@@ -181,7 +181,7 @@ create_table? :links do
   
   text        :name
   text        :description
-  integer     :lanes
+  float       :lanes # fractional lanes is allowed
   float       :length
   text        :type
 
