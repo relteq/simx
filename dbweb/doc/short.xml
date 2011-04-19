@@ -109,7 +109,20 @@
       </od>
     </ODList>
     
-    <SensorList/>
+    <SensorList>
+      <sensor id="add_sensor_1"
+              display_lat="37.86734283851613"
+              display_lng="-122.29155421257019"
+              type="loop"
+              link_type="ML" >
+        <position>
+          <point lng="-122.29155421257019" lat="37.86734283851613" />
+        </position>
+        <links>
+          add6
+        </links>
+      </sensor>
+    </SensorList>
     
     <DirectionsCache>
       <DirectionsCacheEntry avoidHighways="false">

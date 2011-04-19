@@ -8,8 +8,8 @@ module Aurora
           RouteFamily[route.id] or
             raise "xml specified nonexistent route_id: #{route.id}" ##
         else
-          lf = route.route_family = RouteFamily.create
-          ctx.route_family_id_for_xml_id[route_xml["id"]] = lf.id
+          rf = route.route_family = RouteFamily.create
+          ctx.route_family_id_for_xml_id[route_xml["id"]] = rf.id
         end
         
         route.parent = parent
@@ -20,8 +20,8 @@ module Aurora
     def import_xml route_xml, ctx
       self.name = route_xml["name"]
       
-      ctx.defer do
-        link_xml_ids = route_xml.text.split(/\s*,\s*/).map{|s|s.strip}
+      ctx.defer do # the route doesn't exist yet
+        link_xml_ids = route_xml.text.split(",").map{|s|s.strip}
         link_xml_ids.each_with_index do |link_xml_id, order|
           self.class.db[:route_links] << {
             :network_id => network_id,

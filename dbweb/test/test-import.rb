@@ -88,10 +88,10 @@ Aurora.import(File.read(test_doc))
 #pp nw.nodes
 #pp nw.links
 
-puts
-rt = Aurora::Route.first
-pp rt
-pp rt.links
+#puts
+#rt = Aurora::Route.first
+#pp rt
+#pp rt.links
 
 #puts
 #nw.nodes.each do |node|
@@ -100,9 +100,5 @@ pp rt.links
 #  end
 #end
 
-### how to make this work?
-###pp Aurora::Scenario[:id=>1].network.nodes[:id => 1].split_ratio_profiles
+pp Aurora::Sensor.first
 
-#pp Aurora::Node[:id => 1].split_ratio_profiles
-puts
-##pp Aurora::Node[:id => 3].outputs

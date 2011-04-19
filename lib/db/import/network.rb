@@ -1,6 +1,7 @@
 require 'db/import/node'
 require 'db/import/link'
 require 'db/import/route'
+require 'db/import/sensor'
 
 module Aurora
   class Network
@@ -87,7 +88,9 @@ module Aurora
       end
       
       network_xml.xpath("SensorList/sensor").each do |sensor_xml|
-        ### create sensor
+        ctx.defer do
+          Sensor.create_from_xml(sensor_xml, ctx, self)
+        end
       end
 
       ## DirectionsCache
