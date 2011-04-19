@@ -7,8 +7,6 @@
 require 'sequel'
 require 'db/util'
 
-create_next_uniq_id_table ## obsolete
-
 # For testing, this is a stub.
 create_table? :projects do
   primary_key :id

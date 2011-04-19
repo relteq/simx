@@ -2,18 +2,6 @@ def create_table? t, db = DB, &bl
   db.table_exists? t or db.create_table t, &bl
 end
 
-# Used to generate IDs that are unique across all tables that use it.
-# The tables include all those with composite primary key (node, link...).
-# All rows but the last can be deleted at any time.
-# Distinctly created (not copied) entities remain distinct
-# in the database, so that they can be copied and pasted alongside
-# each other. See AuroraModelClassMethods#get_uniq_id.
-def create_next_uniq_id_table db = DB ## obsolete
-  create_table? :next_uniq_id, db do
-    primary_key :id
-  end
-end
-
 module Aurora
   module_function
   
@@ -110,21 +98,5 @@ module AuroraModelClassMethods
         raise
       end
     end
-  end
-  
-  # As create_with_id, but for nodes, links, etc. Assigns the (network_id, id)
-  # composite primary key. The +network+ must be the top level network
-  # that contains the new model element.
-  def import_network_element_id s, network
-    create_with_id s do |model|
-      model.network_id = network.network_id
-      model.id ||= get_uniq_id # autoincrement doesn't work on composite key
-    end
-  end
-
-  def get_uniq_id db = DB ## obsolete
-    uniq_id = db[:next_uniq_id].insert
-    db[:next_uniq_id].where(:id => uniq_id - 1).delete
-    uniq_id
   end
 end
