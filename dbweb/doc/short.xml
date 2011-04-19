@@ -222,4 +222,12 @@
       <IntersectionCacheEntry qlat="37.86761040965988" qlng="-122.29158419259682" lat="37.867837" lng="-122.29183" street1="San Pablo Ave" street2="Addison St"/>
     </IntersectionCache>
   </network>
+
+  <SplitRatioProfileSet id="add_srpset_1">
+    <splitratios node_id="add3" dt="300">
+      <srm>-1.0:-1.0, 0.0:-1.0; -1.0:-1.0, 0.0:-1.0</srm>
+      <srm>-1.0:-1.0, 0.0:-1.0; -1.0:-1.0, 0.0:-1.0</srm>
+      <srm>-1.0:-1.0, 0.0:-1.0; -1.0:-1.0, 0.0:-1.0</srm>
+    </splitratios>
+  </SplitRatioProfileSet>
 </scenario>

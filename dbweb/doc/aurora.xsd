@@ -62,48 +62,60 @@
   <xs:element name="DemandProfileSet">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="description" minOccurs="0" />
         <xs:element ref="demand" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
   <xs:element name="InitialDensityProfile">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="description" minOccurs="0" />
         <xs:element ref="density" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
   <xs:element name="SplitRatioProfileSet">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="description" minOccurs="0" />
         <xs:element ref="splitratios" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
   <xs:element name="CapacityProfileSet">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="description" minOccurs="0" />
         <xs:element ref="capacity" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
   <xs:element name="EventSet">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="description" minOccurs="0" />
         <xs:element ref="event" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
   <xs:element name="ControllerSet">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="description" minOccurs="0" />
         <xs:element ref="controller" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
