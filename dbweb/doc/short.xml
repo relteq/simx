@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scenario schemaVersion="1.0.0" id="add1" name="short">
+  <settings>
+    <display timeMax="24" timeout="1000" dt="0.08333333333333333"/>
+    <VehicleTypes>
+      <vtype name="General" weight="1"/>
+      <vtype name="Truck" weight="5"/>
+    </VehicleTypes>
+    <units>US</units>
+  </settings>
+
   <network name="My Network" ml_control="false" q_control="false" dt="1" id="add1">
     <description>Created by TOPL flash app version 0.2.142</description>
     <position>
       <point lng="-122.29371339082718" lat="37.8640328440588" />
     </position>
-    <MonitorList/>
+    
     <NodeList>
       <node name="Node 1" type="S" id="add1">
         <outputs/>
@@ -42,6 +51,7 @@
         </position>
       </node>
     </NodeList>
+    
     <LinkList>
       <link name="3 -> 4" lanes="1" length="0.189892305438032" type="ST" id="add5">
         <begin node_id="add3"/>
@@ -51,8 +61,11 @@
         <qmax>100</qmax>
       </link>
     </LinkList>
+    
     <ODList/>
+    
     <SensorList/>
+    
     <DirectionsCache>
       <DirectionsCacheEntry avoidHighways="false">
         <From>
@@ -151,12 +164,4 @@
       <IntersectionCacheEntry qlat="37.86761040965988" qlng="-122.29158419259682" lat="37.867837" lng="-122.29183" street1="San Pablo Ave" street2="Addison St"/>
     </IntersectionCache>
   </network>
-  <settings>
-    <display timeMax="24" timeout="1000" dt="0.08333333333333333"/>
-    <VehicleTypes>
-      <vtype name="General" weight="1"/>
-      <vtype name="Truck" weight="5"/>
-    </VehicleTypes>
-    <units>US</units>
-  </settings>
 </scenario>
