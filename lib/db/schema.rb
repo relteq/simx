@@ -117,6 +117,9 @@ end
 # network_id. When the reference is external (e.g. from an event), we
 # combine with the network_id specified by the scenario.
 #
+# Distinctly created (not copied) entities remain distinct in the database, so
+# that they can be copied and pasted alongside each other.
+#
 # See dbweb/doc/subnetworks.txt for details.
 
 create_table? :networks do
