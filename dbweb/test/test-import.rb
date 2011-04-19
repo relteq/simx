@@ -22,7 +22,11 @@ if ENV["LOGTEST"] ##?
   DB.loggers << Logger.new($stderr)
 end
 
-test_doc = File.join(topdir, "dbweb/doc/short.xml")
+if ENV["INPUTTEST"] ##?
+  test_doc = ENV["INPUTTEST"]
+else
+  test_doc = File.join(topdir, "dbweb/doc/short.xml")
+end
 
 # create tables if they don't exist
 require 'db/schema'
