@@ -81,6 +81,13 @@ pp nw
 pp nw.nodes
 pp nw.links
 
+puts
+nw.nodes.each do |node|
+  if node.inputs.size > 0
+    pp [node, node.inputs]
+  end
+end
+
 ### how to make this work?
 ###pp Aurora::Scenario[:id=>1].network.nodes[:id => 1].split_ratio_profiles
 

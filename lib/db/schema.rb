@@ -189,7 +189,7 @@ create_table? :links do
   check       :type => Aurora::LINK_TYPES
   
   string      :fd
-  double      :qmax
+  float       :qmax
   string      :dynamics, :default => "CTM"
   check       :dynamics => Aurora::DYNAMICS
   

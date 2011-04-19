@@ -1,6 +1,8 @@
 module Aurora
   # Exists during one scenario import operation.
   class ImportContext
+    include Aurora
+
     # The scenario being imported.
     attr_reader :scenario
     
@@ -14,12 +16,10 @@ module Aurora
     attr_reader :route_family_id_for_xml_id
     attr_reader :sensor_family_id_for_xml_id
     
-    # Keep track, during import, of order of links in input and output lists
-    # and the list of weaving_factors corresponding to input links. The key
-    # is always the db id, not the xml id.
-    attr_reader :output_link_ids_for_node_id
-    attr_reader :input_link_ids_for_node_id
-    attr_reader :weaving_factors_for_node_id
+    # Keep track of begin and end nodes, ordinals, and weaving_factors
+    # for each link listed (as an xml id) under the node.
+    attr_reader :begin_for_link_xml_id
+    attr_reader :end_for_link_xml_id
 
     def initialize scenario
       @scenario = scenario
@@ -31,9 +31,8 @@ module Aurora
       @sensor_family_id_for_xml_id  = {}
       @route_family_id_for_xml_id   = {}
       
-      @output_link_ids_for_node_id  = {}
-      @input_link_ids_for_node_id   = {}
-      @weaving_factors_for_node_id  = {}
+      @begin_for_link_xml_id        = {}
+      @end_for_link_xml_id          = {}
       
       @deferred = []
     end
@@ -47,5 +46,12 @@ module Aurora
         action.call
       end
     end
+    
+    # define this so that import_length and similar methods will work
+    def units
+      @units ||= scenario.units
+    end
+    
+    public :import_length
   end
 end

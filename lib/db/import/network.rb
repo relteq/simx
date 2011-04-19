@@ -67,8 +67,9 @@ module Aurora
       end
 
       network_xml.xpath("LinkList/link").each do |link_xml|
-#        link = Link.create_from_xml(link_xml, ctx, self)
-#        add_link link
+        ctx.defer do
+          Link.create_from_xml(link_xml, ctx, self)
+        end
       end
       
       network_xml.xpath("NetworkList/network").each do |subnetwork_xml|
