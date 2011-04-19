@@ -6,7 +6,7 @@ module Aurora
       create_with_id node_xml["id"] do |node|
         if node.id
           NodeFamily[node.id] or
-            raise "xml specified nonexistent node_id: #{node.id}" ##
+            NodeFamily.create {|nf| nf.id = node.id}
         else
           nf = node.node_family = NodeFamily.create
           ctx.node_family_id_for_xml_id[node_xml["id"]] = nf.id

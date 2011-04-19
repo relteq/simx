@@ -6,7 +6,7 @@ module Aurora
       create_with_id link_xml["id"] do |link|
         if link.id
           LinkFamily[link.id] or
-            raise "xml specified nonexistent link_id: #{link.id}" ##
+            LinkFamily.create {|lf| lf.id = link.id}
         else
           lf = link.link_family = LinkFamily.create
           ctx.link_family_id_for_xml_id[link_xml["id"]] = lf.id

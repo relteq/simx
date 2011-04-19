@@ -92,10 +92,10 @@ Aurora.import(File.read(test_doc))
 #pp nw.nodes
 #pp nw.links
 
-#puts
-#rt = Aurora::Route.first
-#pp rt
-#pp rt.links
+puts
+rt = Aurora::Route.first
+pp rt
+pp rt.links
 
 #puts
 #nw.nodes.each do |node|

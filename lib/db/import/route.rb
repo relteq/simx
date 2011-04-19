@@ -6,7 +6,7 @@ module Aurora
       create_with_id route_xml["id"] do |route|
         if route.id
           RouteFamily[route.id] or
-            raise "xml specified nonexistent route_id: #{route.id}" ##
+            RouteFamily.create {|rf| rf.id = route.id}
         else
           rf = route.route_family = RouteFamily.create
           ctx.route_family_id_for_xml_id[route_xml["id"]] = rf.id

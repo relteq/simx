@@ -11,7 +11,7 @@ module Aurora
       create_with_id network_xml["id"] do |network|
         if network.id
           NetworkFamily[network.id] or
-            raise "xml specified nonexistent network_id: #{network.id}" ##
+            NetworkFamily.create {|nf| nf.id = network.id}
         else
           nf = network.network_family = NetworkFamily.create
           ctx.network_family_id_for_xml_id[network_xml["id"]] = nf.id

@@ -6,7 +6,7 @@ module Aurora
       create_with_id sensor_xml["id"] do |sensor|
         if sensor.id
           SensorFamily[sensor.id] or
-            raise "xml specified nonexistent sensor_id: #{sensor.id}" ##
+            SensorFamily.create {|sf| sf.id = sensor.id}
         else
           sf = sensor.sensor_family = SensorFamily.create
           ctx.sensor_family_id_for_xml_id[sensor_xml["id"]] = sf.id
