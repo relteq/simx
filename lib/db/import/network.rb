@@ -63,33 +63,18 @@ module Aurora
         end
       end
 
-      network_xml.xpath("NodeList/node").each do |node_xml|
-        ctx.defer do
-          Node.create_from_xml(node_xml, ctx, self)
-        end
-      end
-
-      network_xml.xpath("LinkList/link").each do |link_xml|
-        ctx.defer do
-          Link.create_from_xml(link_xml, ctx, self)
-        end
-      end
-      
-      network_xml.xpath("NetworkList/network").each do |subnetwork_xml|
-        ctx.defer do
-          Network.create_from_xml(subnetwork_xml, ctx, self)
-        end
-      end
-
-      network_xml.xpath("ODList/od/PathList/path").each do |route_xml|
-        ctx.defer do
-          Route.create_from_xml(route_xml, ctx, self)
-        end
-      end
-      
-      network_xml.xpath("SensorList/sensor").each do |sensor_xml|
-        ctx.defer do
-          Sensor.create_from_xml(sensor_xml, ctx, self)
+      ctx.defer do
+        [
+          ["NodeList/node", Node],
+          ["LinkList/link", Link],
+          ["NetworkList/network", Network],
+          ["ODList/od/PathList/path", Route],
+          ["SensorList/sensor", Sensor]
+        ].
+        each do |elt_xpath, elt_class|
+          network_xml.xpath(elt_xpath).each do |elt_xml|
+            elt_class.create_from_xml(elt_xml, ctx, self)
+          end
         end
       end
 
