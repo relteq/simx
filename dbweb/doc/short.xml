@@ -62,6 +62,14 @@
       </link>
     </LinkList>
     
+    <NetworkList>
+      <network name="SubNetwork" ml_control="false" q_control="false" dt="1" id="add101">
+        <description>Created by TOPL flash app version 0.2.142</description>
+        <position>
+          <point lng="-122.29" lat="37.86" />
+        </position>
+    </NetworkList>
+
     <ODList/>
     
     <SensorList/>

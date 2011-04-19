@@ -6,17 +6,18 @@ module Aurora
     include Aurora
     
     def self.create_from_xml network_xml, ctx, parent = nil
-      create_with_id network_xml["id"] do |nw|
-        if nw.id
-          NetworkFamily[nw.id] or
-            raise "xml specified nonexistent network_id: #{nw.id}" ##
+      create_with_id network_xml["id"] do |network|
+        if network.id
+          NetworkFamily[network.id] or
+            raise "xml specified nonexistent network_id: #{network.id}" ##
         else
-          nf = nw.network_family = NetworkFamily.create
+          nf = network.network_family = NetworkFamily.create
           ctx.network_family_id_for_xml_id[network_xml["id"]] = nf.id
         end
         
         if parent
-          nw.tln = parent.tln
+          network.tln = parent.tln
+          network.parent = parent
 
         else # this network "is" a tln
           network_id = import_id(network_xml["network_id"])
@@ -26,19 +27,19 @@ module Aurora
             if not tln
               raise "xml specified nonexistent network_id: #{network_id}" ##
             end
-            nw.tln = tln
+            network.tln = tln
           
           else
-            tln = nw.tln = Tln.create
+            tln = network.tln = Tln.create
             ctx.tln_id_for_xml_id[network_xml["network_id"]] = tln.id
           end
           
-          if ctx.scenario.tln and ctx.scenario.tln != nw.tln
+          if ctx.scenario.tln and ctx.scenario.tln != network.tln
             raise "wrong tln"
           end
         end
 
-        nw.import_xml network_xml, ctx, parent
+        network.import_xml network_xml, ctx, parent
       end
     end
     
@@ -73,8 +74,9 @@ module Aurora
       end
       
       network_xml.xpath("NetworkList/network").each do |subnetwork_xml|
-#        subnetwork = Network.create_from_xml(subnetwork_xml, ctx, self)
-#        add_children subnetwork
+        ctx.defer do
+          Network.create_from_xml(subnetwork_xml, ctx, self)
+        end
       end
 
       network_xml.xpath("ODList/od/PathList/path").each do |path_xml|
