@@ -290,36 +290,42 @@ end
 
 create_table? :split_ratio_profile_sets do
   primary_key :id
+  string      :name
   text        :description
   foreign_key :network_id, :tlns, :null => false
 end
 
 create_table? :capacity_profile_sets do
   primary_key :id
+  string      :name
   text        :description
   foreign_key :network_id, :tlns, :null => false
 end
 
 create_table? :demand_profile_sets do
   primary_key :id
+  string      :name
   text        :description
   foreign_key :network_id, :tlns, :null => false
 end
 
 create_table? :initial_condition_sets do
   primary_key :id
+  string      :name
   text        :description
   foreign_key :network_id, :tlns, :null => false
 end
 
 create_table? :event_sets do
   primary_key :id
+  string      :name
   text        :description
   foreign_key :network_id, :tlns, :null => false
 end
 
 create_table? :controller_sets do
   primary_key :id
+  string      :name
   text        :description
   foreign_key :network_id, :tlns, :null => false
 end
@@ -335,6 +341,9 @@ end
 create_table? :split_ratio_profiles do
   primary_key :id
   
+  float       :start_time, :default => 0
+  check       {start_time >= 0}
+  
   float       :dt
   check       {dt > 0}
 
@@ -347,6 +356,9 @@ end
 create_table? :capacity_profiles do
   primary_key :id
   
+  float       :start_time, :default => 0
+  check       {start_time >= 0}
+  
   float       :dt
   check       {dt > 0}
 
@@ -358,6 +370,9 @@ end
 
 create_table? :demand_profiles do
   primary_key :id
+  
+  float       :start_time, :default => 0
+  check       {start_time >= 0}
   
   float       :dt
   check       {dt > 0}
