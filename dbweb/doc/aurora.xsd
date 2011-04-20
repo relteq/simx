@@ -65,7 +65,8 @@
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="demand" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="name" type="xs:string" use="optional" default="" />
     </xs:complexType>
   </xs:element>
 
@@ -75,7 +76,8 @@
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="density" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="name" type="xs:string" use="optional" default="" />
     </xs:complexType>
   </xs:element>
 
@@ -85,7 +87,8 @@
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="splitratios" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="name" type="xs:string" use="optional" default="" />
     </xs:complexType>
   </xs:element>
 
@@ -95,7 +98,8 @@
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="capacity" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="name" type="xs:string" use="optional" default="" />
     </xs:complexType>
   </xs:element>
 
@@ -105,7 +109,8 @@
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="event" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="name" type="xs:string" use="optional" default="" />
     </xs:complexType>
   </xs:element>
 
@@ -115,7 +120,8 @@
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="controller" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="id" type="xs:string" use="optional" default="" />
+      <xs:attribute name="name" type="xs:string" use="optional" default="" />
     </xs:complexType>
   </xs:element>
 
@@ -439,6 +445,8 @@
   <xs:element name="demand">
     <xs:complexType mixed="true">
       <xs:attribute name="knob" type="xs:decimal" use="required" />
+      <xs:attribute name="start_time" type="xs:decimal" use="optional"
+       default="0" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="link_id" type="xs:string" use="required" />
       <xs:attribute name="delims"
@@ -568,6 +576,8 @@
         <xs:element ref="srm" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
       <xs:attribute name="node_id" type="xs:string" use="required" />
+      <xs:attribute name="start_time" type="xs:decimal" use="optional"
+       default="0" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
     </xs:complexType>
   </xs:element>
@@ -707,6 +717,8 @@
   <xs:element name="capacity">
     <xs:complexType mixed="true">
       <xs:attribute name="link_id" type="xs:string" use="required" />
+      <xs:attribute name="start_time" type="xs:decimal" use="optional"
+       default="0" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="delims"
        type="xs:string" use="optional" default="," />

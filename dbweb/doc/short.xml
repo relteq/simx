@@ -223,7 +223,7 @@
     </IntersectionCache>
   </network>
 
-  <SplitRatioProfileSet id="add_srpset_1">
+  <SplitRatioProfileSet id="add_srpset_1" name="srp set 1">
     <splitratios node_id="add3" dt="300">
       <srm>-1.0:-1.0, 0.0:-1.0; -1.0:-1.0, 0.0:-1.0</srm>
       <srm>-1.0:-1.0, 0.0:-1.0; -1.0:-1.0, 0.0:-1.0</srm>
