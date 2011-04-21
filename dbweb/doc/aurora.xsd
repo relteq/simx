@@ -14,8 +14,8 @@
         <xs:element ref="DemandProfileSet" minOccurs="0" maxOccurs="1" />
         <xs:element ref="ControllerSet" minOccurs="0" maxOccurs="1" />
       </xs:all>
-      <xs:attribute name="id" type="xs:string" use="required" />
-      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="id" type="xs:string" use="optional" />
+      <xs:attribute name="name" type="xs:string" use="optional" />
       <xs:attribute name="schemaVersion" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
