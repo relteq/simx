@@ -46,7 +46,7 @@ module Aurora
     end
     
     def import_xml network_xml, ctx, parent = nil
-      self.name         = network_xml["name"]
+      set_name_from network_xml["name"], ctx
 
       descs = network_xml.xpath("description").map {|desc| desc.text}
       self.description = descs.join("\n")

@@ -64,6 +64,20 @@ module Aurora
     end
   end
   
+  # If string is not a valid name, defers setting the name from the id
+  # until after the first pass through the importer.
+  def set_name_from s, ctx
+    case s
+    when /\S/
+      self.name = s
+    else
+      ctx.defer do
+        cl_name = self.class.name[/\w+$/]
+        self.name = "#{cl_name} #{id}"
+      end
+    end
+  end
+  
   def included m
     if m < Sequel::Model
       m.extend AuroraModelClassMethods

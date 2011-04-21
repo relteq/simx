@@ -1,6 +1,7 @@
 require 'db/import/vehicle-type'
 require 'db/import/network'
 require 'db/import/context'
+require 'db/import/split-ratio-profile-set'
 
 module Aurora
   class Scenario
@@ -8,22 +9,30 @@ module Aurora
     
     def self.create_from_xml scenario_xml, ctx = nil
       scenario = create_with_id scenario_xml["id"] do |sc|
-        ctx ||= ImportContext.new sc
+        prev_scenario = Scenario[:id => sc.id]
+        prev_scenario_state = prev_scenario ? prev_scenario.values : {}
+        raise if prev_scenario ## for now, this mode is not handled
+        
+        ctx ||= ImportContext.new sc, prev_scenario_state
         sc.import_xml scenario_xml, ctx
       end
+      
       ctx.do_deferred
       scenario.save_changes ## needed?
       scenario
     end
     
     def import_xml scenario_xml, ctx
-      self.name = scenario_xml["name"]
+      set_name_from scenario_xml["name"], ctx
 
       descs = scenario_xml.xpath("description").map {|desc_xml| desc_xml.text}
       self.description = descs.join("\n")
       
       scenario_xml.xpath("settings/VehicleTypes/vtype").each do |vtype_xml|
         ctx.defer do
+          ##vehicle_types.each do |vtype|
+          ##  vtype.destroy
+          ##end
           VehicleType.create_from_xml vtype_xml, ctx
         end
       end
@@ -42,7 +51,12 @@ module Aurora
         self.network = Network.create_from_xml(network_xml, ctx)
       end
       
-      ### profiles, etc.
+      scenario_xml.xpath("SplitRatioProfileSet").each do |srp_set_xml|
+        self.srp_set = SplitRatioProfileSet.create_from_xml(srp_set_xml, ctx)
+      end
+
+      ## what do we do if there are existing network, srp_set, vtypes,
+      ## etc.? Delete them?
     end
   end
 end

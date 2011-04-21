@@ -18,12 +18,12 @@ module Aurora
     end
     
     def import_xml link_xml, ctx
-      self.name = link_xml["name"]
+      set_name_from link_xml["name"], ctx
 
       descs = link_xml.xpath("description").map {|desc| desc.text}
       self.description = descs.join("\n")
       
-      self.lanes = Integer(link_xml["lanes"])
+      self.lanes = Float(link_xml["lanes"]) # Fractional lanes allowed.s
       self.length = ctx.import_length(link_xml["length"])
       self.type = link_xml["type"]
       

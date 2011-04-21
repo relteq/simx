@@ -18,7 +18,8 @@ module Aurora
     end
     
     def import_xml node_xml, ctx
-      self.name = node_xml["name"]
+      set_name_from node_xml["name"], ctx
+
       self.type = node_xml["type"]
       
       descs = node_xml.xpath("description").map {|desc| desc.text}

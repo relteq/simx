@@ -18,7 +18,7 @@ module Aurora
     end
     
     def import_xml route_xml, ctx
-      self.name = route_xml["name"]
+      set_name_from route_xml["name"], ctx
       
       ctx.defer do # the route doesn't exist yet
         link_xml_ids = route_xml.text.split(",").map{|s|s.strip}

@@ -92,10 +92,10 @@ Aurora.import(File.read(test_doc))
 #pp nw.nodes
 #pp nw.links
 
-puts
-rt = Aurora::Route.first
-pp rt
-pp rt.links
+#puts
+#rt = Aurora::Route.first
+#pp rt
+#pp rt.links
 
 #puts
 #nw.nodes.each do |node|
@@ -104,5 +104,9 @@ pp rt.links
 #  end
 #end
 
-pp Aurora::Sensor.first
+#pp Aurora::Sensor.first
 
+sc = Aurora::Scenario.first
+pp sc
+pp sc.srp_set
+pp sc.srp_set.srps
