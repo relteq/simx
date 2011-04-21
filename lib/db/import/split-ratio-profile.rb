@@ -1,4 +1,5 @@
 module Aurora
+  # corresponds to <splitratios> element, plus children <srm> elements
   class SplitRatioProfile
     include Aurora
     
@@ -19,4 +20,3 @@ module Aurora
     end
   end
 end
-

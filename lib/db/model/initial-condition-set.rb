@@ -4,7 +4,7 @@ module Aurora
     many_to_one :tln, :key => :network_id
     
     one_to_many :scenarios, :key => :ic_set_id
-    one_to_many :initial_condition_profiles, :key => :ic_set_id
+    one_to_many :ics, :key => :ic_set_id, :class => InitialCondition
   end
 end
 

@@ -2,6 +2,9 @@ require 'db/import/vehicle-type'
 require 'db/import/network'
 require 'db/import/context'
 require 'db/import/split-ratio-profile-set'
+require 'db/import/capacity-profile-set'
+require 'db/import/demand-profile-set'
+require 'db/import/initial-condition-set'
 
 module Aurora
   class Scenario
@@ -53,6 +56,18 @@ module Aurora
       
       scenario_xml.xpath("SplitRatioProfileSet").each do |srp_set_xml|
         self.srp_set = SplitRatioProfileSet.create_from_xml(srp_set_xml, ctx)
+      end
+
+      scenario_xml.xpath("CapacityProfileSet").each do |cp_set_xml|
+        self.cp_set = CapacityProfileSet.create_from_xml(cp_set_xml, ctx)
+      end
+
+      scenario_xml.xpath("DemandProfileSet").each do |dp_set_xml|
+        self.dp_set = DemandProfileSet.create_from_xml(dp_set_xml, ctx)
+      end
+
+      scenario_xml.xpath("InitialDensityProfile").each do |ic_set_xml|
+        self.ic_set = InitialConditionSet.create_from_xml(ic_set_xml, ctx)
       end
 
       ## what do we do if there are existing network, srp_set, vtypes,
