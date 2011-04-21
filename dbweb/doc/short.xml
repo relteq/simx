@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scenario schemaVersion="1.0.0" id="add1" name="short">
+<scenario schemaVersion="1.0.0" name="short">
   <settings>
     <units>US</units>
     <display dt="300" timeout="50" timeInitial="23400" timeMax="39600" />
@@ -223,7 +223,7 @@
     </IntersectionCache>
   </network>
 
-  <SplitRatioProfileSet id="add_srpset_1" name="srp set 1">
+  <SplitRatioProfileSet name="srp set 1">
     <splitratios node_id="add3" dt="300">
       <srm>-1.0:-1.0, 0.0:-1.0; -1.0:-1.0, 0.0:-1.0</srm>
       <srm>-1.0:-1.0, 0.0:-1.0; -1.0:-1.0, 0.0:-1.0</srm>
