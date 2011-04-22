@@ -5,6 +5,8 @@ require 'db/import/split-ratio-profile-set'
 require 'db/import/capacity-profile-set'
 require 'db/import/demand-profile-set'
 require 'db/import/initial-condition-set'
+require 'db/import/event-set'
+require 'db/import/controller-set'
 
 module Aurora
   class Scenario
@@ -68,6 +70,14 @@ module Aurora
 
       scenario_xml.xpath("InitialDensityProfile").each do |ic_set_xml|
         self.ic_set = InitialConditionSet.create_from_xml(ic_set_xml, ctx)
+      end
+
+      scenario_xml.xpath("EventSet").each do |event_set_xml|
+        self.event_set = EventSet.create_from_xml(event_set_xml, ctx)
+      end
+
+      scenario_xml.xpath("ControllerSet").each do |ctrl_set_xml|
+        self.ctrl_set = ControllerSet.create_from_xml(ctrl_set_xml, ctx)
       end
 
       ## what do we do if there are existing network, srp_set, vtypes,

@@ -397,11 +397,15 @@ create_table? :events do
   
   string      :type
   check       :type => Aurora::EVENT_TYPES
+  
   float       :time
   check       {time >= 0}
+  
+  boolean     :enabled
+  
   text        :parameters
   
-  foreign_key :eset_id, :event_sets, :null => false
+  foreign_key :event_set_id, :event_sets, :null => false
 end
 
 create_table? :network_events do
@@ -431,7 +435,7 @@ create_table? :controllers do
   check       {dt > 0}
   text        :parameters
   
-  foreign_key :cset_id, :controller_sets, :null => false
+  foreign_key :ctrl_set_id, :controller_sets, :null => false
 end
 
 create_table? :network_controllers do

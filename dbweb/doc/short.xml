@@ -230,4 +230,12 @@
       <srm>-1.0:-1.0, 0.0:-1.0; -1.0:-1.0, 0.0:-1.0</srm>
     </splitratios>
   </SplitRatioProfileSet>
+
+  <EventSet id="new event set 1">
+    <event type="FD" link_id="add6" tstamp="32400.0" enabled="true">
+      <description>accident</description>
+      <fd densityCritical="25.940298507462686"
+       densityJam="117.41398973400845" flowMax="1738.0" />
+    </event>
+  </EventSet>
 </scenario>

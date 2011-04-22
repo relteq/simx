@@ -1,6 +1,6 @@
 module Aurora
   class Event
-    many_to_one :event_set, :key => :eset_id
+    many_to_one :event_set, :key => :event_set_id
     
     one_to_one :network_event, :key => :event_id
     one_to_one :node_event, :key => :event_id
