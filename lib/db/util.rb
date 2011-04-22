@@ -56,10 +56,16 @@ module Aurora
     end
   end
   
-  def import_boolean s
+  def import_boolean s, *default
     case s
     when "true"; true
     when "false"; false
+    when nil
+      if default.empty?
+        raise "Bad boolean: #{s.inspect}"
+      else
+        default.first
+      end
     else raise "Bad boolean: #{s.inspect}"
     end
   end

@@ -431,8 +431,12 @@ create_table? :controllers do
   
   string      :type
   check       :type => Aurora::CONTROLLER_TYPES
+  
   float       :dt
   check       {dt > 0}
+  
+  boolean     :use_sensors
+  
   text        :parameters
   
   foreign_key :ctrl_set_id, :controller_sets, :null => false
