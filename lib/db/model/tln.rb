@@ -1,5 +1,7 @@
 module Aurora
   class Tln
+    many_to_one :project
+
     one_to_many :scenarios, :key => :network_id
     one_to_many :networks, :key => :network_id
 

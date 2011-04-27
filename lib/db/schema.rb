@@ -53,10 +53,13 @@ create_table? :vehicle_types do
   foreign_key :scenario_id, :scenarios, :null => false
 end
 
-# A hack because a foreign key cannot reference a non-unique part of a
-# composite key. So we reference it uniquely in the "top level networks".
+# Top-level networks. Rows in this table are one-to-one with rows in the
+# networks table that have parent==null. The main reason for having this
+# table separate is to provide half of the composite primary keys that
+# our foreign keys that reference.
 create_table? :tlns do
   primary_key :id
+  foreign_key :project_id, :projects
 end
 
 # The next set of tables just keep track of ids. Each id in one of these tables
@@ -126,7 +129,7 @@ create_table? :networks do
   # Serialized in xml as "network_id", but only in the top level network.
   foreign_key :network_id, :tlns, :null => false
 
-  # This should usually be 1 for the top network. But, really, parent_id==nil
+  # This is often 1 for the top network. But, really, parent_id==nil
   # is the way to tell whether a network is top.
   # Serialized in xml as "id".
   foreign_key :id, :network_families, :null => false
