@@ -58,7 +58,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8341" lng="-122.0079" elevation="0.0"/></position>
+  <position><point lat="37.8341" lng="-122.0079" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804003" name="FR El Cerro Blvd">
   <description>Node 6804003</description>
@@ -75,7 +75,7 @@
       <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8324" lng="-122.0053" elevation="0.0"/></position>
+  <position><point lat="37.8324" lng="-122.0053" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804004" name="Node 6804004">
   <description>Node 6804004</description>
@@ -91,7 +91,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8307" lng="-122.0026" elevation="0.0"/></position>
+  <position><point lat="37.8307" lng="-122.0026" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804005" name="Node 6804005">
   <description>Node 6804005</description>
@@ -107,7 +107,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8289" lng="-122.0" elevation="0.0"/></position>
+  <position><point lat="37.8289" lng="-122.0" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804006" name="FR Diablo Rd - OR El Cerro Blvd">
   <description>Node 6804006</description>
@@ -127,7 +127,7 @@
       <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8272" lng="-121.9973" elevation="0.0"/></position>
+  <position><point lat="37.8272" lng="-121.9973" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804007" name="Node 6804007">
   <description>Node 6804007</description>
@@ -143,7 +143,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8252" lng="-121.9951" elevation="0.0"/></position>
+  <position><point lat="37.8252" lng="-121.9951" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804008" name="Node 6804008">
   <description>Node 6804008</description>
@@ -159,7 +159,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8228" lng="-121.9937" elevation="0.0"/></position>
+  <position><point lat="37.8228" lng="-121.9937" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804009" name="OR Diablo Rd">
   <description>Node 6804009</description>
@@ -178,7 +178,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8196" lng="-121.9933" elevation="0.0"/></position>
+  <position><point lat="37.8196" lng="-121.9933" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804010" name="Node 6804010">
   <description>Node 6804010</description>
@@ -194,7 +194,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8174" lng="-121.9934" elevation="0.0"/></position>
+  <position><point lat="37.8174" lng="-121.9934" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804011" name="FR Sycamore Valley Rd">
   <description>Node 6804011</description>
@@ -211,7 +211,7 @@
       <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8157" lng="-121.9934" elevation="0.0"/></position>
+  <position><point lat="37.8157" lng="-121.9934" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804012" name="Node 6804012">
   <description>Node 6804012</description>
@@ -227,7 +227,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.812" lng="-121.9932" elevation="0.0"/></position>
+  <position><point lat="37.812" lng="-121.9932" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804013" name="Node 6804013">
   <description>Node 6804013</description>
@@ -243,7 +243,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8094" lng="-121.9922" elevation="0.0"/></position>
+  <position><point lat="37.8094" lng="-121.9922" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804014" name="OR Sycamore Valley Rd">
   <description>Node 6804014</description>
@@ -262,7 +262,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8069" lng="-121.9911" elevation="0.0"/></position>
+  <position><point lat="37.8069" lng="-121.9911" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804015" name="Node 6804015">
   <description>Node 6804015</description>
@@ -278,7 +278,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8043" lng="-121.99" elevation="0.0"/></position>
+  <position><point lat="37.8043" lng="-121.99" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804016" name="Node 6804016">
   <description>Node 6804016</description>
@@ -294,7 +294,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8017" lng="-121.9889" elevation="0.0"/></position>
+  <position><point lat="37.8017" lng="-121.9889" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804017" name="Node 6804017">
   <description>Node 6804017</description>
@@ -310,7 +310,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7993" lng="-121.9876" elevation="0.0"/></position>
+  <position><point lat="37.7993" lng="-121.9876" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804018" name="Node 6804018">
   <description>Node 6804018</description>
@@ -326,7 +326,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7969" lng="-121.9858" elevation="0.0"/></position>
+  <position><point lat="37.7969" lng="-121.9858" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804019" name="Node 6804019">
   <description>Node 6804019</description>
@@ -342,7 +342,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7945" lng="-121.9842" elevation="0.0"/></position>
+  <position><point lat="37.7945" lng="-121.9842" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804020" name="Node 6804020">
   <description>Node 6804020</description>
@@ -358,7 +358,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.792" lng="-121.983" elevation="0.0"/></position>
+  <position><point lat="37.792" lng="-121.983" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804021" name="Node 6804021">
   <description>Node 6804021</description>
@@ -374,7 +374,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7895" lng="-121.9818" elevation="0.0"/></position>
+  <position><point lat="37.7895" lng="-121.9818" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804022" name="Node 6804022">
   <description>Node 6804022</description>
@@ -390,7 +390,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.787" lng="-121.9806" elevation="0.0"/></position>
+  <position><point lat="37.787" lng="-121.9806" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804023" name="Node 6804023">
   <description>Node 6804023</description>
@@ -406,7 +406,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7845" lng="-121.9792" elevation="0.0"/></position>
+  <position><point lat="37.7845" lng="-121.9792" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804024" name="FR Crow Canyon Rd">
   <description>Node 6804024</description>
@@ -423,7 +423,7 @@
       <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.782" lng="-121.9778" elevation="0.0"/></position>
+  <position><point lat="37.782" lng="-121.9778" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804025" name="Node 6804025">
   <description>Node 6804025</description>
@@ -439,7 +439,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7795" lng="-121.9766" elevation="0.0"/></position>
+  <position><point lat="37.7795" lng="-121.9766" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804026" name="Node 6804026">
   <description>Node 6804026</description>
@@ -455,7 +455,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.777" lng="-121.9753" elevation="0.0"/></position>
+  <position><point lat="37.777" lng="-121.9753" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804027" name="OR Crow Canyon Rd W">
   <description>Node 6804027</description>
@@ -474,7 +474,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7745" lng="-121.974" elevation="0.0"/></position>
+  <position><point lat="37.7745" lng="-121.974" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804028" name="OR Crow Canyon Rd E">
   <description>Node 6804028</description>
@@ -493,7 +493,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.772" lng="-121.9728" elevation="0.0"/></position>
+  <position><point lat="37.772" lng="-121.9728" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804029" name="Node 6804029">
   <description>Node 6804029</description>
@@ -509,7 +509,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7695" lng="-121.9715" elevation="0.0"/></position>
+  <position><point lat="37.7695" lng="-121.9715" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804030" name="Node 6804030">
   <description>Node 6804030</description>
@@ -525,7 +525,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.767" lng="-121.9701" elevation="0.0"/></position>
+  <position><point lat="37.767" lng="-121.9701" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804031" name="FR Bollinger Canyon Rd">
   <description>Node 6804031</description>
@@ -542,7 +542,7 @@
       <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7646" lng="-121.9685" elevation="0.0"/></position>
+  <position><point lat="37.7646" lng="-121.9685" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804032" name="Node 6804032">
   <description>Node 6804032</description>
@@ -558,7 +558,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7622" lng="-121.967" elevation="0.0"/></position>
+  <position><point lat="37.7622" lng="-121.967" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804033" name="OR Bollinger Canyon Rd W">
   <description>Node 6804033</description>
@@ -577,7 +577,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7598" lng="-121.9654" elevation="0.0"/></position>
+  <position><point lat="37.7598" lng="-121.9654" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804034" name="OR Bollinger Canyon Rd E">
   <description>Node 6804034</description>
@@ -596,7 +596,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7571" lng="-121.9636" elevation="0.0"/></position>
+  <position><point lat="37.7571" lng="-121.9636" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804035" name="Node 6804035">
   <description>Node 6804035</description>
@@ -612,7 +612,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.755" lng="-121.9623" elevation="0.0"/></position>
+  <position><point lat="37.755" lng="-121.9623" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804036" name="Node 6804036">
   <description>Node 6804036</description>
@@ -628,7 +628,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7526" lng="-121.9607" elevation="0.0"/></position>
+  <position><point lat="37.7526" lng="-121.9607" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804037" name="Node 6804037">
   <description>Node 6804037</description>
@@ -644,7 +644,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7502" lng="-121.9592" elevation="0.0"/></position>
+  <position><point lat="37.7502" lng="-121.9592" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804038" name="Node 6804038">
   <description>Node 6804038</description>
@@ -660,7 +660,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7478" lng="-121.9577" elevation="0.0"/></position>
+  <position><point lat="37.7478" lng="-121.9577" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804039" name="Node 6804039">
   <description>Node 6804039</description>
@@ -676,7 +676,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7453" lng="-121.9563" elevation="0.0"/></position>
+  <position><point lat="37.7453" lng="-121.9563" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804040" name="Node 6804040">
   <description>Node 6804040</description>
@@ -692,7 +692,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7429" lng="-121.9547" elevation="0.0"/></position>
+  <position><point lat="37.7429" lng="-121.9547" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804041" name="Node 6804041">
   <description>Node 6804041</description>
@@ -708,7 +708,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7405" lng="-121.9531" elevation="0.0"/></position>
+  <position><point lat="37.7405" lng="-121.9531" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804042" name="Node 6804042">
   <description>Node 6804042</description>
@@ -724,7 +724,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7382" lng="-121.9514" elevation="0.0"/></position>
+  <position><point lat="37.7382" lng="-121.9514" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804043" name="Node 6804043">
   <description>Node 6804043</description>
@@ -740,7 +740,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7358" lng="-121.9498" elevation="0.0"/></position>
+  <position><point lat="37.7358" lng="-121.9498" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804044" name="Node 6804044">
   <description>Node 6804044</description>
@@ -756,7 +756,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7335" lng="-121.9481" elevation="0.0"/></position>
+  <position><point lat="37.7335" lng="-121.9481" elevation="0.0"/></position>
 </node>
 <node type="F" id="6804045" name="Node 6804045">
   <description>Node 6804045</description>
@@ -772,7 +772,7 @@
       <weavingfactors>1.0, 0.0</weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7312" lng="-121.9463" elevation="0.0"/></position>
+  <position><point lat="37.7312" lng="-121.9463" elevation="0.0"/></position>
 </node>
 <node type="T" id="200216804" name="null">
   <description></description>
@@ -781,7 +781,7 @@
   </outputs>
   <inputs>
   </inputs>
-  <position><point lat="-37.8359" lng="-122.0079" elevation="0.0"/></position>
+  <position><point lat="37.8359" lng="-122.0079" elevation="0.0"/></position>
 </node>
 <node type="T" id="300216804" name="null">
   <description></description>
@@ -792,7 +792,7 @@
       <weavingfactors></weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8295" lng="-122.0017" elevation="0.0"/></position>
+  <position><point lat="37.8295" lng="-122.0017" elevation="0.0"/></position>
 </node>
 <node type="T" id="300516804" name="null">
   <description></description>
@@ -803,7 +803,7 @@
       <weavingfactors></weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8234" lng="-121.9943" elevation="0.0"/></position>
+  <position><point lat="37.8234" lng="-121.9943" elevation="0.0"/></position>
 </node>
 <node type="T" id="200616804" name="null">
   <description></description>
@@ -812,7 +812,7 @@
   </outputs>
   <inputs>
   </inputs>
-  <position><point lat="-37.8292" lng="-122.0009" elevation="0.0"/></position>
+  <position><point lat="37.8292" lng="-122.0009" elevation="0.0"/></position>
 </node>
 <node type="T" id="200916804" name="null">
   <description></description>
@@ -821,7 +821,7 @@
   </outputs>
   <inputs>
   </inputs>
-  <position><point lat="-37.8227" lng="-121.994" elevation="0.0"/></position>
+  <position><point lat="37.8227" lng="-121.994" elevation="0.0"/></position>
 </node>
 <node type="T" id="301016804" name="null">
   <description></description>
@@ -832,7 +832,7 @@
       <weavingfactors></weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.8136" lng="-121.9937" elevation="0.0"/></position>
+  <position><point lat="37.8136" lng="-121.9937" elevation="0.0"/></position>
 </node>
 <node type="T" id="201416804" name="null">
   <description></description>
@@ -841,7 +841,7 @@
   </outputs>
   <inputs>
   </inputs>
-  <position><point lat="-37.8104" lng="-121.9937" elevation="0.0"/></position>
+  <position><point lat="37.8104" lng="-121.9937" elevation="0.0"/></position>
 </node>
 <node type="T" id="302316804" name="null">
   <description></description>
@@ -852,7 +852,7 @@
       <weavingfactors></weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7782" lng="-121.9767" elevation="0.0"/></position>
+  <position><point lat="37.7782" lng="-121.9767" elevation="0.0"/></position>
 </node>
 <node type="T" id="202716804" name="null">
   <description></description>
@@ -861,7 +861,7 @@
   </outputs>
   <inputs>
   </inputs>
-  <position><point lat="-37.7777" lng="-121.9765" elevation="0.0"/></position>
+  <position><point lat="37.7777" lng="-121.9765" elevation="0.0"/></position>
 </node>
 <node type="T" id="202816804" name="null">
   <description></description>
@@ -870,7 +870,7 @@
   </outputs>
   <inputs>
   </inputs>
-  <position><point lat="-37.7762" lng="-121.9769" elevation="0.0"/></position>
+  <position><point lat="37.7762" lng="-121.9769" elevation="0.0"/></position>
 </node>
 <node type="T" id="303016804" name="null">
   <description></description>
@@ -881,7 +881,7 @@
       <weavingfactors></weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.76" lng="-121.9671" elevation="0.0"/></position>
+  <position><point lat="37.76" lng="-121.9671" elevation="0.0"/></position>
 </node>
 <node type="T" id="203316804" name="null">
   <description></description>
@@ -890,7 +890,7 @@
   </outputs>
   <inputs>
   </inputs>
-  <position><point lat="-37.76" lng="-121.9667" elevation="0.0"/></position>
+  <position><point lat="37.76" lng="-121.9667" elevation="0.0"/></position>
 </node>
 <node type="T" id="203416804" name="null">
   <description></description>
@@ -899,7 +899,7 @@
   </outputs>
   <inputs>
   </inputs>
-  <position><point lat="-37.7595" lng="-121.9656" elevation="0.0"/></position>
+  <position><point lat="37.7595" lng="-121.9656" elevation="0.0"/></position>
 </node>
 <node type="T" id="104506804" name="null">
   <description></description>
@@ -910,7 +910,7 @@
       <weavingfactors></weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7312" lng="-121.9463" elevation="0.0"/></position>
+  <position><point lat="37.7312" lng="-121.9463" elevation="0.0"/></position>
 </node>
 <node type="T" id="404506804" name="null">
   <description></description>
@@ -921,7 +921,7 @@
       <weavingfactors></weavingfactors>
     </input>
   </inputs>
-  <position><point lat="-37.7312" lng="-121.9463" elevation="0.0"/></position>
+  <position><point lat="37.7312" lng="-121.9463" elevation="0.0"/></position>
 </node>
 </NodeList>
 
