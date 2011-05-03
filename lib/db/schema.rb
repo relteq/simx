@@ -1,10 +1,6 @@
-## use sequel_pg in production
-
-## eventually use migrations instead
-
 ## what indexes do we need?
 
-require 'sequel'
+require 'sequel' ## use sequel_pg in production
 require 'db/util'
 
 # For testing, this is a stub.

@@ -27,7 +27,8 @@ module Aurora
           if network_id
             tln = Tln[network_id]
             if not tln
-              raise "xml specified nonexistent network_id: #{network_id}" ##
+              raise ImportError,
+                "xml specified nonexistent network_id: #{network_id}"
             end
             network.tln = tln
           
@@ -37,7 +38,7 @@ module Aurora
           end
           
           if ctx.scenario.tln and ctx.scenario.tln != network.tln
-            raise "wrong tln"
+            raise "internal error: wrong tln"
           end
         end
 

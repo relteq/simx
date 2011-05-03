@@ -23,7 +23,7 @@ module Aurora
       end
       
       ctx.do_deferred
-      scenario.save_changes ## needed?
+      scenario.save_changes
       scenario
     end
     

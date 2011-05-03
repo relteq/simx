@@ -14,7 +14,6 @@ module Aurora
       self.dt           = Float(ctrl_xml["dt"])
       self.use_sensors  = import_boolean(ctrl_xml["usesensors"], false)
       
-      ## should we pull some of this out so it can be seen in rails?
       self.parameters = ctrl_xml.xpath("*").map {|xml| xml.to_s}.join("\n")
       
       if /\S/ === ctrl_xml["network_id"]

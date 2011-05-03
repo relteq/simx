@@ -14,8 +14,6 @@ module Aurora
       self.time     = Float(event_xml["tstamp"])
       self.enabled  = import_boolean(event_xml["enabled"])
       
-      ## should we pull some of this out, like description, so it can be
-      ## seen in rails?
       self.parameters = event_xml.xpath("*").map {|xml| xml.to_s}.join("\n")
       
       if /\S/ === event_xml["network_id"]

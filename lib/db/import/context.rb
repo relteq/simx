@@ -1,4 +1,6 @@
 module Aurora
+  class ImportError < StandardError; end
+  
   # Exists during one scenario import operation.
   class ImportContext
     include Aurora
@@ -48,7 +50,7 @@ module Aurora
       network_xml_id or raise ArgumentError
       network_family_id_for_xml_id[network_xml_id] || Integer(network_xml_id)
     rescue ArgumentError
-      raise "invalid network id: #{network_xml_id.inspect}"
+      raise ImportError, "invalid network id: #{network_xml_id.inspect}"
     end
     
     # Returns the node family ID for the node specified in the given
@@ -58,7 +60,7 @@ module Aurora
       node_xml_id or raise ArgumentError
       node_family_id_for_xml_id[node_xml_id] || Integer(node_xml_id)
     rescue ArgumentError
-      raise "invalid node id: #{node_xml_id.inspect}"
+      raise ImportError, "invalid node id: #{node_xml_id.inspect}"
     end
     
     # Returns the link family ID for the link specified in the given
@@ -68,7 +70,7 @@ module Aurora
       link_xml_id or raise ArgumentError
       link_family_id_for_xml_id[link_xml_id] || Integer(link_xml_id)
     rescue ArgumentError
-      raise "invalid link id: #{link_xml_id.inspect}"
+      raise ImportError, "invalid link id: #{link_xml_id.inspect}"
     end
     
     def defer &action
