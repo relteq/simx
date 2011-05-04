@@ -1,9 +1,15 @@
 #!/usr/bin/env ruby
 
+opts = {
+  :log    => !!ARGV.delete("--log"),
+  :emit   => !!ARGV.delete("--emit"),
+  :rekey  => !!ARGV.delete("--rekey")
+}
+
 if ARGV.size == 0 or ARGV.size > 2 or ARGV.delete("-h")
   puts <<-END
   
-    Usage: #{$0} [--log] aurora_xml_file [db]
+    Usage: #{$0} [opts] aurora_xml_file [db]
     
     Read aurora_xml_file, parse according to aurora.xsd, and import into
     a database.
@@ -17,15 +23,17 @@ if ARGV.size == 0 or ARGV.size > 2 or ARGV.delete("-h")
     
     Options:
     
-      --log     print full SQL log to stderr
+      --log     Print full SQL log to stderr.
+      
+      --emit    Emit the xml before it is imported, but after rekeying.
+      
+      --rekey   Reassign numeric IDs in preparation for importing to DB.
+                Non-numeric IDs are unaffected and imported to new rows.
+                Use this when the input xml cannot be assumed to
+                have been exported from the db.
       
   END
   exit
-end
-
-if ARGV.delete("--log")
-  require 'logger'
-  DB.loggers << Logger.new($stderr)
 end
 
 xml_file = ARGV[0]
@@ -40,6 +48,11 @@ if db_url
   DB = Sequel.connect db_url
 else
   DB = Sequel.sqlite
+end
+
+if opts[:log]
+  require 'logger'
+  DB.loggers << Logger.new($stderr)
 end
 
 topdir = File.expand_path("..", File.dirname(__FILE__))
@@ -66,9 +79,12 @@ module Aurora
     include Parser
     
     attr_reader :src
+    attr_reader :opts
     attr_reader :scenario_xml
     attr_reader :scenario
     
+    # Set opts[:rekey] to true if the input xml cannot be assumed to have
+    # been exported from the db.
     def initialize src, opts = {}
       @src = src
       @opts = opts
@@ -79,6 +95,15 @@ module Aurora
     def import
       @scenario_xml = parse(src)
       
+      if opts[:rekey]
+        require 'db/import/util'
+        ImportUtil.rekey @scenario_xml
+      end
+      
+      if opts[:emit]
+        puts @scenario_xml
+      end
+      
       DB.transaction do
         @scenario = Scenario.create_from_xml(scenario_xml)
       end
@@ -88,11 +113,11 @@ module Aurora
     
   end
   
-  def self.import src
-    Importer.new(src).import
+  def self.import src, opts
+    Importer.new(src, opts).import
   end
 end
 
-sc_id = Aurora.import(File.read(xml_file))
+sc_id = Aurora.import(File.read(xml_file), opts)
 
 p Aurora::Scenario[sc_id]
