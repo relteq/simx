@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+db_url = ARGV[0]
+scenario_id = ARGV[1]
+
+topdir = File.expand_path("..", File.dirname(__FILE__))
+libdir = File.join(topdir, "lib")
+$LOAD_PATH.unshift libdir
+
+require 'sequel'
+require 'nokogiri'
+
+DB = Sequel.connect db_url
+
+require 'db/schema'
+require 'db/model/aurora'
+require 'db/export/scenario'
+
+module Aurora
+  module Exporter
+    def export_scenario id
+      scenario = Scenario[id]
+      scenario.to_xml
+    end
+  end
+  extend Exporter
+end
+
+puts Aurora.export_scenario(scenario_id)
