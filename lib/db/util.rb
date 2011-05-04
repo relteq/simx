@@ -91,6 +91,10 @@ module Aurora
       m.extend AuroraModelClassMethods
     end
   end
+
+  def import_id s ##
+    s && Integer(s) rescue nil
+  end
 end
 
 module AuroraModelClassMethods
@@ -108,17 +112,9 @@ module AuroraModelClassMethods
   #
   def create_with_id s
     id = import_id(s)
-    begin
-      create do |model|
-        model.id = id if id
-        yield model if block_given?
-      end
-    rescue Sequel::DatabaseError ## or should we just assume transaction?
-      if self[:id => id] ### :network_id too?
-        raise "#{self} already exists" ### delete and insert
-      else
-        raise
-      end
+    create do |model|
+      model.id = id if id
+      yield model if block_given?
     end
   end
 end

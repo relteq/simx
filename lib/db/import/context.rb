@@ -10,9 +10,6 @@ module Aurora
     # The scenario being imported.
     attr_reader :scenario
     
-    # Hash of values from existing scenario before import started, or nil.
-    attr_reader :prev_scenario_state
-    
     # Translation tables from xml ID to database ID.
     # These are only needed when the xml ID is non-numeric. Numeric IDs
     # go directly into the database without translation.
@@ -28,9 +25,8 @@ module Aurora
     attr_reader :begin_for_link_xml_id
     attr_reader :end_for_link_xml_id
 
-    def initialize scenario, prev_scenario_state
+    def initialize scenario
       @scenario = scenario
-      @prev_scenario_state = prev_scenario_state
       
       @tln_id_for_xml_id            = {}
       @network_family_id_for_xml_id = {}

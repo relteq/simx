@@ -15,11 +15,8 @@ module Aurora
     def self.create_from_xml scenario_xml, ctx = nil
       scenario = create_with_id scenario_xml["id"] do |sc|
         prev_scenario = Scenario[:id => sc.id]
-        prev_scenario_state = prev_scenario ? prev_scenario.values : {}
-        raise if prev_scenario ## for now, this mode is not handled
-        
-        ctx ||= ImportContext.new sc, prev_scenario_state
-        sc.import_xml scenario_xml, ctx
+        ctx ||= ImportContext.new sc
+        sc.import_xml scenario_xml, ctx, prev_scenario
       end
       
       ctx.do_deferred
@@ -27,17 +24,19 @@ module Aurora
       scenario
     end
     
-    def import_xml scenario_xml, ctx
+    def import_xml scenario_xml, ctx, prev_scenario
       set_name_from scenario_xml["name"], ctx
 
       descs = scenario_xml.xpath("description").map {|desc_xml| desc_xml.text}
       self.description = descs.join("\n")
       
+      if prev_scenario
+        prev_scenario.vehicle_types.each do |vtype|
+          vtype.destroy
+        end
+      end
       scenario_xml.xpath("settings/VehicleTypes/vtype").each do |vtype_xml|
         ctx.defer do
-          ##vehicle_types.each do |vtype|
-          ##  vtype.destroy
-          ##end
           VehicleType.create_from_xml vtype_xml, ctx
         end
       end
@@ -73,15 +72,25 @@ module Aurora
       end
 
       scenario_xml.xpath("EventSet").each do |event_set_xml|
+        eset_id = import_id(event_set_xml["id"])
+        prev_eset = eset_id && EventSet[eset_id]
+        if prev_eset
+          prev_eset.events.each do |event|
+p [event.pk, event.primary_key]
+p event
+            e = (event.network_event || event.node_event || event.link_event)
+p e
+            e.destroy
+            event.destroy
+          end
+          prev_eset.destroy ## factor into Set model
+        end
         self.event_set = EventSet.create_from_xml(event_set_xml, ctx)
       end
 
       scenario_xml.xpath("ControllerSet").each do |ctrl_set_xml|
         self.ctrl_set = ControllerSet.create_from_xml(ctrl_set_xml, ctx)
       end
-
-      ## what do we do if there are existing network, srp_set, vtypes,
-      ## etc.? Delete them?
     end
   end
 end
