@@ -1,3 +1,7 @@
+require 'db/export/controller_set'
+require 'db/export/event_set'
+require 'db/export/split_ratio_profile_set'
+
 module Aurora
   class Scenario
     def to_xml
@@ -13,6 +17,9 @@ module Aurora
                 xml.vtype(:name => v.name, :weight => v.weight)
               end
             }
+            SplitRatioProfileSet[self.srp_set_id].to_xml(xml)
+            ControllerSet[self.ctrl_set_id].to_xml(xml)
+            EventSet[self.event_set_id].to_xml(xml)
           }
         }
       end
