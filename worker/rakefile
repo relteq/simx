@@ -50,7 +50,7 @@ FileUtils.mkdir_p sock_dir
 #== Tasks
 
 instances = config.keys # unique set of names for all the worker deployments
-ops = %w{ update crontab run start stop restart stat log watch }
+ops = %w{ update update_aurora crontab run start stop restart stat log watch }
 
 desc "update and restart all workers specified in #{config_file}"
 task :all => ["all:update", "all:restart"]
@@ -102,6 +102,32 @@ DEFAULT_INSTANCE_CONFIG = {
   "runweb_port" => Integer(ENV["RUNWEB_PORT"] || runweb_config["port"])
 }
 
+def aurora_files
+  require 'worker/aurora-classpath'
+  Aurora::DEPLOYMENT_FILES
+end
+
+def update_aurora instance, instance_config
+  if DEPLOY_VERBOSELY
+    puts "updating aurora on #{instance}"
+  end
+  
+  if is_local? instance_config
+    puts "updating locally is a noop" if DEPLOY_VERBOSELY
+    return
+  end
+  
+  cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
+  userhost = [ cfg["user"], cfg["host"] ].join("@")
+  dest_dir = `ssh #{userhost} 'echo $AURORA_CLASS_PREFIX'`.chomp
+  if dest_dir.empty?
+    raise "No AURORA_CLASS_PREFIX on #{userhost}"
+  end
+  
+  sh "cd $AURORA_CLASS_PREFIX && rsync -Cavz --relative --delete" +
+     " #{aurora_files.join(" ")} #{userhost}:#{dest_dir}/"
+end
+
 def update instance, instance_config
   if DEPLOY_VERBOSELY
     puts "updating #{instance} with #{{instance => instance_config}.to_yaml}"
@@ -112,10 +138,6 @@ def update instance, instance_config
     return
   end
      
-  if DEPLOY_VERBOSELY
-    puts "updating #{instance} with #{{instance => instance_config}.to_yaml}"
-  end
-  
   cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
   
   dir = cfg["dir"]
