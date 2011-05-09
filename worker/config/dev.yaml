@@ -50,6 +50,16 @@ vii-dev:
   runweb_host:  relteq-db.dyndns.org
   runweb_port:  9097
   workers:
+    - run_class:    Run::Aurora
+      count:        4
+      group:        topl
+      user:         topl
+      engine:       simulator
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
     - run_class:    Run::Dummy
       count:        3
       group:        topl
@@ -72,13 +82,3 @@ vii-dev:
       speed:        1
       priority:     1
       retry_delay:  10
-
-#    - run_class:    Run::Aurora
-#      count:        3
-#      group:        topl
-#      user:         topl
-#      engine:       aurora
-#      cost:         0
-#      speed:        1
-#      priority:     1
-#      retry_delay:  10
