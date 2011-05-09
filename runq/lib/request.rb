@@ -96,6 +96,9 @@ module Runq
       # Engine-specified parameter
       attr_accessor :param
       
+      # Engine requested for this run.
+      attr_accessor :engine
+      
       # Index of this run in batch (may be used in combination with param
       # to select run-specific inputs).
       attr_accessor :batch_index

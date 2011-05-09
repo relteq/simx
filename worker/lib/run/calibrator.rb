@@ -9,7 +9,7 @@ module Run
     # Param hash sent from user via runq. Keys are:
     #
     #   aurora_config:  <url to aurora xml file OR actual xml string>
-    #   sensor_data:                      
+    #   sensor_data:
     #     district:   n                   
     #     year:       y (integer)         
     #     month:      m (integer, 1..12)  
@@ -17,7 +17,7 @@ module Run
     #
     attr_reader :param
     
-    # xml string
+    # xml string or url of xml string
     attr_reader :aurora_config
     
     # hash with keys district, year, month, day

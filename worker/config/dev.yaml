@@ -8,6 +8,16 @@ local:
   # runweb_host:  localhost
   # runweb_port:  env var or default
   workers:
+    - run_class:    Run::Aurora
+      count:        1
+      group:        topl
+      user:         topl
+      engine:       simulator
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
     - run_class:    Run::Dummy
       count:        3
       group:        topl

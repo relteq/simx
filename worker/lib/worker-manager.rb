@@ -7,6 +7,7 @@ require 'tmpdir'
 require 'yaml'
 
 require 'worker/worker'
+require 'worker/run/aurora'
 require 'worker/run/dummy'
 require 'worker/run/generic'
 require 'worker/run/calibrator'
@@ -109,18 +110,9 @@ class WorkerManager
   end
   
   def run_worker worker_spec
-    run_class = get_scoped_constant(worker_spec["run_class"])
-
     loop do
-      log.info "starting worker for spec:\n#{worker_spec.to_yaml}"
-      pid = fork do
-        $0 = "#{run_class} worker for #{instance_name}"
-        Worker.new(run_class, worker_spec).execute
-      end
-      log.info "started #{run_class} worker in pid=#{pid}"
-      Process.waitpid pid
-
-      if $?.exitstatus == 0
+      ok = run_worker_once worker_spec
+      if ok
         # no error, just responding to TERM
         break
       else
@@ -132,5 +124,60 @@ class WorkerManager
     log.error ["In thread for #{worker_spec["run_class"]}:",
       e.inspect, *e.backtrace].join("\n  ")
     ## how to report this to 'rake stat'?
+  end
+  
+  def run_worker_once worker_spec
+    log.info "starting worker for spec:\n#{worker_spec.to_yaml}"
+    
+    run_class = get_scoped_constant(worker_spec["run_class"])
+    
+    case interp = run_class::INTERPRETER
+    when "jruby"
+      run_worker_once_in_jruby worker_spec
+    when "ruby"
+      run_worker_once_in_ruby worker_spec
+    else
+      raise ArgumentError, "Unknown interpreter: #{interp}"
+    end
+  end
+
+  def run_worker_once_in_jruby worker_spec
+    require 'worker/aurora-classpath'
+
+    run_class = get_scoped_constant(worker_spec["run_class"])
+
+    cmd = "env RUBYLIB=$simx_lib:$RUBYLIB " +
+          "CLASSPATH=#{Aurora::CLASSPATH} " +
+          "jruby -e 'require \"worker/jruby-worker\"; JRubyWorker.new.run' " +
+          "2>&1"
+    
+    log.info "starting jruby with: #{cmd.inspect}"
+    
+    result = IO.popen(cmd, "w+") do |jruby|
+      log.info "started #{run_class} jruby worker in pid=#{jruby.pid}"
+      jruby.puts worker_spec.to_yaml
+      jruby.close_write
+      jruby.read
+    end
+    
+    case result
+    when /err/i ## better detection
+      log.warn "Error in jruby worker: #{result}"
+      return false
+    else
+      log.info "Finished jruby worker: #{result}" 
+      return true
+    end
+  end
+  
+  def run_worker_once_in_ruby worker_spec
+    run_class = get_scoped_constant(worker_spec["run_class"])
+    pid = fork do
+      $0 = "#{run_class} worker for #{instance_name}"
+      Worker.new(run_class, worker_spec).execute
+    end
+    log.info "started #{run_class} worker in pid=#{pid}"
+    Process.waitpid pid
+    return $?.exitstatus == 0
   end
 end

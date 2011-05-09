@@ -56,6 +56,9 @@ module Run
     
     attr_reader :runweb_port
     
+    # Engine requested for this run (worker may support several engines).
+    attr_reader :engine
+    
     # Engine-specific opts from local config.
     attr_reader :engine_opts
 
@@ -65,6 +68,8 @@ module Run
     # to 1.0 will not cause confusion).
     attr_reader :progress
 
+    INTERPRETER = "ruby"
+
     def initialize h
       @worker_event_queue = h[:event_queue] || raise
       @log                = h[:log]         || raise
@@ -72,6 +77,7 @@ module Run
       @batch_index        = h[:batch_index] || raise
       @runweb_host        = h[:runweb_host] || raise
       @runweb_port        = h[:runweb_port] || raise
+      @engine             = h[:engine]      || raise
       @engine_opts        = h[:engine_opts]
       
       @progress = :waiting
@@ -182,6 +188,7 @@ module Run
 
     # Typically called by subclass code when progress changes.
     def update
+      ## if progress > old progress + 5 or elapsed > 10s
       worker_event_queue << Event::Update.new
     end
 

@@ -245,9 +245,11 @@ def do_run instance, instance_config
   cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
   cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
   
+  simx_lib = ENV["simx_lib"] = File.expand_path(libdir)
+  
   sh "ruby",
       "-C", exec_dir,
-      "-I", File.expand_path(libdir),
+      "-I", simx_lib,
       ## don't use -r; damn rubygems
       "-e", "require '#{File.expand_path(svr_name)}'; WorkerManager.run",
       cfg_yml
@@ -275,8 +277,10 @@ def do_start instance, instance_config
     cfg = DEFAULT_INSTANCE_CONFIG.merge(h).merge(instance_config)
     cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
 
+    simx_lib = ENV["simx_lib"] = File.expand_path(libdir)
+
     args = [
-      "-I", File.expand_path(libdir),
+      "-I", simx_lib,
       "-e", "require '#{File.expand_path(svr_name)}'; WorkerManager.run",
       cfg_yml
     ]

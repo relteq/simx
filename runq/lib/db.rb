@@ -63,7 +63,7 @@ module Runq
         ## these should be ids of groups and users in redmine
         ## also, should be a n-to-n table of workers/users and workers/groups
 
-        text        :engine # "aurora", "dummy", etc.
+        text        :engine # "aurora", "dummy", etc. May be regex.
         float       :cost   # unit-less assessment of the cost of this worker
         float       :speed  # unit-less assessment of the speed of this worker
         float       :priority

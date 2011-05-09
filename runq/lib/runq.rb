@@ -239,7 +239,7 @@ module Runq
       runs = database[:runs].where(:id => worker[:run_id])
       runs.update(
         :frac_complete => 1.0,
-        :data => data
+        :data => data.to_yaml
         # leave the worker_id intact as record of who did the run
         # and to signify that the run is not waiting to start
       )
@@ -263,6 +263,7 @@ module Runq
 
       log.info "Finished run by worker #{worker_id}; " +
         "#{new_n_complete} of #{n_runs} runs done in batch #{batch_id}"
+      log.debug "Run result = #{data.inspect}"
     end
     
     # +req+ is WorkerAbortedRun
@@ -461,9 +462,10 @@ module Runq
       return false unless s && !s.closed?
       
       batch = database[:batches].where(:id => run[:batch_id]).first
-
+log.debug batch.to_yaml
+log.debug worker.to_yaml
       batch &&
-      (batch[:engine] == worker[:engine]) &&
+      (Regexp.new(worker[:engine]) === batch[:engine]) &&
       (!worker[:group] || batch[:group] == worker[:group]) &&
       (!worker[:user] || batch[:user] == worker[:user])
     end
@@ -482,6 +484,7 @@ module Runq
       
       msg = Request::RunqAssignRun.new(
         :param        => param,
+        :engine       => batch[:engine],
         :batch_index  => batch_index
       )
       ### TODO: export from database?

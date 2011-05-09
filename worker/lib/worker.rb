@@ -348,7 +348,7 @@ class Worker
         log.error "Requested to start a new run before current run done."
         return
       else
-        start_run req.param, req.batch_index
+        start_run req.param, req.engine, req.batch_index
       end
       
     when Runq::Request::RunqGetStatus
@@ -409,7 +409,8 @@ class Worker
     end
   end
   
-  def start_run param, batch_index
+  # +engine+ is the requested engine, which should match the worker's engine
+  def start_run param, engine, batch_index
     if current_run
       raise "Called start_run, but current_run is not nil."
     end
@@ -421,6 +422,7 @@ class Worker
       :batch_index    => batch_index,
       :runweb_host    => runweb_host,
       :runweb_port    => runweb_port,
+      :engine         => engine,
       :engine_opts    => engine_opts
     )
     
