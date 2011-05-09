@@ -462,8 +462,6 @@ module Runq
       return false unless s && !s.closed?
       
       batch = database[:batches].where(:id => run[:batch_id]).first
-log.debug batch.to_yaml
-log.debug worker.to_yaml
       batch &&
       (Regexp.new(worker[:engine]) === batch[:engine]) &&
       (!worker[:group] || batch[:group] == worker[:group]) &&

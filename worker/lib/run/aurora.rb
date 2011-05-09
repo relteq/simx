@@ -84,21 +84,27 @@ module Run
         @progress = pct / 100.0; update
       end
 
-      result = manager.run_application([input_xml], out, updater, update_period)
+      error = nil
+      begin
+        manager.run_application([input_xml], out, updater, update_period)
+      rescue => e
+        error = e
+      end
       
       output_str = File.read(outfile)
       output_xml = xml_dump && File.read(xmloutfile)
       
-      log.debug "result: #{result}"
       log.debug "output:\n#{output_str[0..200]}"
       log.debug "xml dump:\n#{output_xml[0..200]}"
       
       @results = {
-        "result_url"      => store(result),
+        "result"          => !error,
         "output_str_url"  => store(output_str),
         "output_xml_url"  => output_xml && store(output_xml, "xml")
       }
-      log.info "results stored at #{@results.to_yaml}"
+      @results["error"] = error.to_s if error
+      
+      log.info "results = #{@results.to_yaml}"
 
       @progress = 1; update
     end
