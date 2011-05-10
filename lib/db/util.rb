@@ -1,3 +1,5 @@
+require 'sequel'
+
 def create_table? t, db = DB, &bl
   db.table_exists? t or db.create_table t, &bl
 end

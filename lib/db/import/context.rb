@@ -1,3 +1,5 @@
+require 'db/util'
+
 module Aurora
   class ImportError < StandardError; end
   
