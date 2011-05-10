@@ -1,8 +1,8 @@
 This file explains:
 
-(A) how to set up an ad hoc worker installation (not deployed from a central simx source tree);
+(A) how to set up an ad hoc worker installation (not deployed from a central simx source tree) that connects to a given runq server;
 
-(B) how to set up a cental simx source tree and use it both to deploy the main simx daemons and to deploy the workers to multiple hosts.
+(B) how to set up a cental simx source tree and use it both to deploy the main simx daemons and to configure and deploy workers on multiple hosts.
 
 
 == Basic setup for all cases ==
@@ -17,12 +17,12 @@ This file explains:
 
   git clone gitolite:simx
   
-3. See the notes about ssh at the bottom of this document.
+3. See the notes about ssh at the bottom of this document, which may help to make remote operations faster.
 
 
 == Ad hoc worker installation ==
 
-In simx/worker, create a file called config.yaml, but don't add it to git. This file is present in deployments, but not in the repo, because the deployment task uses some logic to pick the correct per-deployment config section out of one fiel in the worker/config dir and send that to the remote host.
+In simx/worker, create a file called config.yaml, but don't add it to git. This file is present in deployments, but not in the repo, because the deployment task uses some logic to pick the correct per-deployment config section out of one fiel in the worker/config dir and send that to the remote host at simx/worker/config.yaml. In effect, you are making your simx source tree act as a worker deployment as well.
 
 The contents should be:
 
@@ -43,11 +43,19 @@ local:
       retry_delay:  10
 
 
-For comparison, see simx/worker/config/dev.yaml. Under deployment (`rake vii-dev`), the "vii-dev:" section becomes the "local:" section of simx-dev/worker/config on vii.path, and this looks very much like above. The file worker/config.yaml, if present, overrides anything in the worker/config dir.
+For comparison, see simx/worker/config/dev.yaml. Under deployment (`rake vii-dev`), the "vii-dev:" section becomes the "local:" section of simx-dev/worker/config on vii.path, and this looks very much like above. (There is also a local entry in simx/worker/config/dev.yaml, but it's checked into git, so you probably don't want to play with it in your source tree.)
 
-This seems to be a useful way of managing several deployments. See `rake --tasks` in the worker dir for more info. If you have multiple deployment targets, you will see a block of tasks for each one. If not, you will only see task blocks for "all" and "local".
+The file worker/config.yaml, if present, overrides anything in the worker/config/ dir.
 
-Now you can just `rake start` (alias for `rake local:start`) to start a WorkerManager and all the workers (just one in this case) that you configured. As they start, they try to connect to runq. WorkerManager runs as a daemon; to control it, use the other rake tasks (stop, restart, stat). There is no direct control of workers themselves. There is no reload task--if you change config, you need to restart. The run task is like start, but does not run as a daemon, so you'll see output on the terminal and you can ctrl-c to kill it.
+This seems to be a useful way of managing several deployments but also allowing ad hoc setups.
+
+See `rake --tasks` in the worker dir for a list of the operations that are available. If you have multiple deployment targets, you will see a block of tasks for each one. If not, you will only see task blocks for "all" and "local".
+
+Now you can just `rake start` (alias for `rake local:start`) to start a WorkerManager and all the workers (just one in this case) that you configured. As they start, they try to connect to runq (the one specified in the config).
+
+WorkerManager runs as a daemon; to control it, use the other rake tasks (stop, restart, stat). Note that start is a no-op if the daemon is already running. There is no direct control of workers themselves. There is no reload task--if you change config, you need to restart. Communication between the rakefile and the daemons goes via unix domain sockets that are located in simx/var/run.
+
+The run task is like start, but does not run as a daemon, so you'll see output on the terminal and you can ctrl-c to kill it.
 
 Now you should be able to send batch requests to runweb (on relteq-db) and see them executed locally. Remember to use the same user name and group as the worker is configured for.
 
@@ -59,22 +67,22 @@ You can get at the daemon's log files in three ways:
 
 - `rake watch` runs tail on the log file in a similar mode
 
+All of these rake tasks work on remotely running processes as well, which is very useful for quickly checking logs. For example, you can watch log events as they occur on vii-dev (which may be distinct from vii-pro etc., but might be on the same host) by simply saying `rake vii-dev:watch`. You can search for errors by doing `rake vii-dev:log` and using less's built-in regex searching functions. This leads us to the next section...
+
 
 == Setting up an installation for managing remote deployments ==
 
-All of these rake tasks work on remotely running processes as well, which is very useful for quickly checking logs. For example, you can watch log events as they occur on vii-dev (which may be distinct from vii-pro etc., but might be on the same host) by simply saying `rake vii-dev:watch`. you can search for errors by doing `rake vii-dev:log` and using less's built-in regex searching functions.
+If you want an installation of simx that can be used to manage remote deployments, as well as the local one, you will need to do one of the following:
 
-If you want an installation of simx that can be used to manage remote deployments like this, as well as the local one, you will need to do one of the following:
+1. If you want to switch between branches and have the current branch determine which set of deployments (for example, development vs. production) you are targeting, you need to do:
 
-1. if you want to switch between branches and have the current branch determine which deployment you are targeting, you need to do:
-
-rake git:init
+  rake git:init
 
 in the top simx dir (not worker--they have different rakefiles). This sets up a git hook so that when you checkout a branch, the symlink simx/config.yaml (not to be confused with the config stuff under simx/worker) points to the correct file in simx/config. This contains some global config that has to be different for development, production, etc.
 
 To configure your workers, use the appropriate file under worker/config/. Make sure you do not have a worker/config.yaml.
 
-2. Or, more simply, if you just want to manage one set of deployments (possbily to many hosts) you can do like you did in the worker/config.yaml case: instead of a symlink, just create your own file simx/config.yaml using the simx/config/ files as a guide.
+2. Or, more simply, if you just want to manage one set of deployments (possibly to many hosts), but do not care about development vs. production, then you can do like you did in the worker/config.yaml case: instead of a symlink, just create your own file simx/config.yaml using the simx/config/ files as a guide. (There's no need to invoke git:init.)
 
 Use `rake config:show` to check what simx thinks the current config settings are. This should verify that your file is the one being read.
 
@@ -84,17 +92,22 @@ Now you should be able to fire the whole thing off with:
 
   rake remote  # deploy code and start runq and runweb
 
+to start runq and runweb. And to start the workers:
+
   cd workers
+
   rake all:update_aurora
     # deploy aurora jars to all remote worker installations
     # note that AURORA_CLASS_PREFIX must be defined on the remote system as
     # well as on the local one (it may be have a different value in each host)
+
   rake all
     # deploy worker code and config, and start the workers that are
     # configured for each host in the worker/config.yaml
 
 If you just want to start workers on one deployment target, say vii-dev:
 
+  cd workers
   rake vii-dev:start
   
 and so on.
@@ -113,23 +126,25 @@ You can watch runq and runweb logs like this:
   cd runweb
   rake watch
 
+In addition to log files, there are also var/log/*.err. These files are sometimes written to when an error occurs before logging is set up.
+
 
 == Making your daemons persist across a system boot ==
 
-There is one more important set of rake tasks: the ones for setting up cron jobs so that the daemons get started after a reboot on each remote host. This is done with cron because non-root users can do that, but they cannot define init scripts. For the simx daemons:
+There is one more important set of rake tasks: the ones for setting up cron jobs so that the daemons get started after a reboot on each remote host. This is done with cron because non-root users can do that, but they cannot define init scripts. None of the simx functionality requires root access. For the simx daemons:
 
   rake remote:crontab
 
-will set this up for you on your specified host where runq and runweb are deployed.
+will set this up for you on your host (specified in config.yaml) where runq and runweb are deployed.
 
 For the workers:
 
   cd worker
   rake all:crontab
 
-will do the same for workers on all worker hosts.
+will do the same for the WorkerManager on all worker hosts.
 
-This only has to be done once per host.
+This only has to be done once per host, and you don't have to do it separately when you add more workers. They are started by WorkerManager.
 
 
 == Note on ssh ==
@@ -140,11 +155,10 @@ Since the deployment process uses ssh and rsync, it will run much more smoothly 
 
 2. set up your .ssh/config so that one ssh session is used as a master, and subsequent requests are tunneled through it, without the setup delay. To do this, you must
 
-(a): add the following in your .ssh/config:
+(a) add the following in your .ssh/config:
 
 Host *
   ControlMaster auto
   ControlPath ~/tmp/.ssh/%r@%h:%p
 
-(b) as you start working, open one ssh session to each remote host you work with, and leave it open as long as you are working.
-
+(b) as you start working, open one ssh session to each remote host you work with, and leave it open as long as you are working. You can just minimize these terminal windows and forget them.
