@@ -463,7 +463,7 @@ module Runq
       
       batch = database[:batches].where(:id => run[:batch_id]).first
       batch &&
-      (Regexp.new(worker[:engine]) === batch[:engine]) &&
+      (/^(?:#{worker[:engine]})$/) === batch[:engine]) &&
       (!worker[:group] || batch[:group] == worker[:group]) &&
       (!worker[:user] || batch[:user] == worker[:user])
     end
