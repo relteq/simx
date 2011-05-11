@@ -11,29 +11,32 @@ module Run
   class Aurora < Base
     # Param hash sent from user via runq. Keys are:
     #
-    #   aurora_config:  <url to aurora xml file OR actual xml string>
     #   update_period:  <integer, in seconds>
-    #   xml_dump:       <true or false; default is false>
+    #   inputs:         <array of urls of input files OR strings>
+    #   output_types:   <array of strings specifying content-types of outputs>
+    #
+    # It is up to the run requestor to make sure that the input and output
+    # specifications make sense with the requested engine.
     #
     attr_reader :param
-    
-    # xml string or url of xml string
-    attr_reader :aurora_config
     
     # period between updates in seconds
     attr_reader :update_period
     
-    # Should the final state of the run (if this is simulation) be
-    # dumped to xml as part of the results?
-    attr_reader :xml_dump
+    # The inputs entries are assumed to be urls if they are one line.
+    # Otherwise, the entry is assumed to be the complete input.
+    attr_reader :inputs
+    
+    # Array of mime types that are expected from the engine.
+    attr_reader :output_types
     
     INTERPRETER = "jruby"
 
     def initialize *args
       super
-      @aurora_config = param["aurora_config"]
       @update_period = param["update_period"] || 10
-      @xml_dump = param["xml_dump"]
+      @inputs = param["inputs"] || []
+      @output_types = param["output_types"] || []
     end
     
     def aurora
@@ -44,8 +47,23 @@ module Run
       case engine
       when 'simulator'
         aurora.service.SimulationManager.new
+      when 'calibrator'
+        aurora.service.CalibrationManager.new
       else
         raise "unknown engine: #{engine}"
+      end
+    end
+    
+    def input_strings
+      @input_strings ||= inputs.map do |input|
+        case input
+        when /\n/ # multiple lines; assume xml
+          log.info "assuming xml given: #{input[0..50]}"
+          input
+        else # single line, assume url
+          log.info "reading url: #{input}"
+          open(input) {|f| f.read} ## local file?
+        end
       end
     end
 
@@ -59,22 +77,9 @@ module Run
     
     def work_in_dir dir
       @progress = 0; update
-
-      case aurora_config
-      when /\n/ # multiple lines; assume xml
-        log.info "assuming xml given: #{aurora_config[0..50]}"
-        input_xml = aurora_config
-      else # single line, assume url
-        log.info "reading url: #{aurora_config}"
-        input_xml = open(aurora_config) {|f| f.read}
-      end
-
-      outfile = File.join(dir, "aurora.out")
-      out = [outfile]
-
-      if xml_dump
-        xmloutfile = File.join(dir, "aurora.xml")
-        out << xmloutfile
+      
+      output_files = (0...output_types.size).map do |i|
+        File.join(dir, "#{i}.out")
       end
 
       updater = ProgressUpdater.new do |pct|
@@ -82,23 +87,31 @@ module Run
         @progress = pct / 100.0; update
       end
 
-      error = nil
-      begin
-        manager.run_application([input_xml], out, updater, update_period)
-      rescue => e
-        error = e
+      error =
+        begin
+          manager.run_application(input_strings, output_files,
+            updater, update_period)
+        rescue => e
+          e
+        else
+          nil
+        end
+      
+      output_urls = output_files.zip(output_types).map do |file, type|
+        data = begin
+          File.read(file)
+        rescue => e
+          log.warn "output file #{file} could not be read: #{e}"
+          ""
+        end
+        
+        log.debug "output #{file}:\n#{data[0..200]}"
+        store(data, type)
       end
       
-      output_str = File.read(outfile)
-      output_xml = xml_dump && File.read(xmloutfile)
-      
-      log.debug "output:\n#{output_str[0..200]}"
-      log.debug "xml dump:\n#{output_xml[0..200]}"
-      
       @results = {
-        "result"          => !error,
-        "output_str_url"  => store(output_str),
-        "output_xml_url"  => output_xml && store(output_xml, "xml")
+        "ok"          => !error,
+        "output_urls" => output_urls
       }
       @results["error"] = error.to_s if error
       
@@ -117,24 +130,13 @@ module Run
       runweb_password = ENV["RUNWEB_PASSWORD"] || "topl5678"
 
       expiry = 600 # seconds
-      ext = type if type
-
       url = "http://" +
         "#{runweb_host}:#{runweb_port}/store?" +
         "expiry=#{expiry}"
-      url << "&ext=#{ext}" if ext
-      
-      mime =
-        case type
-        when nil
-          "text/plain"
-        when "xml", :xml
-          :xml
-        end
-
-      log.info "requesting storage from #{url}"
+            
+      log.info "requesting storage from #{url} with type #{type}"
       rsrc = RestClient::Resource.new(url, runweb_user, runweb_password)
-      response = rsrc.post data, :content_type => mime
+      response = rsrc.post data, :content_type => type
       ## ok to go thru runweb?
       ## maybe a separate service, so runweb is not blocked?
       ## do these requests in parallel, and runweb uses async_post
