@@ -456,16 +456,51 @@ module Runq
     end
 
     def have_match worker, run
+      log.debug {
+        "checking worker #{worker.inspect} for match with run #{run.inspect}"
+      }
+      
       ## may need more sophisticated logic here
       ## should we push logic into the sequel query?
+      
       s = socket_for_worker[worker[:id]]
-      return false unless s && !s.closed?
+      unless s && !s.closed?
+        log.debug {"worker #{worker[:id]} has disconnected"}
+        return false
+      end
       
       batch = database[:batches].where(:id => run[:batch_id]).first
-      batch &&
-      ((/^(?:#{worker[:engine]})$/) === batch[:engine]) &&
-      (!worker[:group] || batch[:group] == worker[:group]) &&
-      (!worker[:user] || batch[:user] == worker[:user])
+      
+      unless batch
+        log.debug "missing batch -- foreign key constraint failed"
+        return false
+      end
+      
+      unless /^(?:#{worker[:engine]})$/ === batch[:engine]
+        log.debug {
+          "engine mismatch: worker accepts #{worker[:engine].inspect} but " +
+          "batch requests #{batch[:engine].inspect}"
+        }
+        return false
+      end
+      
+      if worker[:group] and batch[:group] != worker[:group]
+        log.debug {
+          "group mismatch: worker accepts #{worker[:group].inspect} but " +
+          "batch requests #{batch[:group].inspect}"
+        }
+        return false
+      end
+
+      if worker[:user] and batch[:user] != worker[:user]
+        log.debug {
+          "user mismatch: worker accepts #{worker[:user].inspect} but " +
+          "batch requests #{batch[:user].inspect}"
+        }
+        return false
+      end
+      
+      return true
     end
     
     def send_run_to_worker run, worker
