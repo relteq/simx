@@ -52,11 +52,9 @@ module Run
     def work
       require 'rest-client' # only need this gem in java
       require 'worker/updater' # this depends on java
-###      Dir.mktmpdir "aurora-" do |dir|
-###        work_in_dir dir
-###      end
-      dir = Dir.mktmpdir "aurora-"
-      work_in_dir dir
+      Dir.mktmpdir "aurora-" do |dir|
+        work_in_dir dir
+      end
     end
     
     def work_in_dir dir
@@ -139,6 +137,7 @@ module Run
       response = rsrc.post data, :content_type => mime
       ## ok to go thru runweb?
       ## maybe a separate service, so runweb is not blocked?
+      ## do these requests in parallel, and runweb uses async_post
       
       return "#{response.body}" ## use to_s instead?
     end
