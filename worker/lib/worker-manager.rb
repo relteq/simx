@@ -153,19 +153,19 @@ class WorkerManager
     
     log.info "starting jruby with: #{cmd.inspect}"
     
-    result = IO.popen(cmd, "w+") do |jruby|
-      log.info "started #{run_class} jruby worker in pid=#{jruby.pid}"
+    result, pid = IO.popen(cmd, "r+") do |jruby|
+      log.info "started #{run_class} jruby worker pid=#{jruby.pid}"
       jruby.puts worker_spec.to_yaml
       jruby.close_write
-      jruby.read
+      [jruby.read, jruby.pid]
     end
     
     case result
     when /err/i ## better detection
-      log.warn "Error in jruby worker: #{result}"
+      log.warn "Error in jruby worker pid=#{pid}: #{result}"
       return false
     else
-      log.info "Finished jruby worker: #{result}" 
+      log.info "Finished jruby worker pid=#{pid}: #{result}" 
       return true
     end
   end
@@ -176,8 +176,10 @@ class WorkerManager
       $0 = "#{run_class} worker for #{instance_name}"
       Worker.new(run_class, worker_spec).execute
     end
-    log.info "started #{run_class} worker in pid=#{pid}"
+    log.info "started #{run_class} worker pid=#{pid}"
     Process.waitpid pid
-    return $?.exitstatus == 0
+    result = ($?.exitstatus == 0)
+    log.info "Finished ruby worker pid=#{pid}: result=#{result}" 
+    return result
   end
 end
