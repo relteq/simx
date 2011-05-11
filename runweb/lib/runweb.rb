@@ -278,23 +278,27 @@ get "/batch/:batch_id/run/:run_idx/result" do
   LOGGER.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
-  run = resp["runs"][run_idx] ### handle nil
-  if run[:frac_complete] == 1.0
-    run[:data]
+  run = resp["runs"][run_idx]
+  if run
+    if run[:frac_complete] == 1.0
+      run[:data]
+    else
+      # note: /^not finished/ is used by network editor to test for failure
+      "not finished: batch_id=#{batch_id}, run_idx=#{run_idx}, " +
+        run[:data] ## ok?
+    end
   else
-    # note: /^not finished/ is used by network editor to test for failure
-    return "not finished: batch_id=#{batch_id}, run_idx=#{run_idx}, " +
-      run[:data] ## ok?
+    "Error: No such run." ## 404?
   end
 end
 
 # /store?expiry=100&ext=xml
 #
-# Request s3 storage; returns the s3 key, which is
-# a md5 hash of the data, plus the specified file extension, if any, which
-# s3 uses to make a content-type header. Expiry is in seconds. Default is
-# none. Expiry is not guaranteed, but will not happen before the specified
-# number of seconds has elapsed.
+# Request s3 storage; returns the s3 key, which is a md5 hash of the data,
+# plus the specified file extension, if any, which s3 uses to make a
+# content-type header. Or an explixit Content-Type header can be given.
+# Expiry is in seconds. Default is none. Expiry is not guaranteed, but will
+# not happen before the specified number of seconds has elapsed.
 apost "/store" do
   protected!
   s3
@@ -312,6 +316,7 @@ apost "/store" do
       end
 
     ext = params["ext"]
+    content_type = request.content_type
     data = request.body.read
 
     require 'digest/md5'
@@ -323,16 +328,21 @@ apost "/store" do
       key << "." << ext
     end
 
-    LOGGER.debug "Storing at #{key} with expiry=#{expiry.inspect}: " +
-      data[0..50]
-
     opts = {
       :access => :public_read
     }
+    
+    if content_type
+      opts[:content_type] = content_type
+    end
+    
     if expiry
       opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
       ### need daemon to expire things
     end
+
+    LOGGER.debug {"Storing at #{key} with opts=#{opts.inspect}: " +
+      data[0..50]}
 
     AWS::S3::S3Object.store key, data, RUNWEB_S3_BUCKET, opts
 
