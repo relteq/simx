@@ -50,6 +50,7 @@ module Aurora
 
         ref_attr = "#{t}_id"
         scenario_xml.xpath("//*").each do |ref_elt|
+            ## use xpath to detect presence of ref_attr
           id = numeric(ref_elt[ref_attr])
           if id
             elt = num_id_elt[id]
@@ -64,19 +65,15 @@ module Aurora
 
       def make_tmp_ids num_id_elt, tmp_id_elt
         u = 1
-        uniq_in_hash = proc do |h,k|
-          new_key = "new_#{k}_#{u}"
-          while h[new_key]
-            u += 1
-            new_key = "new_#{k}_#{u}"
-          end
-          new_key
-        end
-
         delta = {}
 
         num_id_elt.each do |id, elt|
-          new_tmp_id = uniq_in_hash[tmp_id_elt, id]
+          new_tmp_id = "new_#{id}_#{u}"
+          while tmp_id_elt[new_tmp_id]
+            u += 1
+            new_tmp_id = "new_#{id}_#{u}"
+          end
+          
           tmp_id_elt[new_tmp_id] = elt
           elt["id"] = new_tmp_id
           delta[id] = new_tmp_id
