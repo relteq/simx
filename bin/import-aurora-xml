@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
 opts = {
-  :log    => !!ARGV.delete("--log"),
-  :emit   => !!ARGV.delete("--emit"),
-  :rekey  => !!ARGV.delete("--rekey")
+  :log      => !!ARGV.delete("--log"),
+  :emit     => !!ARGV.delete("--emit"),
+  :rekey    => !!ARGV.delete("--rekey"),
+  :dry_run  => !!ARGV.delete("--dry-run")
 }
 
 if ARGV.size == 0 or ARGV.size > 2 or ARGV.delete("-h")
@@ -12,7 +13,7 @@ if ARGV.size == 0 or ARGV.size > 2 or ARGV.delete("-h")
     Usage: #{$0} [opts] aurora_xml_file [db]
     
     Read aurora_xml_file, parse according to aurora.xsd, and import into
-    a database.
+    a database. Print the scenario id to stderr.
     
     The database is either an in-memory sqlite3 database (for testing) or
     specified by the db argument, which may be any valid database connection
@@ -26,6 +27,8 @@ if ARGV.size == 0 or ARGV.size > 2 or ARGV.delete("-h")
       --log     Print full SQL log to stderr.
       
       --emit    Emit the xml before it is imported, but after rekeying.
+      
+      --dry-run Quit before sending anything to the database.
       
       --rekey   Reassign numeric IDs in preparation for importing to DB.
                 Non-numeric IDs are unaffected and imported to new rows.
@@ -104,6 +107,10 @@ module Aurora
         puts @scenario_xml
       end
       
+      if opts[:dry_run]
+        return
+      end
+      
       DB.transaction do
         @scenario = Scenario.create_from_xml(scenario_xml)
       end
@@ -120,4 +127,4 @@ end
 
 sc_id = Aurora.import(File.read(xml_file), opts)
 
-p Aurora::Scenario[sc_id]
+$stderr.puts Aurora::Scenario[sc_id]
