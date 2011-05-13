@@ -15,10 +15,14 @@ module Aurora
 
     one_to_many :vehicle_types
 
-    def before_destroy
+    def clear_members
       vehicle_types.each do |vtype|
         vtype.destroy
       end
+    end
+    
+    def before_destroy
+      clear_members
       super
     end
   end

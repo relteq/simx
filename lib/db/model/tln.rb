@@ -21,12 +21,16 @@ module Aurora
     one_to_many :event_set, :class => EventSet,             :key => k
     one_to_many :ctrl_set,  :class => ControllerSet,        :key => k
 
-    def before_destroy
+    def clear_members
       [sensors, routes, links, nodes, networks].each do |models|
         models.each do |model|
           model.destroy
         end
       end
+    end
+
+    def before_destroy
+      clear_members
       super
     end
   end

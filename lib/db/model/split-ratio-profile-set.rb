@@ -6,10 +6,14 @@ module Aurora
     one_to_many :scenarios, :key => :srp_set_id
     one_to_many :srps, :key => :srp_set_id, :class => SplitRatioProfile
 
-    def before_destroy
+    def clear_members
       srps.each do |srp|
         srp.destroy
       end
+    end
+    
+    def before_destroy
+      clear_members
       super
     end
   end

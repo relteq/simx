@@ -6,10 +6,14 @@ module Aurora
     one_to_many :scenarios, :key => :cp_set_id
     one_to_many :cps, :key => :cp_set_id, :class => CapacityProfile
 
-    def before_destroy
+    def clear_members
       cps.each do |cp|
         cp.destroy
       end
+    end
+    
+    def before_destroy
+      clear_members
       super
     end
   end

@@ -6,10 +6,14 @@ module Aurora
     one_to_many :scenarios, :key => :ctrl_set_id
     one_to_many :controllers, :key => :ctrl_set_id
 
-    def before_destroy
+    def clear_members
       controllers.each do |controller|
         controller.destroy
       end
+    end
+    
+    def before_destroy
+      clear_members
       super
     end
   end
