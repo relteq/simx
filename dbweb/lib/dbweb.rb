@@ -73,6 +73,7 @@ helpers do
     end
   end
   
+  ### should have rekey option
   def import_xml xml_data
     ###
     [table, id]
