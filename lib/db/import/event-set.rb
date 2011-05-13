@@ -15,6 +15,8 @@ module Aurora
     end
 
     def import_xml event_set_xml, ctx
+      clear_members
+      
       set_name_from event_set_xml["name"], ctx
 
       descs = event_set_xml.xpath("description").map {|desc_xml| desc_xml.text}

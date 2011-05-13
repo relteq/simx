@@ -16,6 +16,8 @@ module Aurora
     end
 
     def import_xml ic_set_xml, ctx
+      clear_members
+      
       set_name_from ic_set_xml["name"], ctx
 
       descs = ic_set_xml.xpath("description").map {|desc_xml| desc_xml.text}
