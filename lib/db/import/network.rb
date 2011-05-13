@@ -1,14 +1,50 @@
+require 'set'
+
 require 'db/import/node'
 require 'db/import/link'
 require 'db/import/route'
 require 'db/import/sensor'
 
 module Aurora
+  class Tln
+    include Aurora
+
+    # returns [ ["nodes", <set of node ids>], ["links", ...], ... ]
+    def select_members
+      [:networks, :links, :nodes, :routes, :sensors].map do |table|
+        [table, Set.new(send(table).map{|m| m.id})]
+      end
+    end
+  end
+  
   class Network
     include Aurora
     
     def self.create_from_xml network_xml, ctx, parent = nil
-      create_with_id network_xml["id"] do |network|
+      members_before = nil
+
+      if parent
+        tln = parent.tln
+      
+      else # this network "is" a tln
+        network_id = import_id(network_xml["network_id"])
+        if network_id
+          tln = Tln[network_id]
+          if tln
+            members_before = tln.select_members
+          else
+            tln = Tln.create do |tln|
+              tln.id = network_id
+            end
+          end
+        
+        else
+          tln = Tln.create
+          ctx.tln_id_for_xml_id[network_xml["network_id"]] = tln.id
+        end
+      end
+
+      network = create_with_id network_xml["id"], tln.id do |network|
         if network.id
           NetworkFamily[network.id] or
             NetworkFamily.create {|nf| nf.id = network.id}
@@ -17,33 +53,19 @@ module Aurora
           ctx.network_family_id_for_xml_id[network_xml["id"]] = nf.id
         end
         
-        if parent
-          network.tln = parent.tln
-          network.parent = parent
-
-        else # this network "is" a tln
-          network_id = import_id(network_xml["network_id"])
-
-          if network_id
-            tln = Tln[network_id]
-            if not tln
-              raise ImportError,
-                "xml specified nonexistent network_id: #{network_id}"
-            end
-            network.tln = tln
-          
-          else
-            tln = network.tln = Tln.create
-            ctx.tln_id_for_xml_id[network_xml["network_id"]] = tln.id
-          end
-          
-          if ctx.scenario.tln and ctx.scenario.tln != network.tln
-            raise "internal error: wrong tln"
-          end
-        end
-
+        network.tln = tln
+        network.parent = parent if parent
         network.import_xml network_xml, ctx, parent
       end
+      
+      if members_before
+        members_after = tln.select_members
+        members_before.zip(members_after).each do |(table, set0), (_, set1)|
+          DB[table].where(:id => (set0 - set1).to_a).delete
+        end
+      end
+      
+      return network
     end
     
     def import_xml network_xml, ctx, parent = nil

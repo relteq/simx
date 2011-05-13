@@ -112,11 +112,30 @@ module AuroraModelClassMethods
   #
   # Returns model.
   #
-  def create_with_id s
+  # If the model already exists, yield and return it.
+  #
+  def create_with_id s, network_id = nil
     id = import_id(s)
-    create do |model|
-      model.id = id if id
-      yield model if block_given?
+    
+    if id
+      model =
+        network_id ?
+          self[:id => id, :network_id => network_id] :
+          self[:id => id]
+    end
+
+    if model
+      if block_given?
+        yield model
+        model.save_changes
+      end
+      model
+    
+    else
+      create do |model|
+        model.id = id if id
+        yield model if block_given?
+      end
     end
   end
 end
