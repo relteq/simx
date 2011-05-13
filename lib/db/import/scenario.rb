@@ -14,9 +14,8 @@ module Aurora
     
     def self.create_from_xml scenario_xml, ctx = nil
       scenario = create_with_id scenario_xml["id"] do |sc|
-        prev_scenario = Scenario[:id => sc.id]
         ctx ||= ImportContext.new sc
-        sc.import_xml scenario_xml, ctx, prev_scenario
+        sc.import_xml scenario_xml, ctx
       end
       
       ctx.do_deferred
@@ -24,17 +23,14 @@ module Aurora
       scenario
     end
     
-    def import_xml scenario_xml, ctx, prev_scenario
+    def import_xml scenario_xml, ctx
+      clear_members
+      
       set_name_from scenario_xml["name"], ctx
 
       descs = scenario_xml.xpath("description").map {|desc_xml| desc_xml.text}
       self.description = descs.join("\n")
       
-      if prev_scenario
-        prev_scenario.vehicle_types.each do |vtype|
-          vtype.destroy
-        end
-      end
       scenario_xml.xpath("settings/VehicleTypes/vtype").each do |vtype_xml|
         ctx.defer do
           VehicleType.create_from_xml vtype_xml, ctx
@@ -72,19 +68,6 @@ module Aurora
       end
 
       scenario_xml.xpath("EventSet").each do |event_set_xml|
-        eset_id = import_id(event_set_xml["id"])
-        prev_eset = eset_id && EventSet[eset_id]
-        if prev_eset
-          prev_eset.events.each do |event|
-p [event.pk, event.primary_key]
-p event
-            e = (event.network_event || event.node_event || event.link_event)
-p e
-            e.destroy
-            event.destroy
-          end
-          prev_eset.destroy ## factor into Set model
-        end
         self.event_set = EventSet.create_from_xml(event_set_xml, ctx)
       end
 
