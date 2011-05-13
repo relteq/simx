@@ -110,6 +110,8 @@ module AuroraModelClassMethods
   #    model.name = "foo_#{model.id}"
   #  end
   #
+  # Returns model.
+  #
   def create_with_id s
     id = import_id(s)
     create do |model|
