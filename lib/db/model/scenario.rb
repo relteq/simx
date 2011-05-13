@@ -14,5 +14,12 @@ module Aurora
     many_to_one :ctrl_set,  :class => ControllerSet
 
     one_to_many :vehicle_types
+
+    def before_destroy
+      vehicle_types.each do |vtype|
+        vtype.destroy
+      end
+      super
+    end
   end
 end

@@ -11,5 +11,10 @@ module Aurora
     many_to_many :links, :join_table => :route_links,
       :left_key  => [:network_id, :route_id],
       :right_key => [:network_id, :link_id]
+
+    def before_destroy
+      DB[:route_links].filter(:route_id => id).delete
+      super
+    end
   end
 end

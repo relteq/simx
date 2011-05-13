@@ -2,9 +2,14 @@ module Aurora
   class Event
     many_to_one :event_set, :key => :event_set_id
     
-    one_to_one :network_event, :key => :event_id
-    one_to_one :node_event, :key => :event_id
-    one_to_one :link_event, :key => :event_id
+    one_to_one :network_event,  :key => :event_id
+    one_to_one :node_event,     :key => :event_id
+    one_to_one :link_event,     :key => :event_id
+
+    def before_destroy
+      (network_event || node_event || link_event).destroy
+      super
+    end
   end
 
   class NetworkEvent

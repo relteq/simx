@@ -5,6 +5,12 @@ module Aurora
     
     one_to_many :scenarios, :key => :ic_set_id
     one_to_many :ics, :key => :ic_set_id, :class => InitialCondition
+
+    def before_destroy
+      ics.each do |ic|
+        ic.destroy
+      end
+      super
+    end
   end
 end
-
