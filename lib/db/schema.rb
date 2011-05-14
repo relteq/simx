@@ -408,21 +408,18 @@ create_table? :events do
 end
 
 create_table? :network_events do
-  foreign_key :event_id, :events, :null => false
+  foreign_key :event_id, :events, :primary_key => true
   foreign_key :network_family_id, :network_families, :null => false
-  primary_key :event_id
 end
 
 create_table? :node_events do
-  foreign_key :event_id, :events, :null => false
+  foreign_key :event_id, :events, :primary_key => true
   foreign_key :node_family_id, :node_families, :null => false
-  primary_key :event_id
 end
 
 create_table? :link_events do
-  foreign_key :event_id, :events, :null => false
+  foreign_key :event_id, :events, :primary_key => true
   foreign_key :link_family_id, :link_families, :null => false
-  primary_key :event_id
 end
 
 create_table? :controllers do
@@ -442,19 +439,16 @@ create_table? :controllers do
 end
 
 create_table? :network_controllers do
-  foreign_key :controller_id, :controllers, :null => false
+  foreign_key :controller_id, :controllers, :primary_key => true
   foreign_key :network_family_id, :network_families, :null => false
-  primary_key :controller_id
 end
 
 create_table? :node_controllers do
-  foreign_key :controller_id, :controllers, :null => false
+  foreign_key :controller_id, :controllers, :primary_key => true
   foreign_key :node_family_id, :node_families, :null => false
-  primary_key :controller_id
 end
 
 create_table? :link_controllers do
-  foreign_key :controller_id, :controllers, :null => false
+  foreign_key :controller_id, :controllers, :primary_key => true
   foreign_key :link_family_id, :link_families, :null => false
-  primary_key :controller_id
 end
