@@ -38,11 +38,13 @@ module Aurora
       self.lanes      = sensor_xml["lanes"]
       
       link_xml_ids = sensor_xml.xpath("links").text.split(",").map{|s|s.strip}
+      
+      if link_xml_ids.size > 1
+        raise ImportError,
+          "sensor table doesn't support multiple links per sensor"
+      end
+
       link_xml_ids.each do |link_xml_id|
-        if link
-          raise ImportError,
-            "sensor table doesn't support multiple links per sensor"
-        end
         self.link_id = ctx.get_link_id(link_xml_id)
       end
 
