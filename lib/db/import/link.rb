@@ -38,9 +38,6 @@ module Aurora
         self.dynamics = dynamics_xml["type"]
       end
 
-      begin_id_xml  = link_xml.xpath("begin").first["node_id"]
-      end_id_xml    = link_xml.xpath("end").first["node_id"]
-
       self.begin_node, self.begin_order =
         ctx.begin_for_link_xml_id[link_xml["id"]]
 
