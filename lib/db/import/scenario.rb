@@ -47,6 +47,11 @@ module Aurora
         self.duration = Float(display_xml["timeMax"] || begin_time) - begin_time
       end
 
+      [srp_set, cp_set, dp_set, ic_set, event_set, ctrl_set].each do |set|
+        set.clear_members if set
+          # in case the network elts they refer to are no longer present
+      end
+
       scenario_xml.xpath("network").each do |network_xml|
         self.network = Network.create_from_xml(network_xml, ctx)
       end
