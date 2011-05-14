@@ -48,8 +48,7 @@ module Aurora
 
         delta = make_tmp_ids(num_id_elt, tmp_id_elt)
 
-        ref_attr = "#{t}_id"
-        scenario_xml.xpath("//*[@#{ref_attr}]").each do |ref_elt|
+        rekey_attr = proc do |ref_elt, ref_attr|
           id = numeric(ref_elt[ref_attr])
           if id
             elt = num_id_elt[id]
@@ -60,6 +59,42 @@ module Aurora
             end
           end
         end
+        
+        # cells are csv ids in text of element
+        rekey_cells = proc do |ref_elt|
+          ## why is there no #text= ?
+          ref_elt.content = ref_elt.text.split(",").map {|s|
+            id = numeric(s)
+            if id
+              elt = num_id_elt[id]
+              if elt
+                delta[id]
+              else
+                warn "broken reference in #{ref_elt.name} to #{id}"
+                s
+              end
+            else
+              s
+            end
+          }.join(",")
+        end
+
+        # We assume that attrs that reference links are called link_id etc.
+        ref_attr = "#{t}_id"
+        scenario_xml.xpath("//*[@#{ref_attr}]").each do |ref_elt|
+          rekey_attr.call ref_elt, ref_attr
+        end
+        
+        # Special cases, such as cell-based storage.
+        case t
+        when "link"
+          scenario_xml.xpath("//links | //path").each do |ref_elt|
+            rekey_cells.call ref_elt
+          end
+        when "node"
+          ## rekey all <nodes>
+        end
+        ## also rekey: LinkPairs, monitors
       end
 
       def make_tmp_ids num_id_elt, tmp_id_elt
