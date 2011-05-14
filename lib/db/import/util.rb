@@ -49,8 +49,7 @@ module Aurora
         delta = make_tmp_ids(num_id_elt, tmp_id_elt)
 
         ref_attr = "#{t}_id"
-        scenario_xml.xpath("//*").each do |ref_elt|
-            ## use xpath to detect presence of ref_attr
+        scenario_xml.xpath("//*[@#{ref_attr}]").each do |ref_elt|
           id = numeric(ref_elt[ref_attr])
           if id
             elt = num_id_elt[id]
