@@ -3,8 +3,13 @@ module Aurora
     many_to_one :controller_set, :key => :ctrl_set_id
     
     one_to_one :network_controller, :key => :controller_id
-    one_to_one :node_controller, :key => :controller_id
-    one_to_one :link_controller, :key => :controller_id
+    one_to_one :node_controller,    :key => :controller_id
+    one_to_one :link_controller,    :key => :controller_id
+
+    def before_destroy
+      (network_controller || node_controller || link_controller).destroy
+      super
+    end
   end
 
   class NetworkController
