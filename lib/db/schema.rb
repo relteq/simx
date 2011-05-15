@@ -145,6 +145,9 @@ create_table? :networks do
   float       :lat
   float       :lng
   float       :elevation, :default => 0
+  
+  text        :directions_cache     ## xml, but could be put in tables
+  text        :intersection_cache   ## ditto
 end
 
 create_table? :nodes do

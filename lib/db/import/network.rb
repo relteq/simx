@@ -101,8 +101,13 @@ module Aurora
         end
       end
 
-      ## DirectionsCache
-      ## IntersectionCache
+      network_xml.xpath("DirectionsCache").each do |dir_cache_xml|
+        self.directions_cache = dir_cache_xml
+      end
+
+      network_xml.xpath("IntersectionCache").each do |int_cache_xml|
+        self.intersection_cache = int_cache_xml
+      end
     end
   end
 end
