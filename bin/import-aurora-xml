@@ -1,13 +1,21 @@
 #!/usr/bin/env ruby
 
-opts = {
-  :log      => !!ARGV.delete("--log"),
-  :emit     => !!ARGV.delete("--emit"),
-  :rekey    => !!ARGV.delete("--rekey"),
-  :dry_run  => !!ARGV.delete("--dry-run")
+require 'argos'
+
+optdef = {
+  "h"         => true,
+  "help"      => true,
+  "log"       => true,
+  "emit"      => true,
+  "rekey"     => true,
+  "dry-run"   => true
 }
 
-if ARGV.size == 0 or ARGV.size > 2 or ARGV.delete("-h")
+opts = Argos.parse_options(ARGV, optdef)
+p ARGV, opts, ARGV.grep(/^-./)
+
+if ARGV.size == 0 or ARGV.size > 2 or
+   not ARGV.grep(/^-./).empty? or opts["h"] or opts["help"]
   puts <<-END
   
     Usage: #{$0} [opts] aurora_xml_file [db]
@@ -53,7 +61,7 @@ else
   DB = Sequel.sqlite
 end
 
-if opts[:log]
+if opts["log"]
   require 'logger'
   DB.loggers << Logger.new($stderr)
 end
@@ -86,7 +94,7 @@ module Aurora
     attr_reader :scenario_xml
     attr_reader :scenario
     
-    # Set opts[:rekey] to true if the input xml cannot be assumed to have
+    # Set opts["rekey"] to true if the input xml cannot be assumed to have
     # been exported from the db.
     def initialize src, opts = {}
       @src = src
@@ -98,16 +106,16 @@ module Aurora
     def import
       @scenario_xml = parse(src)
       
-      if opts[:rekey]
+      if opts["rekey"]
         require 'db/import/util'
         ImportUtil.rekey @scenario_xml
       end
       
-      if opts[:emit]
+      if opts["emit"]
         puts @scenario_xml
       end
       
-      if opts[:dry_run]
+      if opts["dry-run"]
         return
       end
       
