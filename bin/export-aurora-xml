@@ -1,29 +1,63 @@
 #!/usr/bin/env ruby
 
-db_url = ARGV[0]
-scenario_id = ARGV[1]
+require 'argos'
 
-topdir = File.expand_path("..", File.dirname(__FILE__))
-libdir = File.join(topdir, "lib")
-$LOAD_PATH.unshift libdir
+optdef = {
+  "h"         => true,
+  "help"      => true,
+  "log"       => true
+}
+
+opts = Argos.parse_options(ARGV, optdef)
+
+if ARGV.size != 2 or not ARGV.grep(/^-./).empty? or opts["h"] or opts["help"]
+  puts <<-END
+  
+    Usage: #{$0} [opts] db scenario_id
+    
+    Export specified scenario from database and print xml to stdout.
+    
+    The db argument may be any valid database connection string:
+    
+      sqlite://foo.db
+      postgres://user:password@host:port/database_name
+    
+    The scenario_id is the integer id of a row in the scenarios table.
+    
+    Options:
+    
+      --log     Print full SQL log to stderr.
+      
+  END
+  exit
+end
+
+db_url = ARGV[0]
+scenario_id = Integer(ARGV[1])
 
 require 'sequel'
 require 'nokogiri'
 
 DB = Sequel.connect db_url
 
+if opts["log"]
+  require 'logger'
+  DB.loggers << Logger.new($stderr)
+end
+
+topdir = File.expand_path("..", File.dirname(__FILE__))
+libdir = File.join(topdir, "lib")
+$LOAD_PATH.unshift libdir
+
 require 'db/schema'
 require 'db/model/aurora'
 require 'db/export/scenario'
 
 module Aurora
-  module Exporter
-    def export_scenario id
-      scenario = Scenario[id]
-      scenario.to_xml
-    end
+  def self.export_scenario id
+    scenario = Scenario[id]
+    scenario.to_xml
   end
-  extend Exporter
 end
 
 puts Aurora.export_scenario(scenario_id)
