@@ -12,7 +12,6 @@ optdef = {
 }
 
 opts = Argos.parse_options(ARGV, optdef)
-p ARGV, opts, ARGV.grep(/^-./)
 
 if ARGV.size == 0 or ARGV.size > 2 or
    not ARGV.grep(/^-./).empty? or opts["h"] or opts["help"]
@@ -123,7 +122,7 @@ module Aurora
         @scenario = Scenario.create_from_xml(scenario_xml)
       end
       
-      return scenario[:id]
+      return scenario.id
     end
     
   end
@@ -133,6 +132,6 @@ module Aurora
   end
 end
 
-sc_id = Aurora.import(File.read(xml_file), opts)
+scenario_id = Aurora.import(File.read(xml_file), opts)
 
-$stderr.puts Aurora::Scenario[sc_id]
+$stderr.puts scenario_id
