@@ -14,7 +14,10 @@ module Aurora
       self.time     = Float(event_xml["tstamp"])
       self.enabled  = import_boolean(event_xml["enabled"])
       
-      self.parameters = event_xml.xpath("*").map {|xml| xml.to_s}.join("\n")
+      fudge1 = "\n    " ## a hack until we parse the xml into the database
+      fudge2 = "\n      "
+      self.parameters = fudge2 +
+        event_xml.xpath("*").map {|xml| xml.to_s}.join(fudge2) + fudge1
       
       if /\S/ === event_xml["network_id"]
         ctx.defer do

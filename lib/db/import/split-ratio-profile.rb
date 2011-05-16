@@ -15,8 +15,10 @@ module Aurora
       self.start_time = Float(srp_xml["start_time"] || 0)
       self.node_id    = ctx.get_node_id(srp_xml["node_id"])
       
-      self.profile =
-        srp_xml.xpath("srm").map {|srm_xml| srm_xml.to_s}.join("\n")
+      fudge1 = "\n    " ## a hack until we parse the xml into the database
+      fudge2 = "\n      "
+      self.profile = fudge2 +
+        srp_xml.xpath("srm").map {|srm_xml| srm_xml.to_s}.join(fudge2) + fudge1
     end
   end
 end

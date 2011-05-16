@@ -14,7 +14,10 @@ module Aurora
       self.dt           = Float(ctrl_xml["dt"])
       self.use_sensors  = import_boolean(ctrl_xml["usesensors"], false)
       
-      self.parameters = ctrl_xml.xpath("*").map {|xml| xml.to_s}.join("\n")
+      fudge1 = "\n    " ## a hack until we parse the xml into the database
+      fudge2 = "\n      "
+      self.parameters = fudge2 +
+        ctrl_xml.xpath("*").map {|xml| xml.to_s}.join(fudge2) + fudge1
       
       if /\S/ === ctrl_xml["network_id"]
         ctx.defer do
