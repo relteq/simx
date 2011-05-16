@@ -4,7 +4,7 @@ module Aurora
   class ControllerSet
     def build_xml(xml)
       xml.ControllerSet(:id => id, :name => name) {
-        xml.description description
+        xml.description description unless description.empty?
         
         controllers.each do |controller|
           controller.build_xml(xml)

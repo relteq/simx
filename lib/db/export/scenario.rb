@@ -18,7 +18,7 @@ module Aurora
                    :name => name,
                    :schemaVersion => schema_version) {
 
-        xml.description description
+        xml.description description unless description.empty?
 
         xml.settings {
           xml.units units
