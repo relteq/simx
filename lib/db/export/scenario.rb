@@ -1,8 +1,11 @@
 require 'db/export/model'
-require 'db/export/initial-condition-set'
+require 'db/export/network'
 require 'db/export/event-set'
 require 'db/export/controller-set'
+require 'db/export/initial-condition-set'
 require 'db/export/split-ratio-profile-set'
+require 'db/export/capacity-profile-set'
+require 'db/export/demand-profile-set'
 
 module Aurora
   class Scenario
@@ -30,7 +33,7 @@ module Aurora
         }
 
         parts = [
-#          network,
+          network,
           ic_set, srp_set, cp_set, dp_set,
           event_set, ctrl_set
         ]
