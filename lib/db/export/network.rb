@@ -1,4 +1,6 @@
 require 'db/export/node'
+require 'db/export/link'
+require 'db/export/sensor'
 
 module Aurora
   class Network
@@ -23,19 +25,23 @@ module Aurora
           xml.point point_attrs
         }
         
-        if not nodes.empty?
-          xml.NodeLList {
-            nodes.each do |node|
-              node.build_xml(xml)
-            end
-          }
+        lists = [
+          ["NodeList", nodes],
+          ["LinkList", links],
+          ["NetworkList", subnetworks],
+          ["SensorList", sensors]
+        ]
+        
+        lists.each do |elt_name, models|
+          if not models.empty?
+            xml.send(elt_name) {
+              models.each do |model|
+                model.build_xml(xml)
+              end
+            }
+          end
         end
 
-#          ["NodeList", nodes],
-#          ["LinkList", links],
-#          ["NetworkList", subnetworks],
-#          ["SensorList", sensors]
-#
 #          ["ODList/od/PathList/path", routes],
         
         xml << directions_cache

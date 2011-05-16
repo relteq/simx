@@ -1,7 +1,7 @@
 module Aurora
-  class Node
+  class Sensor
     def build_xml(xml)
-      xml.node(:id => id, :name => name, :type => self[:type]) {
+      xml.sensor(:id => id, :type => self[:type]) {
         xml.description description unless description.empty?
         xml.position {
           point_attrs = {
