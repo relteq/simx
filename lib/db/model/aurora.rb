@@ -1,46 +1,55 @@
 module Aurora
-  class Model < Sequel::Model; end
+  module Model; end # a place to put things, e.g. in export/model.rb
   
-  class NetworkFamily < Model; end
-  class NodeFamily < Model; end
-  class LinkFamily < Model; end
-  class RouteFamily < Model; end
-  class SensorFamily < Model; end
+  class NetworkFamily < Sequel::Model; end
+  class NodeFamily < Sequel::Model; end
+  class LinkFamily < Sequel::Model; end
+  class RouteFamily < Sequel::Model; end
+  class SensorFamily < Sequel::Model; end
   
-  class Network < Model; end
-  class Node < Model; end
-  class Link < Model; end
-  class Route < Model; end
-  class Sensor < Model; end
+  class Network < Sequel::Model; end
+  class Node < Sequel::Model; end
+  class Link < Sequel::Model; end
+  class Route < Sequel::Model; end
+  class Sensor < Sequel::Model; end
 
-  class Scenario < Model; end
-  class VehicleType < Model; end
-  class Tln < Model; end
-  class Project < Model; end
+  class Scenario < Sequel::Model; end
+  class VehicleType < Sequel::Model; end
+  class Tln < Sequel::Model; end
+  class Project < Sequel::Model; end
 
-  class SplitRatioProfileSet < Model; end
-  class SplitRatioProfile < Model; end
+  class SplitRatioProfileSet < Sequel::Model; end
+  class SplitRatioProfile < Sequel::Model; end
 
-  class CapacityProfileSet < Model; end
-  class CapacityProfile < Model; end
+  class CapacityProfileSet < Sequel::Model; end
+  class CapacityProfile < Sequel::Model; end
 
-  class DemandProfileSet < Model; end
-  class DemandProfile < Model; end
+  class DemandProfileSet < Sequel::Model; end
+  class DemandProfile < Sequel::Model; end
 
-  class InitialConditionSet < Model; end
-  class InitialCondition < Model; end
+  class InitialConditionSet < Sequel::Model; end
+  class InitialCondition < Sequel::Model; end
 
-  class EventSet < Model; end
-  class Event < Model; end
-  class NetworkEvent < Model; end
-  class NodeEvent < Model; end
-  class LinkEvent < Model; end
+  class EventSet < Sequel::Model; end
+  class Event < Sequel::Model; end
+  class NetworkEvent < Sequel::Model; end
+  class NodeEvent < Sequel::Model; end
+  class LinkEvent < Sequel::Model; end
 
-  class ControllerSet < Model; end
-  class Controller < Model; end
-  class NetworkController < Model; end
-  class NodeController < Model; end
-  class LinkController < Model; end
+  class ControllerSet < Sequel::Model; end
+  class Controller < Sequel::Model; end
+  class NetworkController < Sequel::Model; end
+  class NodeController < Sequel::Model; end
+  class LinkController < Sequel::Model; end
+  
+  constants.each do |const|
+    c = const_get(const)
+    if c.kind_of? Class and c < Sequel::Model
+      c.class_eval do
+        include Aurora::Model
+      end
+    end
+  end
 end
 
 dir = File.expand_path(File.dirname(__FILE__))
