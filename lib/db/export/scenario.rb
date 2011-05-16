@@ -1,8 +1,8 @@
 require 'db/export/model'
 require 'db/export/initial-condition-set'
-require 'db/export/event_set'
-require 'db/export/controller_set'
-require 'db/export/split_ratio_profile_set'
+require 'db/export/event-set'
+require 'db/export/controller-set'
+require 'db/export/split-ratio-profile-set'
 
 module Aurora
   class Scenario

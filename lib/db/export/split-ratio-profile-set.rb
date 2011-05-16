@@ -1,4 +1,4 @@
-require 'db/export/split_ratio_profile'
+require 'db/export/split-ratio-profile'
 
 module Aurora
   class SplitRatioProfileSet
