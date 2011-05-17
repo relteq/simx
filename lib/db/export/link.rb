@@ -8,10 +8,10 @@ module Aurora
         :length => length
       }
       
-      attrs[:name] = name unless name.empty?
+      attrs[:name] = name unless !name or name.empty?
 
       xml.link(attrs) {
-        xml.description description unless description.empty?
+        xml.description description unless !description or description.empty?
         xml.begin(:node_id => begin_node.id)
         xml.end(:node_id => end_node.id)
         xml << fd

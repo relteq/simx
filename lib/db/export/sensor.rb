@@ -6,19 +6,20 @@ module Aurora
         :type           => self[:type],
         :display_lat    => display_lat,
         :display_lng    => display_lng,
-        :length         => length,
-        :offset_in_link => offset,
-        :data_id        => data_id,
-        :link_type      => link_type,
-        :vds            => vds,
-        :hwy_name       => hwy_name,
-        :hwy_dir        => hwy_dir,
-        :postmile       => postmile,
-        :lanes          => lanes
+        :link_type      => link_type
       }
       
+      attrs[:length]         = length   unless length == 0
+      attrs[:offset_in_link] = offset   unless offset == 0
+      attrs[:data_id]        = data_id  unless !data_id or data_id.empty?
+      attrs[:vds]            = vds      unless !vds or vds.empty?
+      attrs[:hwy_name]       = hwy_name unless !hwy_name or hwy_name.empty?
+      attrs[:hwy_dir]        = hwy_dir  unless !hwy_dir or hwy_dir.empty?
+      attrs[:postmile]       = postmile unless postmile == 0
+      attrs[:lanes]          = lanes    unless !lanes or lanes.empty?
+      
       xml.sensor(attrs) {
-        xml.description description unless description.empty?
+        xml.description description unless !description or description.empty?
         
         xml.position {
           point_attrs = {

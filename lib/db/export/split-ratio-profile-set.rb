@@ -4,10 +4,10 @@ module Aurora
   class SplitRatioProfileSet
     def build_xml(xml)
       attrs = {:id => id}
-      attrs[:name] = name unless name.empty?
+      attrs[:name] = name unless !name or name.empty?
       
       xml.SplitRatioProfileSet(attrs) {
-        xml.description description unless description.empty?
+        xml.description description unless !description or description.empty?
         
         srps.each do |srp|
           srp.build_xml(xml)

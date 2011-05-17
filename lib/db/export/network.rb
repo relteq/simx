@@ -15,7 +15,7 @@ module Aurora
       }
 
       xml.Network(attrs) {
-        xml.description description unless description.empty?
+        xml.description description unless !description or description.empty?
         xml.position {
           point_attrs = {
             :lat => lat,

@@ -14,11 +14,15 @@ module Aurora
     end
     
     def build_xml xml
-      xml.scenario(:id => id,
-                   :name => name,
-                   :schemaVersion => schema_version) {
-
-        xml.description description unless description.empty?
+      attrs = {
+        :id => id,
+        :schemaVersion => schema_version
+      }
+      
+      attrs[:name] = name unless !name or name.empty?
+      
+      xml.scenario(attrs) {
+        xml.description description unless !description or description.empty?
 
         xml.settings {
           xml.units units

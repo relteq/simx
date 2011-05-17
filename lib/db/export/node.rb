@@ -2,7 +2,7 @@ module Aurora
   class Node
     def build_xml(xml)
       xml.node(:id => id, :name => name, :type => self[:type]) {
-        xml.description description unless description.empty?
+        xml.description description unless !description or description.empty?
         
         unless outputs.empty?
           outputs_in_order = outputs.sort_by {|output| output.begin_order}
