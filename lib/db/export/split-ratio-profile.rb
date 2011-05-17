@@ -1,11 +1,14 @@
 module Aurora
   class SplitRatioProfile
     def build_xml(xml)
-      xml.event(
+      attrs = {
         :node_id => node_id,
-        :start_time => start_time,
         :dt => dt
-      ) do
+      }
+      
+      attrs[:start_time] = start_time if start_time != 0
+
+      xml.splitratios(attrs) do
         xml << profile
       end
     end

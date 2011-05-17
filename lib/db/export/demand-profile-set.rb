@@ -3,7 +3,10 @@ require 'db/export/demand-profile'
 module Aurora
   class DemandProfileSet
     def build_xml(xml)
-      xml.DemandProfileSet(:id => id, :name => name) {
+      attrs = {:id => id}
+      attrs[:name] = name unless name.empty?
+      
+      xml.DemandProfileSet(attrs) {
         xml.description description unless description.empty?
         
         dps.each do |dp|

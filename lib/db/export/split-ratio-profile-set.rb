@@ -3,7 +3,10 @@ require 'db/export/split-ratio-profile'
 module Aurora
   class SplitRatioProfileSet
     def build_xml(xml)
-      xml.SplitRatioProfileSet(:id => id, :name => name) {
+      attrs = {:id => id}
+      attrs[:name] = name unless name.empty?
+      
+      xml.SplitRatioProfileSet(attrs) {
         xml.description description unless description.empty?
         
         srps.each do |srp|

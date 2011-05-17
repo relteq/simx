@@ -1,11 +1,14 @@
 module Aurora
   class DemandProfile
     def build_xml(xml)
-      xml.event(
+      attrs = {
         :link_id => link_id,
-        :start_time => start_time,
         :dt => dt
-      ) do
+      }
+      
+      attrs[:start_time] = start_time if start_time != 0
+
+      xml.demand(attrs) do
         xml.text profile
       end
     end

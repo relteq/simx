@@ -3,7 +3,10 @@ require 'db/export/initial-condition'
 module Aurora
   class InitialConditionSet
     def build_xml(xml)
-      xml.InitialConditionSet(:id => id, :name => name) {
+      attrs = {:id => id}
+      attrs[:name] = name unless name.empty?
+      
+      xml.InitialDensityProfile(attrs) {
         xml.description description unless description.empty?
         
         ics.each do |ic|
