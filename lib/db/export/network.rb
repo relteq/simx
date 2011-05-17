@@ -14,7 +14,7 @@ module Aurora
         :dt           => dt
       }
 
-      xml.Network(attrs) {
+      xml.network(attrs) {
         xml.description description unless !description or description.empty?
         xml.position {
           point_attrs = {

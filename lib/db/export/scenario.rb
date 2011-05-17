@@ -27,8 +27,9 @@ module Aurora
         xml.settings {
           xml.units units
           xml.display_(:dt => dt, 
-                      :timeInitial => begin_time,
-                      :timeMax => begin_time + duration)
+                       :timeout => 50,
+                       :timeInitial => begin_time,
+                       :timeMax => begin_time + duration)
           xml.VehicleTypes {
             vehicle_types.each do |v|
               xml.vtype(:name => v.name, :weight => v.weight)

@@ -4,16 +4,16 @@ module Aurora
       xml.node(:id => id, :name => name, :type => self[:type]) {
         xml.description description unless !description or description.empty?
         
-        unless outputs.empty?
+        #unless outputs.empty? # xsd doesn't like this
           outputs_in_order = outputs.sort_by {|output| output.begin_order}
           xml.outputs {
             outputs_in_order.each do |output|
               xml.output(:link_id => output.id)
             end
           }
-        end
+        #end
         
-        unless inputs.empty?
+        #unless inputs.empty?
           inputs_in_order = inputs.sort_by {|input| input.end_order}
           xml.inputs {
             inputs_in_order.each do |input|
@@ -23,7 +23,7 @@ module Aurora
               }
             end
           }
-        end
+        #end
         
         xml.position {
           point_attrs = {
