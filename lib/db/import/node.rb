@@ -39,8 +39,8 @@ module Aurora
         ctx.begin_for_link_xml_id[ xml["link_id"] ] = [self, ord]
       end
       
-      wf = node_xml.xpath("weavingfactors").first
       node_xml.xpath("inputs/input").each_with_index do |xml, ord|
+        wf = xml.xpath("weavingfactors").first
         ctx.end_for_link_xml_id[ xml["link_id"] ] = [self, ord, wf]
       end
     end
