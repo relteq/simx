@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'argos'
+topdir = File.expand_path("..", File.dirname(__FILE__))
+libdir = File.join(topdir, "lib")
+$LOAD_PATH.unshift libdir
+
+require 'simx/argos'
 
 optdef = {
   "h"         => true,
@@ -44,10 +48,6 @@ if opts["log"]
   require 'logger'
   DB.loggers << Logger.new($stderr)
 end
-
-topdir = File.expand_path("..", File.dirname(__FILE__))
-libdir = File.join(topdir, "lib")
-$LOAD_PATH.unshift libdir
 
 require 'db/schema'
 require 'db/model/aurora'
