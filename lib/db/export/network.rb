@@ -41,9 +41,44 @@ module Aurora
             }
           end
         end
-
-#          ["ODList/od/PathList/path", routes],
         
+        if not routes.empty?
+          od_routes = Hash.new do |h, k|
+            h[k] = []
+          end
+            # [begin_node_id, end_node_id] => [ [route,links], ...]
+            # where links is sorted by order
+          
+          routes.each do |route|
+            rls =
+              DB[:route_links].
+              filter(:network_id => network_id, :route_id => route.id).
+              order_by(:order)
+            
+            links = rls.map {|rl|
+              Link[:network_id => network_id, :id => rl[:link_id]]}
+            
+            begin_node = links.first.begin_node
+            end_node = links.last.end_node
+            
+            od_routes[ [begin_node.id, end_node.id] ] << [route, links]
+          end
+          
+          xml.ODList {
+            od_routes.each do |(begin_node_id, end_node_id), routes_with_links|
+              xml.od(:begin => begin_node_id, :end => end_node_id) {
+                xml.PathList {
+                  routes_with_links.each do |route, links|
+                    xml.path(:name => route.name) {
+                      xml.text links.map {|link| link.id}.join(", ")
+                    }
+                  end
+                }
+              }
+            end
+          }
+        end
+
         xml << directions_cache
         xml << intersection_cache
       }

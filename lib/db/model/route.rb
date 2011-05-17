@@ -13,7 +13,7 @@ module Aurora
       :right_key => [:network_id, :link_id]
 
     def before_destroy
-      DB[:route_links].filter(:route_id => id).delete
+      DB[:route_links].filter(:network_id => network_id, :route_id => id).delete
       super
     end
   end
