@@ -69,7 +69,7 @@ module Aurora
               xml.od(:begin => begin_node_id, :end => end_node_id) {
                 xml.PathList {
                   routes_with_links.each do |route, links|
-                    xml.path(:name => route.name) {
+                    xml.path(:name => route.name, :id => route.id) {
                       xml.text links.map {|link| link.id}.join(",")
                     }
                   end
