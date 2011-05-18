@@ -4,7 +4,7 @@ module Aurora
       attrs = {
         :link_id => link_id,
         :dt => dt,
-        :knob => 1.0 ## tmp until added to db schema
+        :knob => knob
       }
       
       attrs[:start_time] = start_time if start_time != 0

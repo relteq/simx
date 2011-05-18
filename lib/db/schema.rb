@@ -378,6 +378,9 @@ create_table? :demand_profiles do
   
   float       :dt
   check       {dt > 0}
+  
+  float       :knob, :default => 1.0
+  check       {knob > 0}
 
   text        :profile # xml text
   
