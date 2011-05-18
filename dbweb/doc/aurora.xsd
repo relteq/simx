@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.4">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.5">
 
   <xs:element name="scenario">
     <xs:complexType>
@@ -181,23 +181,15 @@
 
   <xs:element name="sensor">
     <xs:complexType>
-      <xs:sequence>
+      <xs:all>
         <xs:element ref="description" minOccurs="0" />
         <xs:element ref="position" minOccurs="0" />
+        <xs:element ref="display_position" minOccurs="0" />
         <xs:element ref="links" minOccurs="0" />
-      </xs:sequence>
+        <xs:element ref="parameters" minOccurs="0" />
+      </xs:all>
       
       <xs:attribute name="id" type="xs:string" use="required" />
-       
-      <xs:attribute name="display_lat" type="xs:decimal" use="required" />
-      <xs:attribute name="display_lng" type="xs:decimal" use="required" />
-      
-      <xs:attribute name="length" type="xs:decimal" use="optional"
-       default="0.0" />
-      <xs:attribute name="offset_in_link" type="xs:decimal" use="optional"
-       default="0.0" />
-      <xs:attribute name="data_id" type="xs:string" use="optional"
-       default="" />
 
       <xs:attribute name="type" use="required">
         <xs:simpleType>
@@ -214,17 +206,6 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      
-      <xs:attribute name="vds" type="xs:string" use="optional"
-       default="" />
-      <xs:attribute name="hwy_name" type="xs:string" use="optional"
-       default="" />
-      <xs:attribute name="hwy_dir" type="xs:string" use="optional"
-       default="" />
-      <xs:attribute name="postmile" type="xs:decimal" use="optional"
-       default="0.0" />
-      <xs:attribute name="lanes" type="xs:string" use="optional"
-       default="" />
     </xs:complexType>
   </xs:element>
 
@@ -387,6 +368,14 @@
   </xs:element>
 
   <xs:element name="position">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="point" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="display_position">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="point" maxOccurs="unbounded" />

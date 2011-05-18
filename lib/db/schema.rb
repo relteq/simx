@@ -248,28 +248,13 @@ create_table? :sensors do
   integer     :link_id, :null => true
   foreign_key [:network_id, :link_id], :links, :key => [:network_id, :id]
 
-  float       :offset
-  check       {offset >= 0}
-
-  float       :length
-  check       {length >= 0}
-
-  float       :postmile
-
   string      :type
   check       :type => Aurora::SENSOR_TYPES
   
   string      :link_type
   check       :link_type => Aurora::SENSOR_LINK_TYPES
   
-  string      :data_id
-  
   text        :parameters
-  
-  string      :vds
-  string      :hwy_name
-  string      :hwy_dir
-  string      :lanes
   
   float       :display_lat
   float       :display_lng

@@ -10,7 +10,7 @@ require 'db/export/demand-profile-set'
 module Aurora
   class Scenario
     def schema_version
-      "1.0.3" ### should read this from xsd
+      "1.0.5" ### should read this from xsd
     end
     
     def build_xml xml
