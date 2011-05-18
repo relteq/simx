@@ -10,7 +10,7 @@ require 'db/export/demand-profile-set'
 module Aurora
   class Scenario
     def schema_version
-      "1.0.2" ### should read this from xsd
+      "1.0.3" ### should read this from xsd
     end
     
     def build_xml xml
@@ -26,8 +26,8 @@ module Aurora
 
         xml.settings {
           xml.units units
-          xml.display_(:dt => dt, 
-                       :timeout => 50,
+          xml.display_(:dt => dt,
+                       :timeout => 50, # default for optional atr
                        :timeInitial => begin_time,
                        :timeMax => begin_time + duration)
           xml.VehicleTypes {

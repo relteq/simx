@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.2">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.3">
 
   <xs:element name="scenario">
     <xs:complexType>
@@ -495,7 +495,7 @@
   <xs:element name="display">
     <xs:complexType>
       <xs:attribute name="timeMax" type="xs:decimal" use="required" />
-      <xs:attribute name="timeout" type="xs:integer" use="required" />
+      <xs:attribute name="timeout" type="xs:integer" use="optional" default="50" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
       <xs:attribute name="timeInitial" type="xs:decimal" use="optional"
         default="0.0" />
