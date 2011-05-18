@@ -1803,7 +1803,588 @@
         </PathList>
       </od>
     </ODList>
-    <SensorList/>
+    <SensorList>
+      <sensor type="loop" id="400852" link_type="ML">
+        <description>Stone Valley Rd</description>
+        <links>200216804</links>
+        <parameters>
+          <parameter name="data_id" value="400852"/>
+          <parameter name="vds" value="400852"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="40.202"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.24"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources>
+          <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_07.txt" dt="300" format="pems"/>
+          <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_08.txt" dt="300" format="pems"/>
+          <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_09.txt" dt="300" format="pems"/>
+        </data_sources>
+        <display_position>
+          <point lat="37.83508897256243" lng="-122.00963674378204"/>
+        </display_position>
+        <position>
+          <point lat="37.835136" lng="-122.009773" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401097" link_type="ML">
+        <description>1000 ft south of EL Pintado Road</description>
+        <links>100206804</links>
+        <parameters>
+          <parameter name="data_id" value="401097"/>
+          <parameter name="vds" value="401097"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="40.012"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.185"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.83334374036634" lng="-122.0067728723526"/>
+        </display_position>
+        <position>
+          <point lat="37.833445" lng="-122.007025" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401999" link_type="ML">
+        <description>El Cerro Blvd</description>
+        <links>100306804</links>
+        <parameters>
+          <parameter name="data_id" value="401999"/>
+          <parameter name="vds" value="401999"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="39.832"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.26"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources>
+          <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_07.txt" dt="300" format="pems"/>
+          <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_08.txt" dt="300" format="pems"/>
+          <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_09.txt" dt="300" format="pems"/>
+        </data_sources>
+        <display_position>
+          <point lat="37.831798" lng="-122.004468"/>
+        </display_position>
+        <position>
+          <point lat="37.831798" lng="-122.004468" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401124" link_type="ML">
+        <description>south of El Cerro Blvd</description>
+        <links>100506804</links>
+        <parameters>
+          <parameter name="data_id" value="401124"/>
+          <parameter name="vds" value="401124"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="39.492"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.23"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.828677" lng="-121.999652"/>
+        </display_position>
+        <position>
+          <point lat="37.828677" lng="-121.999652" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400401" link_type="ML">
+        <description>WB Diablo Rd</description>
+        <links>100506804</links>
+        <parameters>
+          <parameter name="data_id" value="400401"/>
+          <parameter name="vds" value="400401"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="39.372"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.255"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.827616" lng="-121.997921"/>
+        </display_position>
+        <position>
+          <point lat="37.827616" lng="-121.997921" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401328" link_type="ML">
+        <description>Diablo Rd</description>
+        <links>100706804</links>
+        <parameters>
+          <parameter name="data_id" value="401328"/>
+          <parameter name="vds" value="401328"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="38.982"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.3400000000000001"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.823087" lng="-121.993916"/>
+        </display_position>
+        <position>
+          <point lat="37.823087" lng="-121.993916" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400767" link_type="ML">
+        <description>Sycamore Valley Rd</description>
+        <links>100906804</links>
+        <parameters>
+          <parameter name="data_id" value="400767"/>
+          <parameter name="vds" value="400767"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="38.692"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.36"/>
+          <parameter name="lanes" value="5"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.818938" lng="-121.993435"/>
+        </display_position>
+        <position>
+          <point lat="37.818938" lng="-121.993435" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400437" link_type="ML">
+        <description>Sycamore Valley Rd</description>
+        <links>101106804</links>
+        <parameters>
+          <parameter name="data_id" value="400437"/>
+          <parameter name="vds" value="400437"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="38.262"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.48199999999999993"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.812737" lng="-121.993371"/>
+        </display_position>
+        <position>
+          <point lat="37.812737" lng="-121.993371" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400741" link_type="ML">
+        <description>Sycamore Valley Rd</description>
+        <links>101406804</links>
+        <parameters>
+          <parameter name="data_id" value="400741"/>
+          <parameter name="vds" value="400741"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="37.727"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.448"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.805372" lng="-121.990474"/>
+        </display_position>
+        <position>
+          <point lat="37.805372" lng="-121.990474" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401420" link_type="ML">
+        <description>3500' N of Greenbrook Dr</description>
+        <links>101606804</links>
+        <parameters>
+          <parameter name="data_id" value="401420"/>
+          <parameter name="vds" value="401420"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="37.367"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.305"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.800464" lng="-121.988317"/>
+        </display_position>
+        <position>
+          <point lat="37.800464" lng="-121.988317" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401114" link_type="ML">
+        <description>1800 ft north of Greenbrook Driv</description>
+        <links>101706804</links>
+        <parameters>
+          <parameter name="data_id" value="401114"/>
+          <parameter name="vds" value="401114"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="37.117"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.465"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.797293" lng="-121.986149"/>
+        </display_position>
+        <position>
+          <point lat="37.797293" lng="-121.986149" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401103" link_type="ML">
+        <description>1600 ft south of Greenbrook Driv</description>
+        <links>102106804</links>
+        <parameters>
+          <parameter name="data_id" value="401103"/>
+          <parameter name="vds" value="401103"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="36.437"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.495"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.788269" lng="-121.98132"/>
+        </display_position>
+        <position>
+          <point lat="37.788269" lng="-121.98132" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400958" link_type="ML">
+        <description>Sycamore Valley Rd</description>
+        <links>102206804</links>
+        <parameters>
+          <parameter name="data_id" value="400958"/>
+          <parameter name="vds" value="400958"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="36.127"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.335"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.78416" lng="-121.979058"/>
+        </display_position>
+        <position>
+          <point lat="37.78416" lng="-121.979058" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400105" link_type="ML">
+        <description>Crow Canyon Rd</description>
+        <links>102406804</links>
+        <parameters>
+          <parameter name="data_id" value="400105"/>
+          <parameter name="vds" value="400105"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="35.767"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.26"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.779363" lng="-121.976498"/>
+        </display_position>
+        <position>
+          <point lat="37.779363" lng="-121.976498" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401950" link_type="ML">
+        <description>N of Crow Canyon Rd rm-s-lp</description>
+        <links>102506804</links>
+        <parameters>
+          <parameter name="data_id" value="401950"/>
+          <parameter name="vds" value="401950"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="35.607"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.18"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.777214" lng="-121.975415"/>
+        </display_position>
+        <position>
+          <point lat="37.777214" lng="-121.975415" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400446" link_type="ML">
+        <description>Crow Canyon</description>
+        <links>102606804</links>
+        <parameters>
+          <parameter name="data_id" value="400446"/>
+          <parameter name="vds" value="400446"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="35.407"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.195"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.77449" lng="-121.974048"/>
+        </display_position>
+        <position>
+          <point lat="37.77449" lng="-121.974048" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401956" link_type="ML">
+        <description>500' S of Norris Canyon Rd</description>
+        <links>102706804</links>
+        <parameters>
+          <parameter name="data_id" value="401956"/>
+          <parameter name="vds" value="401956"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="35.217"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.27"/>
+          <parameter name="lanes" value="5"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.771896" lng="-121.972761"/>
+        </display_position>
+        <position>
+          <point lat="37.771896" lng="-121.972761" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401288" link_type="ML">
+        <description>2000 ft south of Norris Canyon r</description>
+        <links>102906804</links>
+        <parameters>
+          <parameter name="data_id" value="401288"/>
+          <parameter name="vds" value="401288"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="34.867"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.41"/>
+          <parameter name="lanes" value="5"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.767242" lng="-121.970295"/>
+        </display_position>
+        <position>
+          <point lat="37.767242" lng="-121.970295" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401347" link_type="ML">
+        <description>WB Bollinger Canyon Rd/1</description>
+        <links>103206804</links>
+        <parameters>
+          <parameter name="data_id" value="401347"/>
+          <parameter name="vds" value="401347"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="34.397"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.3400000000000001"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.761225" lng="-121.966381"/>
+        </display_position>
+        <position>
+          <point lat="37.761225" lng="-121.966381" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401461" link_type="ML">
+        <description>WB Bollinger Canyon Rd/1</description>
+        <links>103306804</links>
+        <parameters>
+          <parameter name="data_id" value="401461"/>
+          <parameter name="vds" value="401461"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="34.187"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.22"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.758541" lng="-121.964623"/>
+        </display_position>
+        <position>
+          <point lat="37.758541" lng="-121.964623" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="402413" link_type="ML">
+        <description>SB680 connector to SB Benicia Br</description>
+        <links>103406804</links>
+        <parameters>
+          <parameter name="data_id" value="402413"/>
+          <parameter name="vds" value="402413"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="33.957"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.12"/>
+          <parameter name="lanes" value="3"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.755597" lng="-121.962704"/>
+        </display_position>
+        <position>
+          <point lat="37.755597" lng="-121.962704" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400553" link_type="ML">
+        <description>Bollinger Canyon Rd</description>
+        <links>103406804</links>
+        <parameters>
+          <parameter name="data_id" value="400553"/>
+          <parameter name="vds" value="400553"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="33.947"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.155"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.75547" lng="-121.96262"/>
+        </display_position>
+        <position>
+          <point lat="37.75547" lng="-121.96262" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="400696" link_type="ML">
+        <description>Montevideo Rd</description>
+        <links>103606804</links>
+        <parameters>
+          <parameter name="data_id" value="400696"/>
+          <parameter name="vds" value="400696"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="33.647"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.29"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.751639" lng="-121.960097"/>
+        </display_position>
+        <position>
+          <point lat="37.751639" lng="-121.960097" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401126" link_type="ML">
+        <description>150' North of Montevideo UC east</description>
+        <links>103706804</links>
+        <parameters>
+          <parameter name="data_id" value="401126"/>
+          <parameter name="vds" value="401126"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="33.367"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.595"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.748018" lng="-121.957858"/>
+        </display_position>
+        <position>
+          <point lat="37.748018" lng="-121.957858" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401918" link_type="ML">
+        <description>S of Pine Valley Rd</description>
+        <links>104206804</links>
+        <parameters>
+          <parameter name="data_id" value="401918"/>
+          <parameter name="vds" value="401918"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="32.457"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.745"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.736377" lng="-121.950232"/>
+        </display_position>
+        <position>
+          <point lat="37.736377" lng="-121.950232" elevation="0.0"/>
+        </position>
+      </sensor>
+      <sensor type="loop" id="401356" link_type="ML">
+        <description>2300' N of Alcosta Blvd.</description>
+        <links>104506804</links>
+        <parameters>
+          <parameter name="data_id" value="401356"/>
+          <parameter name="vds" value="401356"/>
+          <parameter name="hwy_name" value="680"/>
+          <parameter name="hwy_dir" value="S"/>
+          <parameter name="postmile" value="31.877"/>
+          <parameter name="offset_in_link" value="0.5"/>
+          <parameter name="length" value="0.465"/>
+          <parameter name="lanes" value="4"/>
+          <parameter name="start_time" value="0"/>
+        </parameters>
+        <data_sources/>
+        <display_position>
+          <point lat="37.729126" lng="-121.944735"/>
+        </display_position>
+        <position>
+          <point lat="37.729126" lng="-121.944735" elevation="0.0"/>
+        </position>
+      </sensor>
+    </SensorList>
   </network>
   <ControllerSet id="new controller set 1">
     <controller link_id="200616804" type="ALINEA" dt="60">
