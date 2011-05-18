@@ -103,10 +103,8 @@
     <position>
       <point lat="0.0" lng="0.0" elevation="0.0"/>
     </position>
-    <MonitorList>
-</MonitorList>
-    <NetworkList>
-</NetworkList>
+    <MonitorList/>
+    <NetworkList/>
     <NodeList>
       <node type="F" id="6804002" name="401097-401097">
         <description>Node 6804002</description>
@@ -928,16 +926,14 @@
         <outputs>
           <output link_id="200216804"/>
         </outputs>
-        <inputs>
-  </inputs>
+        <inputs/>
         <position>
           <point lat="37.8359" lng="-122.0079" elevation="0.0"/>
         </position>
       </node>
       <node type="T" id="300216804" name="null">
         <description/>
-        <outputs>
-  </outputs>
+        <outputs/>
         <inputs>
           <input link_id="300216804">
             <weavingfactors/>
@@ -949,8 +945,7 @@
       </node>
       <node type="T" id="300516804" name="null">
         <description/>
-        <outputs>
-  </outputs>
+        <outputs/>
         <inputs>
           <input link_id="300516804">
             <weavingfactors/>
@@ -965,8 +960,7 @@
         <outputs>
           <output link_id="200616804"/>
         </outputs>
-        <inputs>
-  </inputs>
+        <inputs/>
         <position>
           <point lat="37.8292" lng="-122.0009" elevation="0.0"/>
         </position>
@@ -976,16 +970,14 @@
         <outputs>
           <output link_id="200916804"/>
         </outputs>
-        <inputs>
-  </inputs>
+        <inputs/>
         <position>
           <point lat="37.8227" lng="-121.994" elevation="0.0"/>
         </position>
       </node>
       <node type="T" id="301016804" name="null">
         <description/>
-        <outputs>
-  </outputs>
+        <outputs/>
         <inputs>
           <input link_id="301016804">
             <weavingfactors/>
@@ -1000,16 +992,14 @@
         <outputs>
           <output link_id="201416804"/>
         </outputs>
-        <inputs>
-  </inputs>
+        <inputs/>
         <position>
           <point lat="37.8104" lng="-121.9937" elevation="0.0"/>
         </position>
       </node>
       <node type="T" id="302316804" name="null">
         <description/>
-        <outputs>
-  </outputs>
+        <outputs/>
         <inputs>
           <input link_id="302316804">
             <weavingfactors/>
@@ -1024,8 +1014,7 @@
         <outputs>
           <output link_id="202716804"/>
         </outputs>
-        <inputs>
-  </inputs>
+        <inputs/>
         <position>
           <point lat="37.7777" lng="-121.9765" elevation="0.0"/>
         </position>
@@ -1035,16 +1024,14 @@
         <outputs>
           <output link_id="202816804"/>
         </outputs>
-        <inputs>
-  </inputs>
+        <inputs/>
         <position>
           <point lat="37.7762" lng="-121.9769" elevation="0.0"/>
         </position>
       </node>
       <node type="T" id="303016804" name="null">
         <description/>
-        <outputs>
-  </outputs>
+        <outputs/>
         <inputs>
           <input link_id="303016804">
             <weavingfactors/>
@@ -1059,8 +1046,7 @@
         <outputs>
           <output link_id="203316804"/>
         </outputs>
-        <inputs>
-  </inputs>
+        <inputs/>
         <position>
           <point lat="37.76" lng="-121.9667" elevation="0.0"/>
         </position>
@@ -1070,16 +1056,14 @@
         <outputs>
           <output link_id="203416804"/>
         </outputs>
-        <inputs>
-  </inputs>
+        <inputs/>
         <position>
           <point lat="37.7595" lng="-121.9656" elevation="0.0"/>
         </position>
       </node>
       <node type="T" id="104506804" name="null">
         <description/>
-        <outputs>
-  </outputs>
+        <outputs/>
         <inputs>
           <input link_id="104506804">
             <weavingfactors/>
@@ -1091,8 +1075,7 @@
       </node>
       <node type="T" id="404506804" name="null">
         <description/>
-        <outputs>
-  </outputs>
+        <outputs/>
         <inputs>
           <input link_id="404506804">
             <weavingfactors/>
@@ -1820,8 +1803,7 @@
         </PathList>
       </od>
     </ODList>
-    <SensorList>
-</SensorList>
+    <SensorList/>
   </network>
   <ControllerSet id="new controller set 1">
     <controller link_id="200616804" type="ALINEA" dt="60">
