@@ -58,8 +58,8 @@ module Aurora
             links = rls.map {|rl|
               Link[:network_id => network_id, :id => rl[:link_id]]}
             
-            begin_node = links.first.begin_node
-            end_node = links.last.end_node
+            begin_node = links.first.end_node
+            end_node = links.last.begin_node
             
             od_routes[ [begin_node.id, end_node.id] ] << [route, links]
           end
