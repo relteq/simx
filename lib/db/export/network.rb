@@ -70,7 +70,7 @@ module Aurora
                 xml.PathList {
                   routes_with_links.each do |route, links|
                     xml.path(:name => route.name) {
-                      xml.text links.map {|link| link.id}.join(", ")
+                      xml.text links.map {|link| link.id}.join(",")
                     }
                   end
                 }
