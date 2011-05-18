@@ -255,6 +255,7 @@ create_table? :sensors do
   check       :link_type => Aurora::SENSOR_LINK_TYPES
   
   text        :parameters
+  text        :data_sources
   
   float       :display_lat
   float       :display_lng

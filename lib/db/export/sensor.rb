@@ -40,6 +40,17 @@ module Aurora
             )
           end
         }
+        
+        xml.data_sources {
+          data_sources_xml = Nokogiri.XML(data_sources)
+          data_sources_xml.xpath("data_sources/source").each do |source_xml|
+            xml.source(
+              :url    => source_xml["url"],
+              :dt     => source_xml["dt"],
+              :format => source_xml["format"]
+            )
+          end
+        }
       }
     end
   end

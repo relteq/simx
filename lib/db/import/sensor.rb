@@ -36,6 +36,7 @@ module Aurora
       end
       
       self.parameters = sensor_xml.xpath("parameters").first
+      self.data_sources = sensor_xml.xpath("data_sources").first
 
       sensor_xml.xpath("display_position/point").each do |point_xml|
         self.display_lat = Float(point_xml["lat"])

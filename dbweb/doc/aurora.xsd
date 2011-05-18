@@ -187,6 +187,7 @@
         <xs:element ref="display_position" minOccurs="0" />
         <xs:element ref="links" minOccurs="0" />
         <xs:element ref="parameters" minOccurs="0" />
+        <xs:element ref="data_sources" minOccurs="0" />
       </xs:all>
       
       <xs:attribute name="id" type="xs:string" use="required" />
@@ -206,6 +207,22 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="data_sources">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="source" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="source">
+    <xs:complexType>
+      <xs:attribute name="url" type="xs:string" use="required" />
+      <xs:attribute name="dt" type="xs:decimal" use="required" />
+      <xs:attribute name="format" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
 
