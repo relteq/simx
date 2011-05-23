@@ -54,7 +54,7 @@ vii-dev:
       count:        4
       group:        topl
       user:         topl
-      engine:       simulator
+      engine:       simulator|calibrator|report generator
       cost:         0
       speed:        1
       priority:     1
