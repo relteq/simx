@@ -49,6 +49,8 @@ module Run
         aurora.service.SimulationManager.new
       when 'calibrator'
         aurora.service.CalibrationManager.new
+      when 'report generator'
+        aurora.service.ReportManager.new
       else
         raise "unknown engine: #{engine}"
       end
