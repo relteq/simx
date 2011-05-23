@@ -15,3 +15,5 @@ worker:
   log level: debug
 aws:
   s3 bucket: relteq-uploads-dev
+#db:
+#  url: sqlite://var/data/dev.sqlite

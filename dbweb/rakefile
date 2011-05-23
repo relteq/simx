@@ -13,6 +13,7 @@ require 'simx/daemon'
 config = YAML.load(File.read("../config.yaml"))
 dbweb_config = config["dbweb"]
 aws_config = config["aws"]
+db_config = config["db"]
 
 ENV["DBWEB_S3_BUCKET"] ||= aws_config["s3 bucket"]
 
@@ -32,6 +33,9 @@ sock_name   = File.join(sock_dir, "#{proc_name}.sock")
 log_dir     = File.expand_path(File.join(exec_dir, "var/log"))
 log_file    = File.join(log_dir, "#{proc_name}.log")
 err_file    = log_file.sub(/\.log/, ".err")
+data_dir    = File.expand_path(File.join(exec_dir, "var/data"))
+
+ENV["DBWEB_DB_URL"] ||= db_config["url"] || File.join(data_dir, "dbweb.sqlite")
 
 FileUtils.mkdir_p log_dir
 FileUtils.mkdir_p sock_dir

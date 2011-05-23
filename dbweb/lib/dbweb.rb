@@ -2,8 +2,10 @@ require 'sinatra'
 require 'sinatra/async'
 require 'yaml'
 require 'logger'
+require 'sequel'
 
 require 'db/import/scenario'
+require 'db/export/scenario'
 
 class MyLogger < Logger
   alias write << # Stupid! See http://groups.google.com/group/rack-devel/browse_thread/thread/ffec93533180e98a
@@ -69,7 +71,7 @@ helpers do
         :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
       )
       
-      @s3 = true ## should we rescue s3 errors somewhere and set @s3=nil ?
+      @s3 = true
     end
   end
   
@@ -81,6 +83,7 @@ helpers do
 end
 
 DBWEB_S3_BUCKET = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
+DB_URL = ENV["DBWEB_DB_URL"]
 
 ## don't need this
 TRUSTED_ADDRS = Set[*%w{
