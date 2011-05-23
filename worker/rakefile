@@ -17,19 +17,29 @@ require 'simx/daemon'
 class << self
   attr_reader :config, :proc_name, :svr_name, :exec_dir,
     :sock_dir, :sock_name, :log_dir, :log_file, :err_file,
-    :libdir, :config_file, :worker_config, :runq_config, :runweb_config
+    :libdir, :config_file, :simx_worker_config, :runq_config, :runweb_config,
+    :simx_worker_log_level
 end
 
 # Read the deployment-specific config file (see ../config/README).
-simx_config = YAML.load(File.read("../config.yaml"))
-
-@worker_config = simx_config["worker"]
-@runq_config = simx_config["runq"]
-@runweb_config = simx_config["runweb"]
+begin
+  config_yaml = File.read("../config.yaml")
+rescue Errno::ENOENT
+else
+  simx_config = YAML.load(config_yaml)
+  @simx_worker_config = simx_config["worker"]
+  @simx_worker_log_level = simx_worker_config["log level"]
+  @runq_config = simx_config["runq"]
+  @runweb_config = simx_config["runweb"]
+end
 
 @libdir = libdir
-@config_file = File.join("config", worker_config["config file"])
-if not File.file? @config_file
+
+if simx_worker_config and simx_worker_config["config file"]
+  @config_file = File.join("config", simx_worker_config["config file"])
+end
+
+if not @config_file or not File.file? @config_file
   @config_file = "config.yaml"
   # on a remote host, there's only one, written by the #update method
 end
@@ -97,10 +107,18 @@ DEFAULT_INSTANCE_CONFIG = {
   "user"        => ENV["USERNAME"],
   "dir"         => TOPDIR,
   "runq_host"   => ENV["RUNQ_HOST"] || "localhost",
-  "runq_port"   => Integer(ENV["RUNQ_PORT"] || runq_config["port"]),
-  "runweb_host" => ENV["RUNWEB_HOST"] || "localhost",
-  "runweb_port" => Integer(ENV["RUNWEB_PORT"] || runweb_config["port"])
+  "runweb_host" => ENV["RUNWEB_HOST"] || "localhost"
 }
+
+default_runq_port = ENV["RUNQ_PORT"] || (runq_config && runq_config["port"])
+if default_runq_port
+  DEFAULT_INSTANCE_CONFIG["runq_port"] = Integer(default_runq_port)
+end
+
+default_runweb_port = ENV["RUNWEB_PORT"] || (runweb_config && runweb_config["port"])
+if default_runweb_port
+  DEFAULT_INSTANCE_CONFIG["runweb_port"] = Integer(default_runweb_port)
+end
 
 def aurora_files
   require 'worker/aurora-classpath'
@@ -271,9 +289,13 @@ def do_start instance, instance_config
     }
     
     h = {
-      "log_file"      => log_file,
-      "log_level"     => worker_config["log level"]
+      "log_file"      => log_file
     }
+    
+    if simx_worker_log_level
+      h["log_level"] = simx_worker_log_level
+    end
+    
     cfg = DEFAULT_INSTANCE_CONFIG.merge(h).merge(instance_config)
     cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
 
