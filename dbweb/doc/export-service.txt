@@ -1,0 +1,39 @@
+Export is working as a web service on relteq-db, our ec2 instance. It pulls a scenario out of a database and either gives you the xml or starts a network editor with the xml.
+
+There are advantages to doing it this way (separate web service) instead of embedding export code within the rails app:
+
+1. Dyno timeouts. Heroku dynos (web server processes) time out after 15 seconds. However, it's entirely possible that an export-and-start-netework-editor request will take longer than that, particularly if the client's download is slow, but also if for some reason the export is slow (for example, blocked because something else is writing to the database).
+
+2. Concurrency. A dyno handles request/response with no concurrency, so any slowness, as above, will block other requests. We can of course add more dynos, but that's really wasteful if the reason for the slowness is client side or database side (rather than slowness in the heroku app). The implementation I'm using is based on asynchronous sinatra (which is based on eventmachine), which I've used before for this purpose. All the http handling is managed asynchronously, which means that if one request hangs for a while, it doesn't block other requests.
+
+3. Modularization, separation of concerns, etc. IMO rails is good UI, but I'm hesitant to put much computation in it.
+
+4. Distribution. We can run export on any host; it can be in the heroku clound, amazon cloud, or elsewhere.
+
+The database this uses is not, at the moment, the same as the one rails uses. There are some schema differences to resolve first. However, there are two sample scenarios available to export for testing.
+
+We will also need to add some kind of session key to the API so that we don't have to re-authenticate the user. We also need some kind of progress indicator so the user doesn't give up if the process is slow.
+
+There are three ways to invoke export from the web api, depending on how you are going to use the resulting xml. All the urls are based on http://relteq-db.dyndns.org:9098 (8098 for production).
+
+1. GET /model/scenario/#{id}.xml
+
+Exports the scenario and returns the xml string in the response body, with content type application/xml.
+
+2. GET /model/scenario/#{id}.url
+
+Exports the scenario, uploads the xml string to a url (s3, but that's an implementation detail), and returns the url in the response body, with content type text/plain.
+
+3. GET /editor/scenario/#{id}.html
+
+Exports the scenario, uploads the xml string to a url, and returns a html response that, when loaded in the client browser, runs our flash app, which then loads the url passed to it by fashvars.
+
+For example, try these urls, which all reference the test.xml network:
+
+http://relteq-db.dyndns.org:9098/model/scenario/1.xml
+http://relteq-db.dyndns.org:9098/model/scenario/1.url
+http://relteq-db.dyndns.org:9098/editor/scenario/1.html
+
+For a more complex example, substitute 2 for 1.
+
+These urls (primarily the latter) are what the redmine app should hand to the user's browser to start the editor on a given scenario.
