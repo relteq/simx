@@ -3,9 +3,7 @@ require 'sinatra/async'
 require 'yaml'
 require 'logger'
 require 'sequel'
-
-require 'db/import/scenario'
-require 'db/export/scenario'
+require 'cgi'
 
 class MyLogger < Logger
   alias write << # Stupid! See http://groups.google.com/group/rack-devel/browse_thread/thread/ffec93533180e98a
@@ -74,16 +72,87 @@ helpers do
       @s3 = true
     end
   end
+
+  # params can include "expiry", "ext"; returns url
+  def s3_store data, params
+    s3
+    expiry_str = params["expiry"]
+    expiry =
+      begin
+        expiry_str && Float(expiry_str)
+      rescue => e
+        LOGGER.warn e
+        nil
+      end
+
+    ext = params["ext"]
+
+    require 'digest/md5'
+    key = Digest::MD5.hexdigest(data)
+    if ext
+      if /\./ =~ ext
+        ext = ext[/\.([^.]*?)$/, 1]
+      end
+      key << "." << ext
+    end
+
+    # check if key already exists on s3 and don't upload if so
+    exists =
+      begin
+        AWS::S3::S3Object.find key, DBWEB_S3_BUCKET
+        true
+      rescue AWS::S3::NoSuchKey
+        false
+      rescue => ex
+        LOGGER.debug ex
+      end
+    
+    if exists
+      LOGGER.info "Data already exists in S3 at #{DBWEB_S3_BUCKET}/#{key}"
+      ## what if expiry is different? update it?
+    
+    else
+      LOGGER.info "Storing in S3 at #{DBWEB_S3_BUCKET}/#{key}"
+      LOGGER.debug "expiry=#{expiry.inspect}, data: " + data[0..50]
+
+      opts = {
+        :access => :public_read
+      }
+      if expiry
+        opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
+        ### need daemon to expire things
+      end
+
+      AWS::S3::S3Object.store key, data, DBWEB_S3_BUCKET, opts
+    end
+
+    return "https://s3.amazonaws.com/#{DBWEB_S3_BUCKET}/#{key}"
+  end
   
   ### should have rekey option
   def import_xml xml_data
     ###
     [table, id]
   end
+  
+  def export_scenario_xml scenario_id
+    Aurora::Scenario[Integer(scenario_id)].to_xml
+  end
+  
+  def editor_html
+    @editor_html ||= DATA.read
+  end
 end
+
+NE_URL = "http://vii.path.berkeley.edu/topl/NetworkEditor/NetworkEditor.swf"
 
 DBWEB_S3_BUCKET = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
 DB_URL = ENV["DBWEB_DB_URL"]
+DB = Sequel.connect DB_URL
+require 'db/schema'
+require 'db/model/aurora'
+require 'db/import/scenario'
+require 'db/export/scenario'
 
 ## don't need this
 TRUSTED_ADDRS = Set[*%w{
@@ -189,9 +258,60 @@ end
 
 
 # Export
-#
-# use /export to export xml data via http
-# use /export_s3 to export xml data to s3, returning the key
+
+# Exports the scenario and returns the xml string in the response body, with
+# content type application/xml.
+
+aget "/model/scenario/:id.xml" do |id|
+  protected!
+  LOGGER.info "requested scenario #{id} as xml"
+  ## why doesn't params include :id for aget?
+  
+  EM.defer do
+    content_type :xml
+    body export_scenario_xml(id)
+  end
+end
+
+# Exports the scenario, uploads the xml string to s3, and returns the url in the
+# response body, with content type text/plain.
+
+aget "/model/scenario/:id.url" do |id|
+  protected!
+  LOGGER.info "requested scenario #{id} as url"
+  
+  EM.defer do
+    content_type :text
+    xml = export_scenario_xml(id)
+    params["ext"] = "xml"
+    url = s3_store(xml, params)
+    body url
+  end
+end
+
+# Exports the scenario, uploads the xml string to s3, and returns a html
+# response that, when loaded in the client browser, runs our flash app, which
+# then loads the url passed to it by fashvars.
+
+aget "/editor/scenario/:id.html" do |id|
+  protected!
+  LOGGER.info "requested scenario #{id} in editor"
+  
+  EM.defer do
+    content_type :html
+
+    xml = export_scenario_xml(id)
+    params["ext"] = "xml"
+    url = s3_store(xml, params)
+
+    html = editor_html.
+      gsub("URL", CGI.escape(url)).
+      gsub("NE", NE_URL)
+      ## use real templating
+
+    body html
+  end
+end
 
 # Request s3 storage; returns the s3 key, which is
 # a md5 hash of the data, plus the specified file extension, if any, which
@@ -204,43 +324,12 @@ apost "/store" do
 
   EM.defer do
     LOGGER.info "started deferred store operation"
-
-    expiry_str = params["expiry"]
-    expiry =
-      begin
-        expiry_str && Float(expiry_str)
-      rescue => e
-        LOGGER.warn e
-        nil
-      end
-
-    ext = params["ext"]
+    
     data = request.body.read
+    url = s3_store(data, params)
 
-    require 'digest/md5'
-    key = Digest::MD5.hexdigest(data)
-    if ext
-      if /\./ =~ ext
-        ext = ext[/\.([^.]*?)$/, 1]
-      end
-      key << "." << ext
-    end
-
-    LOGGER.debug "Storing at #{key} with expiry=#{expiry.inspect}: " +
-      data[0..50]
-
-    opts = {
-      :access => :public_read
-    }
-    if expiry
-      opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
-      ### need daemon to expire things
-    end
-
-    AWS::S3::S3Object.store key, data, RUNWEB_S3_BUCKET, opts
-
-    LOGGER.info "finished deferred store operation"
-    body "https://s3.amazonaws.com/#{RUNWEB_S3_BUCKET}/#{key}"
+    LOGGER.info "finished deferred store operation, url = #{url}"
+    body url
   end
 end
 
@@ -258,3 +347,27 @@ error do
   LOGGER.error msg.inspect + "\n" + msg.backtrace.join("\n  ")
   "Error: #{msg}\n"
 end
+
+__END__
+
+<div>
+  <object id="NetworkEditor"
+    classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000'
+    codebase='http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab'
+    width="100%"
+    height="100%">
+    <param name="movie" value="NE">
+    <param name="quality" value="high">
+    <param name="flashVars" value="url=URL">
+    <embed
+      name="NetworkEditor"
+      width="100%"
+      height="100%"
+      src="NE"
+      quality="high"
+      FlashVars="url=URL"
+      pluginspage="http://www.macromedia.com/go/getflashplayer"
+      type="application/x-shockwave-flash">
+    </embed>
+  </object>
+</div>
