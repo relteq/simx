@@ -120,8 +120,8 @@ delegated_tasks.each do |name|
     daemon_dirs.each do |dir|
       print "%20s: " % dir
       $stdout.flush
-      result = `cd #{dir} && rake #{name}`.split("\n")[1..-1]
-      puts result.join(";") if result
+      result = `cd #{dir} && rake #{name}`
+      puts result if result
     end
   end
 end
