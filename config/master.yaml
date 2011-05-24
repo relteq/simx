@@ -8,8 +8,8 @@ runweb:
   port: 8097
   log level: info
 dbweb:
-  port: 9098
-  log level: debug
+  port: 8098
+  log level: info
 worker:
   config file: master.yaml
   log level: info
