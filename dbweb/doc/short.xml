@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scenario schemaVersion="1.0.0" name="short">
+<scenario schemaVersion="1.0.5" name="short">
   <settings>
     <units>US</units>
     <display dt="300" timeout="50" timeInitial="23400" timeMax="39600" />
@@ -102,7 +102,7 @@
     <ODList>
       <od begin="add1" end="add4">
         <PathList>
-          <path name="Freeway mainline route">
+          <path id="add1" name="Freeway mainline route">
             add5, add6, add7
           </path>
         </PathList>
@@ -110,17 +110,28 @@
     </ODList>
     
     <SensorList>
-      <sensor id="add_sensor_1"
-              display_lat="37.86734283851613"
-              display_lng="-122.29155421257019"
-              type="loop"
-              link_type="ML" >
+      <sensor id="add_sensor_1" type="loop" link_type="ML">
+        <description>a sensor</description>
+
         <position>
           <point lng="-122.29155421257019" lat="37.86734283851613" />
         </position>
-        <links>
-          add6
-        </links>
+
+        <display_position>
+          <point lng="-122.29155421257019" lat="37.86734283851613" />
+        </display_position>
+
+        <links>add6</links>
+
+        <parameters>
+        </parameters>
+
+        <data_sources>
+          <source
+            url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_07.txt"
+            dt="300"
+            format="pems" />
+        </data_sources>
       </sensor>
     </SensorList>
     
