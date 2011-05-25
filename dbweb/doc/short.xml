@@ -124,6 +124,15 @@
         <links>add6</links>
 
         <parameters>
+          <parameter name="data_id" value="400852" />
+          <parameter name="vds" value="400852" />
+          <parameter name="hwy_name" value="680" />
+          <parameter name="hwy_dir" value="S" />
+          <parameter name="postmile" value="40.202" />
+          <parameter name="offset_in_link" value="0.5" />
+          <parameter name="length" value="0.24" />
+          <parameter name="lanes" value="4" />
+          <parameter name="start_time" value="0" />
         </parameters>
 
         <data_sources>
