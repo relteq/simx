@@ -37,6 +37,7 @@ sudo make install
 export JAVA_HOME=/usr/local/jre
 export PATH=~/bin:$PATH:/usr/local/jre/bin:/usr/local/jruby/bin
 export RUBYOPT='rubygems'
+export JRUBY_OPTS='-rubygems'
 
 === system tools
 
@@ -126,31 +127,9 @@ exit 0
 
 == JRuby gems
 
-You'll need:
+You need 
 
-export JRUBY_OPTS='-rubygems'
-
-You also need rest-client as a gem in jruby.
-
-For me this works:
-
-$ sudo jgem install rest-client
-[sudo] password for vjoel:
-Fetching: mime-types-1.16.gem (100%)
-Fetching: rest-client-1.6.1.gem (100%)
-Successfully installed mime-types-1.16
-Successfully installed rest-client-1.6.1
-2 gems installed
-
-$ jgem list
-
-*** LOCAL GEMS ***
-
-mime-types (1.16)
-rake (0.8.7)
-rest-client (1.6.1)
-sources (0.0.1)
-
+$ sudo jgem install rest-client mime-types rake
 
 However, getting jgem to work like this can be a bit tricky, because of how root's PATH is set up. One way to fix this is:
 
@@ -158,6 +137,5 @@ However, getting jgem to work like this can be a bit tricky, because of how root
 # ln -s ../jruby/bin/jruby .
 # ln -s ../jruby/bin/jirb .
 # ln -s ../jruby/bin/jgem .
-
 
 If you are not maintaining jruby as root, then this won't be a problem (but you might have to tinker with paths in other ways).
