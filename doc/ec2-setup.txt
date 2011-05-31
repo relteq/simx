@@ -1,0 +1,163 @@
+== EC2 Setup
+
+This is simplified from the setup for the instance we are using for the database and web services.
+
+=== Instance type
+
+ebs/ubuntu-images-testing/ubuntu-maverick-daily-i386-server
+
+=== java
+
+I had trouble installing either sun-java6 or openjdk using apt-get. There were hangs during the install. So I installed java from sun's (ie. oracle's) download page:
+
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=42723
+
+Then, as root:
+cd /usr/local
+ln -s jre1.6.0_22 jre
+
+=== jruby
+
+get it from jruby.org and unpack to /usr/local
+
+Then:
+cd /usr/local
+ln -s jruby-1.6.1 jruby
+
+=== ruby
+
+get it from ruby-lang.org; unpack to your home and build and install:
+
+./configure
+make
+sudo make install
+
+=== PATH and related env vars
+
+export JAVA_HOME=/usr/local/jre
+export PATH=~/bin:$PATH:/usr/local/jre/bin:/usr/local/jruby/bin
+export RUBYOPT='rubygems'
+
+=== system tools
+
+Install using `apt-get install ...`
+
+Essential:
+
+gcc
+g++
+unzip, zip
+git
+git-core
+
+Useful:
+
+htop
+zsh
+postgres
+postgresql-contrib-8.4
+postgis
+sqlite3
+
+=== libraries needed for building certain gems
+
+Install using `apt-get install ...`
+
+libncurses5-dev
+libssl-dev
+libreadline-dev
+libxml2-dev
+libpq-dev
+libsqlite3-dev
+
+=== ruby gems
+
+Install using `gem install ...` for C ruby and `jgem install ...` for jruby
+
+Most important:
+rake nokogiri json
+
+Also potentially useful:
+pg rack thin eventmachine sinatra async_sinatra sqlite3 sequel sequel_pg rest-client taps
+
+
+== Where to get ruby 1.8.7
+
+
+They make 1.8.7 hard to find, for some reason. It's strange, because so many deployments (heroku for example) are using 1.8.7. Anyway, here it is:
+
+ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.8.7-p334.tar.gz
+
+The next step is to do the client side on your system, with the server and worker remote (relteq and vii.path). This will make sure that the web api is correct, and everything is working. This does not depend on ruby or simx, just curl.
+
+The step after that will be to put the worker on your system rather than vii.path.
+
+
+== DNS setup
+
+Question: Is there way to assign new DNS name to my ec2 instance through dyndns.org?
+
+Yes, just set up an account there. I believe you get 2 free dns assignments. You can manually assign, for testing purposes.
+
+There is one difficulty. Ec2 instances are on dynamic ip addresses. So you have to write an init script that runs when your ec2 instance boots, and registers the current ip (the external one, not the 10.x.x.x that you see inside the cloud) with dyndns.org.
+
+Furthermore, dyndns will expire your account after 28 days of inactivity. So this same init script should be called from cron.weekly.
+
+So, I created /etc/init.d/dyndns, more or less as below. It is called from /etc/rc.local and also is symlinked from /etc/cron.weekly. Make sure you have wget installed (probably you could use curl, but the args would be different).
+
+
+#! /bin/sh
+
+# At boot and periodically, call this to update the dns. If we don't do
+# this periodically, dyndns will send an expiration notice for the account
+# after 28 days of inactivity and then expire the account 5 days later.
+
+USER="your-username"
+PASS="your-password"
+DOMAIN="whatever.dyndns.org"
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+wget -O /dev/null https://$USER:$PASS@members.dyndns.org/nic/update?hostname=$DOMAIN
+
+exit 0
+
+
+
+== JRuby gems
+
+You'll need:
+
+export JRUBY_OPTS='-rubygems'
+
+You also need rest-client as a gem in jruby.
+
+For me this works:
+
+$ sudo jgem install rest-client
+[sudo] password for vjoel:
+Fetching: mime-types-1.16.gem (100%)
+Fetching: rest-client-1.6.1.gem (100%)
+Successfully installed mime-types-1.16
+Successfully installed rest-client-1.6.1
+2 gems installed
+
+$ jgem list
+
+*** LOCAL GEMS ***
+
+mime-types (1.16)
+rake (0.8.7)
+rest-client (1.6.1)
+sources (0.0.1)
+
+
+However, getting jgem to work like this can be a bit tricky, because of how root's PATH is set up. One way to fix this is:
+
+# cd /usr/local/bin
+# ln -s ../jruby/bin/jruby .
+# ln -s ../jruby/bin/jirb .
+# ln -s ../jruby/bin/jgem .
+
+
+If you are not maintaining jruby as root, then this won't be a problem (but you might have to tinker with paths in other ways).
