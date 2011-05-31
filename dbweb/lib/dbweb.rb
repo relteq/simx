@@ -1,4 +1,6 @@
+require 'thin'
 require 'sinatra'
+require 'eventmachine'
 require 'sinatra/async'
 require 'yaml'
 require 'logger'
@@ -149,6 +151,7 @@ NE_URL = "http://vii.path.berkeley.edu/topl/NetworkEditor/NetworkEditor.swf"
 DBWEB_S3_BUCKET = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
 DB_URL = ENV["DBWEB_DB_URL"]
 DB = Sequel.connect DB_URL
+LOGGER.info "Connected to DB at #{DB_URL}"
 require 'db/schema'
 require 'db/model/aurora'
 require 'db/import/scenario'
