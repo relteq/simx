@@ -6,7 +6,7 @@ module Aurora
     def self.create_from_xml srp_xml, ctx
       create_with_id srp_xml["id"] do |srp|
         srp.import_xml srp_xml, ctx
-        srp.srp_set = ctx.scenario.srp_set
+        srp.split_ratio_profile_set = ctx.scenario.split_ratio_profile_set
       end
     end
     

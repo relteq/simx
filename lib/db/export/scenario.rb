@@ -38,9 +38,9 @@ module Aurora
         }
 
         parts = [
-          network,
-          ic_set, srp_set, cp_set, dp_set,
-          event_set, ctrl_set
+          network, initial_condition_set, split_ratio_profile_set, 
+          capacity_profile_set, demand_profile_set, event_set, 
+          controller_set
         ]
         
         parts.each do |part|

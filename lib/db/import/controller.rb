@@ -5,7 +5,7 @@ module Aurora
     def self.create_from_xml ctrl_xml, ctx
       create_with_id ctrl_xml["id"] do |ctrl|
         ctrl.import_xml ctrl_xml, ctx
-        ctrl.controller_set = ctx.scenario.ctrl_set
+        ctrl.controller_set = ctx.scenario.controller_set
       end
     end
     

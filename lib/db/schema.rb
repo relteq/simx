@@ -31,12 +31,12 @@ create_table? :scenarios do
   foreign_key [:tln_id, :network_family_id], :networks,
                 :key => [:network_id, :id]
 
-  foreign_key :ic_set_id,     :initial_condition_sets
-  foreign_key :dp_set_id,     :demand_profile_sets
-  foreign_key :cp_set_id,     :capacity_profile_sets
-  foreign_key :srp_set_id,    :split_ratio_profile_sets
-  foreign_key :event_set_id,  :event_sets
-  foreign_key :ctrl_set_id,   :controller_sets
+  foreign_key :initial_condition_set_id,    :initial_condition_sets
+  foreign_key :demand_profile_set_id,       :demand_profile_sets
+  foreign_key :capacity_profile_set_id,     :capacity_profile_sets
+  foreign_key :split_ratio_profile_set_id,  :split_ratio_profile_sets
+  foreign_key :event_set_id,                :event_sets
+  foreign_key :controller_set_id,           :controller_sets
 end
 
 create_table? :vehicle_types do
@@ -337,7 +337,9 @@ create_table? :split_ratio_profiles do
 
   text        :profile # xml text of form <srm>...</srm><srm>...</srm>...
   
-  foreign_key :srp_set_id, :split_ratio_profile_sets, :null => false
+  foreign_key :split_ratio_profile_set_id, 
+              :split_ratio_profile_sets, 
+              :null => false
   foreign_key :node_id, :node_families, :null => false
 end
 
@@ -352,7 +354,9 @@ create_table? :capacity_profiles do
 
   text        :profile # xml text
   
-  foreign_key :cp_set_id, :capacity_profile_sets, :null => false
+  foreign_key :capacity_profile_set_id, 
+              :capacity_profile_sets, 
+              :null => false
   foreign_key :link_id, :link_families, :null => false
 end
 
@@ -370,7 +374,9 @@ create_table? :demand_profiles do
 
   text        :profile # xml text
   
-  foreign_key :dp_set_id, :demand_profile_sets, :null => false
+  foreign_key :demand_profile_set_id, 
+              :demand_profile_sets, 
+              :null => false
   foreign_key :link_id, :link_families, :null => false
 end
 
@@ -379,7 +385,9 @@ create_table? :initial_conditions do
   
   text        :density
   
-  foreign_key :ic_set_id, :initial_condition_sets, :null => false
+  foreign_key :initial_condition_set_id, 
+              :initial_condition_sets, 
+              :null => false
   foreign_key :link_id, :link_families, :null => false
 end
 

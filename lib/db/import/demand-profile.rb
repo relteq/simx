@@ -6,7 +6,7 @@ module Aurora
     def self.create_from_xml dp_xml, ctx
       create_with_id dp_xml["id"] do |dp|
         dp.import_xml dp_xml, ctx
-        dp.dp_set = ctx.scenario.dp_set
+        dp.demand_profile_set = ctx.scenario.demand_profile_set
       end
     end
     

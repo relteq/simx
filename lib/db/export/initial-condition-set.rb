@@ -9,7 +9,7 @@ module Aurora
       xml.InitialDensityProfile(attrs) {
         xml.description description unless !description or description.empty?
         
-        ics.each do |ic|
+        initial_conditions.each do |ic|
           ic.build_xml(xml)
         end
       }

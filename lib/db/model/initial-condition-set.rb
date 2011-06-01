@@ -4,7 +4,7 @@ module Aurora
     many_to_one :tln, :key => :network_id
     
     one_to_many :scenarios, :key => :ic_set_id
-    one_to_many :ics, :key => :ic_set_id, :class => InitialCondition
+    one_to_many :initial_conditions, :key => :initial_condition_set_id
 
     def clear_members
       ics.each do |ic|

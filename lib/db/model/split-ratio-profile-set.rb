@@ -3,8 +3,9 @@ module Aurora
     # for editing; does not restrict combination with other scenario.network
     many_to_one :tln, :key => :network_id
     
-    one_to_many :scenarios, :key => :srp_set_id
-    one_to_many :srps, :key => :srp_set_id, :class => SplitRatioProfile
+    one_to_many :scenarios, :key => :split_ratio_profile_set_id
+    one_to_many :srps, :key => :split_ratio_profile_set_id, 
+                :class => SplitRatioProfile
 
     def clear_members
       srps.each do |srp|
