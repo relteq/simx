@@ -3,7 +3,7 @@ module Aurora
     def build_xml(xml)
       attrs = {
         :id => id,
-        :type => self[:type],
+        :type => type_link,
         :lanes => lanes,
         :length => length
       }

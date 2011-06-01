@@ -25,7 +25,7 @@ module Aurora
       
       self.lanes = Float(link_xml["lanes"]) # Fractional lanes allowed.s
       self.length = ctx.import_length(link_xml["length"])
-      self.type = link_xml["type"]
+      self.type_link = link_xml["type"]
       
       link_xml.xpath("fd").each do |fd_xml|
         # just store the xml in the column for now

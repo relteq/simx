@@ -2,7 +2,7 @@ module Aurora
   class Event
     def build_xml(xml)
       attrs = {
-        :type => self[:type],
+        :type => event_type,
         :enabled => enabled,
         :tstamp => time
       }

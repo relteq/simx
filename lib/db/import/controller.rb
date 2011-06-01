@@ -10,9 +10,9 @@ module Aurora
     end
     
     def import_xml ctrl_xml, ctx
-      self.type         = ctrl_xml["type"]
-      self.dt           = Float(ctrl_xml["dt"])
-      self.use_sensors  = import_boolean(ctrl_xml["usesensors"], false)
+      self.controller_type = ctrl_xml["type"]
+      self.dt              = Float(ctrl_xml["dt"])
+      self.use_sensors     = import_boolean(ctrl_xml["usesensors"], false)
       
       fudge1 = "\n    " ## a hack until we parse the xml into the database
       fudge2 = "\n      "
@@ -21,30 +21,36 @@ module Aurora
       
       if /\S/ === ctrl_xml["network_id"]
         ctx.defer do
-          NetworkController.create do |network_ctrl|
+          nc = NetworkController.create do |network_ctrl|
             network_ctrl.controller_id = id
             network_ctrl.network_family_id =
               ctx.get_network_id(ctrl_xml["network_id"])
           end
+          self.update(:network_id => nc.network_family_id)
         end
+        self.type = 'NetworkController'
       end
 
       if /\S/ === ctrl_xml["node_id"]
         ctx.defer do
-          NodeController.create do |node_ctrl|
+          nc = NodeController.create do |node_ctrl|
             node_ctrl.controller_id = id
             node_ctrl.node_family_id = ctx.get_node_id(ctrl_xml["node_id"])
           end
+          self.update(:node_id => nc.node_family_id)
         end
+        self.type = 'NodeController'
       end
 
       if /\S/ === ctrl_xml["link_id"]
         ctx.defer do
-          LinkController.create do |link_ctrl|
+          lc = LinkController.create do |link_ctrl|
             link_ctrl.controller_id = id
             link_ctrl.link_family_id = ctx.get_link_id(ctrl_xml["link_id"])
           end
+          self.update(:link_id => lc.link_family_id)
         end
+        self.type = 'LinkController'
       end
     end
   end

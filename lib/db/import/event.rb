@@ -10,9 +10,9 @@ module Aurora
     end
     
     def import_xml event_xml, ctx
-      self.type     = event_xml["type"]
-      self.time     = Float(event_xml["tstamp"])
-      self.enabled  = import_boolean(event_xml["enabled"])
+      self.event_type  = event_xml["type"]
+      self.time        = Float(event_xml["tstamp"])
+      self.enabled     = import_boolean(event_xml["enabled"])
       
       fudge1 = "\n    " ## a hack until we parse the xml into the database
       fudge2 = "\n      "
@@ -21,30 +21,36 @@ module Aurora
       
       if /\S/ === event_xml["network_id"]
         ctx.defer do
-          NetworkEvent.create do |network_event|
+          ne = NetworkEvent.create do |network_event|
             network_event.event_id = id
             network_event.network_family_id =
               ctx.get_network_id(event_xml["network_id"])
           end
+          self.update(:network_id => ne.network_family_id)
         end
+        self.type = 'NetworkEvent'
       end
 
       if /\S/ === event_xml["node_id"]
         ctx.defer do
-          NodeEvent.create do |node_event|
+          ne = NodeEvent.create do |node_event|
             node_event.event_id = id
             node_event.node_family_id = ctx.get_node_id(event_xml["node_id"])
           end
+          self.update(:node_id => ne.node_family_id)
         end
+        self.type = 'NodeEvent'
       end
 
       if /\S/ === event_xml["link_id"]
         ctx.defer do
-          LinkEvent.create do |link_event|
+          le = LinkEvent.create do |link_event|
             link_event.event_id = id
             link_event.link_family_id = ctx.get_link_id(event_xml["link_id"])
           end
+          self.update(:link_id => le.link_family_id)
         end
+        self.type = 'LinkEvent'
       end
     end
   end

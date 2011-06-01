@@ -2,7 +2,7 @@ module Aurora
   class Controller
     def build_xml(xml)
       attrs = {
-        :type => self[:type],
+        :type => controller_type,
         :usesensors => use_sensors,
         :dt => dt
       }

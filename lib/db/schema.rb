@@ -165,8 +165,8 @@ create_table? :nodes do
   
   text        :name
   text        :description
-  text        :type
-  check       :type => Aurora::NODE_TYPES
+  text        :type_node
+  check       :type_node => Aurora::NODE_TYPES
   
   float       :lat
   float       :lng
@@ -185,11 +185,11 @@ create_table? :links do
   text        :description
   float       :lanes # fractional lanes is allowed
   float       :length
-  text        :type
+  text        :type_link
 
   check       {lanes >= 0}
   check       {length >= 0}
-  check       :type => Aurora::LINK_TYPES
+  check       :type_link => Aurora::LINK_TYPES
   
   string      :fd
   float       :qmax
@@ -248,8 +248,8 @@ create_table? :sensors do
   integer     :link_id, :null => true
   foreign_key [:network_id, :link_id], :links, :key => [:network_id, :id]
 
-  string      :type
-  check       :type => Aurora::SENSOR_TYPES
+  string      :type_sensor
+  check       :type_sensor => Aurora::SENSOR_TYPES
   
   string      :link_type
   check       :link_type => Aurora::SENSOR_LINK_TYPES
@@ -385,9 +385,20 @@ end
 
 create_table? :events do
   primary_key :id
+
+  # Used by Rails app for STI, not Aurora event type 
+  string      :type, :null => false
+  check       :type => Aurora::EVENT_STI_TYPES
+
+  # Rails app requires these three foreign keys, does not
+  # know about link_event, node_event, and network_event
+  # tables.
+  foreign_key :node_id, :node_families
+  foreign_key :link_id, :link_families
+  foreign_key :network_id, :network_families
   
-  string      :type
-  check       :type => Aurora::EVENT_TYPES
+  string      :event_type
+  check       :event_type => Aurora::EVENT_TYPES
   
   float       :time
   check       {time >= 0}
@@ -416,9 +427,19 @@ end
 
 create_table? :controllers do
   primary_key :id
+
+  string      :type, :null => false
+  check       :type => Aurora::CONTROL_STI_TYPES
+
+  # Rails app requires these three foreign keys, does not
+  # know about link_controller, node_controller, and 
+  # network_controller tables.
+  foreign_key :node_id, :node_families, :key => :id
+  foreign_key :link_id, :link_families, :key => :id
+  foreign_key :network_id, :network_families, :key => :id
   
-  string      :type
-  check       :type => Aurora::CONTROLLER_TYPES
+  string      :controller_type
+  check       :controller_type => Aurora::CONTROLLER_TYPES
   
   float       :dt
   check       {dt > 0}
@@ -427,7 +448,9 @@ create_table? :controllers do
   
   text        :parameters
   
-  foreign_key :ctrl_set_id, :controller_sets, :null => false
+  foreign_key :controller_set_id,
+              :controller_sets,
+              :null => false
 end
 
 create_table? :network_controllers do

@@ -21,8 +21,8 @@ module Aurora
       descs = sensor_xml.xpath("description").map {|desc| desc.text}
       self.description = descs.join("\n")
       
-      self.type       = sensor_xml["type"]
-      self.link_type  = sensor_xml["link_type"]
+      self.type_sensor = sensor_xml["type"]
+      self.link_type   = sensor_xml["link_type"]
 
       link_xml_ids = sensor_xml.xpath("links").text.split(",").map{|s|s.strip}
       

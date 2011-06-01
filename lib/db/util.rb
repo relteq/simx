@@ -18,6 +18,8 @@ module Aurora
                           SYNCHRONIZED SWARM HERO SLAVE }
   QCONTROLLER_TYPES = %w{ QUEUEOVERRIDE PROPORTIONAL PI }
   DYNAMICS          = %w{ CTM }
+  EVENT_STI_TYPES   = %w{ LinkEvent NodeEvent NetworkEvent }
+  CONTROL_STI_TYPES = %w{ NetworkController NodeController LinkController }
 
   # Convert length in xml file to length for insertion in database.
   def import_length len

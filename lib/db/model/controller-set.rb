@@ -3,8 +3,8 @@ module Aurora
     # for editing; does not restrict combination with other scenario.network
     many_to_one :tln, :key => :network_id
     
-    one_to_many :scenarios, :key => :ctrl_set_id
-    one_to_many :controllers, :key => :ctrl_set_id
+    one_to_many :scenarios, :key => :controller_set_id
+    one_to_many :controllers, :key => :controller_set_id
 
     def clear_members
       controllers.each do |controller|
