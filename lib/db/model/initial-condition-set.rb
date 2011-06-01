@@ -7,7 +7,7 @@ module Aurora
     one_to_many :initial_conditions, :key => :initial_condition_set_id
 
     def clear_members
-      ics.each do |ic|
+      initial_conditions.each do |ic|
         ic.destroy
       end
     end
