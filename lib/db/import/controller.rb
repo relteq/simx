@@ -20,37 +20,24 @@ module Aurora
         ctrl_xml.xpath("*").map {|xml| xml.to_s}.join(fudge2) + fudge1
       
       if /\S/ === ctrl_xml["network_id"]
-        ctx.defer do
-          nc = NetworkController.create do |network_ctrl|
-            network_ctrl.controller_id = id
-            network_ctrl.network_family_id =
-              ctx.get_network_id(ctrl_xml["network_id"])
-          end
-          self.update(:network_id => nc.network_family_id)
-        end
         self.type = 'NetworkController'
+        ctx.defer do
+          self.update(:network_id => ctx.get_network_id(ctrl_xml["network_id"]))
+        end
       end
 
       if /\S/ === ctrl_xml["node_id"]
-        ctx.defer do
-          nc = NodeController.create do |node_ctrl|
-            node_ctrl.controller_id = id
-            node_ctrl.node_family_id = ctx.get_node_id(ctrl_xml["node_id"])
-          end
-          self.update(:node_id => nc.node_family_id)
-        end
         self.type = 'NodeController'
+        ctx.defer do
+          self.update(:node_id => ctx.get_node_id(ctrl_xml["node_id"]))
+        end
       end
 
       if /\S/ === ctrl_xml["link_id"]
-        ctx.defer do
-          lc = LinkController.create do |link_ctrl|
-            link_ctrl.controller_id = id
-            link_ctrl.link_family_id = ctx.get_link_id(ctrl_xml["link_id"])
-          end
-          self.update(:link_id => lc.link_family_id)
-        end
         self.type = 'LinkController'
+        ctx.defer do
+          self.update(:link_id => ctx.get_link_id(ctrl_xml["link_id"]))
+        end
       end
     end
   end

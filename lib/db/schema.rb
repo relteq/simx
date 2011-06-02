@@ -394,7 +394,6 @@ end
 create_table? :events do
   primary_key :id
 
-  # Used by Rails app for STI, not Aurora event type 
   string      :type, :null => false
   check       :type => Aurora::EVENT_STI_TYPES
 
@@ -416,21 +415,6 @@ create_table? :events do
   text        :parameters
   
   foreign_key :event_set_id, :event_sets, :null => false
-end
-
-create_table? :network_events do
-  foreign_key :event_id, :events, :primary_key => true
-  foreign_key :network_family_id, :network_families, :null => false
-end
-
-create_table? :node_events do
-  foreign_key :event_id, :events, :primary_key => true
-  foreign_key :node_family_id, :node_families, :null => false
-end
-
-create_table? :link_events do
-  foreign_key :event_id, :events, :primary_key => true
-  foreign_key :link_family_id, :link_families, :null => false
 end
 
 create_table? :controllers do
@@ -459,19 +443,4 @@ create_table? :controllers do
   foreign_key :controller_set_id,
               :controller_sets,
               :null => false
-end
-
-create_table? :network_controllers do
-  foreign_key :controller_id, :controllers, :primary_key => true
-  foreign_key :network_family_id, :network_families, :null => false
-end
-
-create_table? :node_controllers do
-  foreign_key :controller_id, :controllers, :primary_key => true
-  foreign_key :node_family_id, :node_families, :null => false
-end
-
-create_table? :link_controllers do
-  foreign_key :controller_id, :controllers, :primary_key => true
-  foreign_key :link_family_id, :link_families, :null => false
 end

@@ -7,14 +7,9 @@ module Aurora
         :dt => dt
       }
       
-      case
-      when network_controller
-        attrs[:network_id] = network_controller.network_family_id
-      when node_controller
-        attrs[:node_id] = node_controller.node_family_id
-      when link_controller
-        attrs[:link_id] = link_controller.link_family_id
-      end
+      attrs[:network_id] = network_id if network_id
+      attrs[:node_id] = node_id if node_id
+      attrs[:link_id] = link_id if link_id
       
       xml.controller(attrs) do
         xml << parameters

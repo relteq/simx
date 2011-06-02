@@ -1,29 +1,18 @@
 module Aurora
   class Event
+    plugin :single_table_inheritance, :type
     many_to_one :event_set, :key => :event_set_id
-    
-    one_to_one :network_event,  :key => :event_id
-    one_to_one :node_event,     :key => :event_id
-    one_to_one :link_event,     :key => :event_id
-
-    def before_destroy
-      (network_event || node_event || link_event).destroy
-      super
-    end
   end
 
-  class NetworkEvent
-    many_to_one :event, :key => :event_id
+  class NetworkEvent < Event
     many_to_one :network_family, :key => :network_family_id
   end
 
-  class NodeEvent
-    many_to_one :event, :key => :event_id
+  class NodeEvent < Event
     many_to_one :node_family, :key => :node_family_id
   end
 
-  class LinkEvent
-    many_to_one :event, :key => :event_id
+  class LinkEvent < Event
     many_to_one :link_family, :key => :link_family_id
   end
 end

@@ -32,15 +32,15 @@ module Aurora
 
   class EventSet < Sequel::Model; end
   class Event < Sequel::Model; end
-  class NetworkEvent < Sequel::Model; end
-  class NodeEvent < Sequel::Model; end
-  class LinkEvent < Sequel::Model; end
+  class NetworkEvent < Event; end
+  class NodeEvent < Event; end
+  class LinkEvent < Event; end
 
   class ControllerSet < Sequel::Model; end
   class Controller < Sequel::Model; end
-  class NetworkController < Sequel::Model; end
-  class NodeController < Sequel::Model; end
-  class LinkController < Sequel::Model; end
+  class NetworkController < Controller; end
+  class NodeController < Controller; end
+  class LinkController < Controller; end
   
   constants.each do |const|
     c = const_get(const)

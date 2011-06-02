@@ -7,14 +7,9 @@ module Aurora
         :tstamp => time
       }
       
-      case
-      when network_event
-        attrs[:network_id] = network_event.network_family_id
-      when node_event
-        attrs[:node_id] = node_event.node_family_id
-      when link_event
-        attrs[:link_id] = link_event.link_family_id
-      end
+      attrs[:network_id] = network_id if network_id
+      attrs[:node_id] = node_id if node_id
+      attrs[:link_id] = link_id if link_id
       
       xml.event(attrs) do
         xml << parameters
