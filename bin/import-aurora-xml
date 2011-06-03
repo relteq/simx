@@ -7,12 +7,13 @@ $LOAD_PATH.unshift libdir
 require 'simx/argos'
 
 optdef = {
-  "h"         => true,
-  "help"      => true,
-  "log"       => true,
-  "emit"      => true,
-  "rekey"     => true,
-  "dry-run"   => true
+  "h"           => true,
+  "help"        => true,
+  "log"         => true,
+  "emit"        => true,
+  "rekey"       => true,
+  "dry-run"     => true,
+  "round-trip"  => true
 }
 
 opts = Argos.parse_options(ARGV, optdef)
@@ -46,6 +47,9 @@ if ARGV.size == 0 or ARGV.size > 2 or
                 Use this when the input xml cannot be assumed to
                 have been exported from the db.
       
+      --round-trip
+                Export the same scenario to stdout after importing.
+
   END
   exit
 end
@@ -120,6 +124,11 @@ module Aurora
       
       DB.transaction do
         @scenario = Scenario.create_from_xml(scenario_xml)
+      end
+      
+      if opts["round-trip"]
+        require 'db/export/scenario'
+        puts scenario.to_xml
       end
       
       return scenario.id
