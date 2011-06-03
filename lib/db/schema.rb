@@ -81,6 +81,7 @@ end
 
 create_table? :networks do
   primary_key :id
+  foreign_key :project_id, :projects
 
   text        :name
   text        :description
