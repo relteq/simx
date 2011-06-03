@@ -7,7 +7,7 @@ module Aurora
     def self.create_from_xml event_set_xml, ctx
       create_with_id event_set_xml["id"] do |event_set|
         event_set.import_xml event_set_xml, ctx
-        event_set.network_id = ctx.scenario.tln_id
+        event_set.network_id = ctx.scenario.network_id
           # since we are creating a new event set, let's assume the user wants
           # to edit it using the network in this scenario; that can be
           # changed later by the user.

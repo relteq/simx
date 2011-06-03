@@ -27,11 +27,6 @@ module Aurora
           end
         end
 
-        # the network's network_id is also unreferenced
-        scenario_xml.xpath("//network").each do |elt|
-          elt["network_id"] = "" if numeric(elt["network_id"])
-        end
-
         REFERENCED_ELEMENT_TYPES.each do |t|
           rekey_for_type t, scenario_xml
         end

@@ -3,7 +3,7 @@ module Aurora
     include Aurora
     
     def self.create_from_xml node_xml, ctx, parent
-      create_with_id node_xml["id"], parent.network_id do |node|
+      create_with_id node_xml["id"], parent.id do |node|
         if node.id
           NodeFamily[node.id] or
             NodeFamily.create {|nf| nf.id = node.id}
@@ -12,7 +12,7 @@ module Aurora
           ctx.node_family_id_for_xml_id[node_xml["id"]] = nf.id
         end
         
-        node.parent = parent
+        node.network = parent
         node.import_xml node_xml, ctx
       end
     end

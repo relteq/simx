@@ -8,7 +8,7 @@ module Aurora
     def self.create_from_xml ic_set_xml, ctx
       create_with_id ic_set_xml["id"] do |ic_set|
         ic_set.import_xml ic_set_xml, ctx
-        ic_set.network_id = ctx.scenario.tln_id
+        ic_set.network_id = ctx.scenario.network_id
           # since we are creating a new ic set, let's assume the user wants
           # to edit it using the network in this scenario; that can be
           # changed later by the user.

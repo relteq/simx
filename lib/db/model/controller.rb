@@ -5,7 +5,7 @@ module Aurora
   end
 
   class NetworkController < Controller
-    many_to_one :network_family, :key => :network_family_id
+    many_to_one :network, :key => :network_id
   end
 
   class NodeController < Controller

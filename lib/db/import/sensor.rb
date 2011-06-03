@@ -3,7 +3,7 @@ module Aurora
     include Aurora
     
     def self.create_from_xml sensor_xml, ctx, parent
-      create_with_id sensor_xml["id"], parent.network_id do |sensor|
+      create_with_id sensor_xml["id"], parent.id do |sensor|
         if sensor.id
           SensorFamily[sensor.id] or
             SensorFamily.create {|sf| sf.id = sensor.id}
@@ -12,7 +12,7 @@ module Aurora
           ctx.sensor_family_id_for_xml_id[sensor_xml["id"]] = sf.id
         end
         
-        sensor.parent = parent
+        sensor.network = parent
         sensor.import_xml sensor_xml, ctx
       end
     end

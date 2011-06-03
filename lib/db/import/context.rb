@@ -13,8 +13,7 @@ module Aurora
     # Translation tables from xml ID to database ID.
     # These are only needed when the xml ID is non-numeric. Numeric IDs
     # go directly into the database without translation.
-    attr_reader :tln_id_for_xml_id
-    attr_reader :network_family_id_for_xml_id
+    attr_reader :network_id_for_xml_id
     attr_reader :node_family_id_for_xml_id
     attr_reader :link_family_id_for_xml_id
     attr_reader :route_family_id_for_xml_id
@@ -28,8 +27,8 @@ module Aurora
     def initialize scenario
       @scenario = scenario
       
-      @tln_id_for_xml_id            = {}
-      @network_family_id_for_xml_id = {}
+      @network_id_for_xml_id        = {}
+      
       @node_family_id_for_xml_id    = {}
       @link_family_id_for_xml_id    = {}
       @sensor_family_id_for_xml_id  = {}
@@ -41,12 +40,12 @@ module Aurora
       @deferred = []
     end
     
-    # Returns the network family ID (not Tln ID) for the network specified in
+    # Returns the network ID for the network specified in
     # the given string. If the string is not a decimal integer, look up the
     # string in the hash of local IDs defined in the imported xml.
     def get_network_id network_xml_id
       network_xml_id or raise ArgumentError
-      network_family_id_for_xml_id[network_xml_id] || Integer(network_xml_id)
+      network_id_for_xml_id[network_xml_id] || Integer(network_xml_id)
     rescue ArgumentError
       raise ImportError, "invalid network id: #{network_xml_id.inspect}"
     end

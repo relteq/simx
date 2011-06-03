@@ -4,9 +4,8 @@ module Aurora
   end
   
   class Link
-    many_to_one :tln, :key => :network_id
+    many_to_one :network, :key => :network_id
     many_to_one :link_family, :key => :id
-    many_to_one :parent, :class => Network, :key => [:network_id, :parent_id]
 
     many_to_one :begin_node, :class => Node, :key => [:network_id, :begin_id]
     many_to_one :end_node,   :class => Node, :key => [:network_id, :end_id]

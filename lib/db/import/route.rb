@@ -3,7 +3,7 @@ module Aurora
     include Aurora
     
     def self.create_from_xml route_xml, ctx, parent
-      create_with_id route_xml["id"], parent.network_id do |route|
+      create_with_id route_xml["id"], parent.id do |route|
         if route.id
           RouteFamily[route.id] or
             RouteFamily.create {|rf| rf.id = route.id}
@@ -12,7 +12,7 @@ module Aurora
           ctx.route_family_id_for_xml_id[route_xml["id"]] = rf.id
         end
         
-        route.parent = parent
+        route.network = parent
         route.import_xml route_xml, ctx
       end
     end

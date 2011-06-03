@@ -5,7 +5,7 @@ module Aurora
   end
 
   class NetworkEvent < Event
-    many_to_one :network_family, :key => :network_family_id
+    many_to_one :network, :key => :network_id
   end
 
   class NodeEvent < Event

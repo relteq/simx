@@ -1,14 +1,15 @@
 module Aurora
   class Project
     one_to_many :scenarios
-    one_to_many :tlns
+    one_to_many :networks
 
     def before_destroy
       scenarios.each do |scenario|
         scenario.destroy
       end
-      tlns.each do |tln|
-        tln.destroy
+      ### destroy sets too, using network_id?
+      networks.each do |network|
+        network.destroy
       end
       super
     end

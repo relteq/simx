@@ -7,7 +7,6 @@ module Aurora
     def build_xml(xml)
       attrs = {
         :id           => id,
-        :network_id   => network_id,
         :name         => name,
         :ml_control   => ml_control,
         :q_control    => q_control,
@@ -28,7 +27,7 @@ module Aurora
         lists = [
           ["NodeList", nodes],
           ["LinkList", links],
-          ["NetworkList", subnetworks],
+          ["NetworkList", children],
           ["SensorList", sensors]
         ]
         
@@ -52,11 +51,11 @@ module Aurora
           routes.each do |route|
             rls =
               DB[:route_links].
-              filter(:network_id => network_id, :route_id => route.id).
+              filter(:network_id => id, :route_id => route.id).
               order_by(:order)
             
             links = rls.map {|rl|
-              Link[:network_id => network_id, :id => rl[:link_id]]}
+              Link[:network_id => id, :id => rl[:link_id]]}
             
             begin_node = links.first.end_node
             end_node = links.last.begin_node

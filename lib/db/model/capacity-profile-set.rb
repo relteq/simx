@@ -1,7 +1,7 @@
 module Aurora
   class CapacityProfileSet
     # for editing; does not restrict combination with other scenario.network
-    many_to_one :tln, :key => :network_id
+    many_to_one :network, :key => :network_id
     
     one_to_many :scenarios, :key => :capacity_profile_set_id
     one_to_many :cps, :key => :capacity_profile_set_id, 

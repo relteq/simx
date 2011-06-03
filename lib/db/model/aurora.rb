@@ -1,7 +1,6 @@
 module Aurora
   module Model; end # a place to put things, e.g. in export/model.rb
   
-  class NetworkFamily < Sequel::Model; end
   class NodeFamily < Sequel::Model; end
   class LinkFamily < Sequel::Model; end
   class RouteFamily < Sequel::Model; end
@@ -15,7 +14,6 @@ module Aurora
 
   class Scenario < Sequel::Model; end
   class VehicleType < Sequel::Model; end
-  class Tln < Sequel::Model; end
   class Project < Sequel::Model; end
 
   class SplitRatioProfileSet < Sequel::Model; end
