@@ -362,7 +362,7 @@ create_table? :events do
   # tables.
   foreign_key :node_id, :node_families
   foreign_key :link_id, :link_families
-  foreign_key :network_id, :network_families
+  foreign_key :network_id, :networks
   
   string      :event_type
   check       :event_type => Aurora::EVENT_TYPES
@@ -388,7 +388,7 @@ create_table? :controllers do
   # network_controller tables.
   foreign_key :node_id, :node_families, :key => :id
   foreign_key :link_id, :link_families, :key => :id
-  foreign_key :network_id, :network_families, :key => :id
+  foreign_key :network_id, :networks, :key => :id
   
   string      :controller_type
   check       :controller_type => Aurora::CONTROLLER_TYPES
