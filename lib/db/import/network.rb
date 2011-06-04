@@ -30,10 +30,11 @@ module Aurora
       end
       
       if members_before
-        ### shouldn't this be deferred?
-        members_after = network.select_members
-        members_before.zip(members_after).each do |(table, set0), (_, set1)|
-          DB[table].where(:id => (set0 - set1).to_a).delete
+        ctx.defer do
+          members_after = network.select_members
+          members_before.zip(members_after).each do |(table, set0), (_, set1)|
+            DB[table].where(:id => (set0 - set1).to_a).delete
+          end
         end
       end
       
