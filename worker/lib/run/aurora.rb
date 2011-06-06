@@ -16,8 +16,42 @@ module Run
     #   output_types:   <array of strings specifying content-types of outputs>
     #
     # It is up to the run requestor to make sure that the input and output
-    # specifications make sense with the requested engine.
+    # specifications make sense with the requested engine, as follows.
     #
+    #  calibrator:
+    #   * Inputs
+    #     [0]: xml buffer with scenario configuration
+    #
+    #   * Outputs
+    #     [0]: name of the xml configuration file tha needs to be generated
+    #
+    #  simulator:
+    #   * Inputs
+    #     [0]: xml buffer with scenario configuration
+    #     [1]: xml buffer with time range (optional), for example:
+    #         <time_range begin_time="25200" duration="10800" />
+    #
+    #   * Outputs
+    #     [0]: name of the output .csv file
+    #     [1]: name of the xml configuration file (optional - present
+    #          in the warm-up run)
+    #
+    #  report generator:
+    #   * Inputs
+    #     [0]: xml buffer with the report request
+    #
+    #   * Outputs
+    #     [0]: name of the xml file containing the report data
+    #
+    #
+    #  report exporter:
+    #   * Inputs
+    #     [0]: url pointing to xml file containing the report data
+    #
+    #   * Outputs
+    #     [0]: name of the resulting file whose extension (.pdf, .ppt, .xls)
+    #          indicates the type of export to be performed
+
     attr_reader :param
     
     # period between updates in seconds
@@ -51,6 +85,8 @@ module Run
         aurora.service.CalibrationManager.new
       when 'report generator'
         aurora.service.ReportManager.new
+      when 'report exporter'
+        aurora.service.ExportManager.new
       else
         raise "unknown engine: #{engine}"
       end
@@ -59,12 +95,13 @@ module Run
     def input_strings
       @input_strings ||= inputs.map do |input|
         case input
-        when /\n/ # multiple lines; assume xml
-          log.info "assuming xml given: #{input[0..50]}"
+        when /\n/,    # multiple lines; assume inline data, not url
+              /^\s*</ # looks like single-line xml
+          log.info "assuming inline data: #{input[0..50]}"
           input
-        else # single line, assume url
+        else # assume url
           log.info "reading url: #{input}"
-          open(input) {|f| f.read} ## local file?
+          open(input) {|f| f.read} ## prohibit or restrict local file?
         end
       end
     end
@@ -85,9 +122,19 @@ module Run
       end
 
       updater = ProgressUpdater.new do |pct|
-        log.info "ProgressUpdater: #{pct}%"
+        log.debug "ProgressUpdater: #{pct}%"
         @progress = pct / 100.0; update
       end
+      
+      log.info {
+        "running aurora #{engine} with inputs:\n  " +
+        input_strings.map {|s|s[0..100].inspect}.join("\n  ")
+      }
+
+      log.info {
+        "running aurora #{engine} with output files:\n  " +
+        output_files.map {|s| s.inspect}.join("\n  ")
+      }
 
       error =
         begin
@@ -95,9 +142,15 @@ module Run
             updater, update_period)
         rescue => e
           e
-        else
-          nil
         end
+      
+      if error == "Done!" ## fix this
+        error = nil
+      end
+      
+      if error
+        log.error e
+      end
       
       output_urls = output_files.zip(output_types).map do |file, type|
         data = begin
@@ -127,6 +180,7 @@ module Run
     end
     
     def store data, type = nil
+      ## need option to store locally for debugging, not s3
       ### Worker should not know about this stuff.
       runweb_user = ENV["RUNWEB_USER"] || "relteq"
       runweb_password = ENV["RUNWEB_PASSWORD"] || "topl5678"
