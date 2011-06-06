@@ -1,8 +1,35 @@
 source :rubygems
 
-gem 'eventmachine'
-gem 'sinatra'
-gem 'async_sinatra', '~>0.5'
-gem 'sequel'
-gem 'thin'
-gem 'sqlite3-ruby'
+#------------------------------
+# for server and worker installations
+#
+mri_18_gems = %w{
+  eventmachine
+  sinatra
+  sequel
+  thin
+  sqlite3-ruby
+  rake
+  nokogiri
+  json
+  pg
+  sequel_pg
+  rest-client
+}
+
+mri_18_gems.each do |g|
+  gem g, :platforms => :mri_18
+end
+gem 'async_sinatra', '~>0.5', :platforms => :mri_18
+
+#------------------------------
+# for worker installations
+#
+jruby_gems = %w{
+  jruby-openssl
+  rest-client
+}
+
+jruby_gems.each do |g|
+  gem g, :platforms => :jruby
+end
