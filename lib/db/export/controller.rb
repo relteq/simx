@@ -4,7 +4,7 @@ module Aurora
       attrs = {
         :type => controller_type,
         :usesensors => use_sensors,
-        :dt => dt
+        :dt => "%.1f" % dt
       }
       
       attrs[:network_id] = network_id if network_id
