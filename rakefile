@@ -130,7 +130,7 @@ namespace :workers do
   delegated_tasks.each do |name|
     task name do
       result = `cd worker && rake #{name}`
-      puts result
+      puts "workers: #{result}"
     end
   end
 end
