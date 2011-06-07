@@ -117,18 +117,17 @@ helpers do
       LOGGER.info "Storing in S3 at #{DBWEB_S3_BUCKET}/#{key}"
       LOGGER.debug "expiry=#{expiry.inspect}, data: " + data[0..50]
 
-      opts = {
-        :access => :public_read
-      }
+      opts = {}
       if expiry
         opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
         ### need daemon to expire things
       end
 
       AWS::S3::S3Object.store key, data, DBWEB_S3_BUCKET, opts
+      
     end
 
-    return "https://s3.amazonaws.com/#{DBWEB_S3_BUCKET}/#{key}"
+    return AWS::S3::S3Object.url_for(key, DBWEB_S3_BUCKET) 
   end
   
   ### should have rekey option
@@ -170,11 +169,16 @@ USERS = [
 
 helpers do
   def protected!
-return ### otherwise, flash credentials don't work??
+    return ### otherwise, flash credentials don't work??
     response['WWW-Authenticate'] = %(Basic realm="the TOPL Project") and \
     throw(:halt,
           [401, "Not authorized at #{request.env["REMOTE_ADDR"]}\n"]) and \
     return unless authorized?
+  end
+
+  def not_authorized!
+    throw(:halt,
+          [403, "Unauthorized request: Try returning to relteq.com"])
   end
 
   def authorized?
@@ -183,6 +187,16 @@ return ### otherwise, flash credentials don't work??
       @auth.provided? && @auth.basic? && @auth.credentials &&
         USERS.include?(@auth.credentials)
     end
+  end
+
+  def can_export?(object, access_token)
+    unexpired_auths = DB[:dbweb_authorizations].filter('expiration > ?', Time.now)
+    applicable_to_object = unexpired_auths.filter(
+      :object_id => object[:id], 
+      :object_type => object[:type],
+      :access_token => access_token
+    )
+    applicable_to_object.all.count == 1 
   end
 
   def index_page
@@ -267,12 +281,17 @@ end
 
 aget "/model/scenario/:id.xml" do |id|
   protected!
+  params[:access_token] or not_authorized!
   LOGGER.info "requested scenario #{id} as xml"
-  ## why doesn't params include :id for aget?
-  
-  EM.defer do
-    content_type :xml
-    body export_scenario_xml(id)
+
+  if can_export?({:type => 'Scenario', 
+                  :id => id}, params[:access_token])
+    EM.defer do
+      content_type :xml
+      body export_scenario_xml(id)
+    end
+  else
+    not_authorized!
   end
 end
 
@@ -298,21 +317,31 @@ end
 
 aget "/editor/scenario/:id.html" do |id|
   protected!
+  params[:access_token] or not_authorized!
   LOGGER.info "requested scenario #{id} in editor"
   
-  EM.defer do
-    content_type :html
+  if can_export?({:type => 'Scenario', 
+                  :id => id}, params[:access_token])
+    EM.defer do
+      content_type :html
 
-    xml = export_scenario_xml(id)
-    params["ext"] = "xml"
-    url = s3_store(xml, params)
+      xml = export_scenario_xml(id)
+      params["ext"] = "xml"
+      s3_url = s3_store(xml, params)
+      # NOTE Full URL escaping will make this fail in some cases, as 
+      # S3Object.url_for creates the correct %xx entities for most special characters
+      flash_friendly_s3_url = 
+        s3_url.gsub(/%/,'%2525').gsub(/&/,'%26').gsub(/=/,'%3D')
 
-    html = editor_html.
-      gsub("URL", CGI.escape(url)).
-      gsub("NE", NE_URL)
-      ## use real templating
+      html = editor_html.
+        gsub("URL", flash_friendly_s3_url).
+        gsub("NE", NE_URL)
+        ## use real templating
 
-    body html
+      body html
+    end
+  else
+    not_authorized!
   end
 end
 
