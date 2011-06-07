@@ -12,11 +12,11 @@ class JRubyWorker
   
   # As expected by WorkerManager.
   def error msg
-    puts "Error: #{msg}"
+    puts "#{self.class} error: #{msg}"
   end
   
   def done
-    puts "Done"
+    puts "#{self.class} done."
   end
   
   def run
@@ -25,8 +25,12 @@ class JRubyWorker
     ## handle term signal by exiting result code 0
   
     run_class = get_scoped_constant(worker_spec["run_class"])
-    $0 = "#{run_class} jruby worker" ## for #{instance_name}"
+    instance_name = worker_spec["instance_name"]
+    
+    $0 = "#{run_class} jruby worker for #{instance_name}"
+    
     Worker.new(run_class, worker_spec).execute
+    
     done
   
   rescue => ex

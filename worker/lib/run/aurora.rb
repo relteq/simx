@@ -11,7 +11,7 @@ module Run
   class Aurora < Base
     # Param hash sent from user via runq. Keys are:
     #
-    #   update_period:  <integer, in seconds>
+    #   update_period:  <integer, in seconds, default=10>
     #   inputs:         <array of urls of input files OR strings>
     #   output_types:   <array of strings specifying content-types of outputs>
     #
@@ -97,7 +97,7 @@ module Run
         case input
         when /\n/,    # multiple lines; assume inline data, not url
               /^\s*</ # looks like single-line xml
-          log.info "assuming inline data: #{input[0..50]}"
+          log.info "assuming inline data: #{input[0..50].inspect}"
           input
         else # assume url
           log.info "reading url: #{input}"
@@ -136,22 +136,19 @@ module Run
         output_files.map {|s| s.inspect}.join("\n  ")
       }
 
-      error =
-        begin
-          manager.run_application(input_strings, output_files,
-            updater, update_period)
-        rescue => e
-          e
-        end
-      
-      if error == "Done!" ## fix this
-        error = nil
-      end
-      
-      if error
+      begin
+        manager.run_application(input_strings, output_files,
+          updater, update_period)
+      rescue => e
         log.error e
+        @results = {
+          "ok"          => false,
+          "output_urls" => [],
+          "error"       => e.to_s
+        }
+        return
       end
-      
+
       output_urls = output_files.zip(output_types).map do |file, type|
         data = begin
           File.read(file)
@@ -160,15 +157,14 @@ module Run
           ""
         end
         
-        log.debug "output #{file}:\n#{data[0..200]}"
+        log.debug "output #{file}:\n#{data[0..200].inspect}"
         store(data, type)
       end
       
       @results = {
-        "ok"          => !error,
+        "ok"          => true,
         "output_urls" => output_urls
       }
-      @results["error"] = error.to_s if error
       
       log.info "results = #{@results.to_yaml}"
 
