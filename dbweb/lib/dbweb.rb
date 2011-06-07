@@ -6,6 +6,7 @@ require 'yaml'
 require 'logger'
 require 'sequel'
 require 'cgi'
+require 'haml'
 
 class MyLogger < Logger
   alias write << # Stupid! See http://groups.google.com/group/rack-devel/browse_thread/thread/ffec93533180e98a
@@ -138,10 +139,6 @@ helpers do
   
   def export_scenario_xml scenario_id
     Aurora::Scenario[Integer(scenario_id)].to_xml
-  end
-  
-  def editor_html
-    @editor_html ||= DATA.read
   end
 end
 
@@ -326,19 +323,17 @@ aget "/editor/scenario/:id.html" do |id|
       content_type :html
 
       xml = export_scenario_xml(id)
-      params["ext"] = "xml"
-      s3_url = s3_store(xml, params)
+      s3_params = {}
+      s3_params["ext"] = "xml"
+      unusable_s3_url = s3_store(xml, s3_params)
       # NOTE Full URL escaping will make this fail in some cases, as 
       # S3Object.url_for creates the correct %xx entities for most special characters
-      flash_friendly_s3_url = 
-        s3_url.gsub(/%/,'%2525').gsub(/&/,'%26').gsub(/=/,'%3D')
+      @s3_url = 
+        unusable_s3_url.gsub(/%/,'%2525').gsub(/&/,'%26').gsub(/=/,'%3D')
+      @network_editor = NE_URL
+      LOGGER.debug "flash_friendly_s3_url = #{@s3_url}"
 
-      html = editor_html.
-        gsub("URL", flash_friendly_s3_url).
-        gsub("NE", NE_URL)
-        ## use real templating
-
-      body html
+      body { haml :flash_edit }
     end
   else
     not_authorized!
@@ -379,27 +374,3 @@ error do
   LOGGER.error msg.inspect + "\n" + msg.backtrace.join("\n  ")
   "Error: #{msg}\n"
 end
-
-__END__
-
-<div>
-  <object id="NetworkEditor"
-    classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000'
-    codebase='http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab'
-    width="100%"
-    height="100%">
-    <param name="movie" value="NE">
-    <param name="quality" value="high">
-    <param name="flashVars" value="url=URL">
-    <embed
-      name="NetworkEditor"
-      width="100%"
-      height="100%"
-      src="NE"
-      quality="high"
-      FlashVars="url=URL"
-      pluginspage="http://www.macromedia.com/go/getflashplayer"
-      type="application/x-shockwave-flash">
-    </embed>
-  </object>
-</div>

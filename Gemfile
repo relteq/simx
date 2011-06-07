@@ -15,6 +15,7 @@ mri_18_gems = %w{
   pg
   sequel_pg
   rest-client
+  haml
 }
 
 mri_18_gems.each do |g|
