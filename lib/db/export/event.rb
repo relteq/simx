@@ -4,7 +4,7 @@ module Aurora
       attrs = {
         :type => event_type,
         :enabled => enabled,
-        :tstamp => time
+        :tstamp => "%.1f" % time
       }
       
       attrs[:network_id] = network_id if network_id

@@ -21,8 +21,8 @@ module Aurora
         
         xml.display_position {
           point_attrs = {
-            :lat => lat,
-            :lng => lng
+            :lat => display_lat,
+            :lng => display_lng
           }
           xml.point point_attrs
         }

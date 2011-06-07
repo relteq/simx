@@ -10,7 +10,7 @@ module Aurora
         :name         => name,
         :ml_control   => ml_control,
         :q_control    => q_control,
-        :dt           => dt
+        :dt           => "%.1f" % dt
       }
 
       xml.network(attrs) {

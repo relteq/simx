@@ -26,10 +26,10 @@ module Aurora
 
         xml.settings {
           xml.units units
-          xml.display_(:dt => dt,
+          xml.display_(:dt => "%d" % dt,
                        :timeout => 50, # default for optional atr
-                       :timeInitial => begin_time,
-                       :timeMax => begin_time + duration)
+                       :timeInitial => "%d" % begin_time,
+                       :timeMax => "%d" % (begin_time + duration))
           xml.VehicleTypes {
             vehicle_types.each do |v|
               xml.vtype(:name => v.name, :weight => v.weight)

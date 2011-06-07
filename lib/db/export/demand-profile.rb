@@ -3,8 +3,8 @@ module Aurora
     def build_xml(xml)
       attrs = {
         :link_id => link_id,
-        :dt => dt,
-        :knob => knob
+        :dt => "%.1f" % dt,
+        :knob => "%.1f" % knob
       }
       
       attrs[:start_time] = start_time if start_time != 0
