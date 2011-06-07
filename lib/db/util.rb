@@ -83,7 +83,7 @@ module Aurora
     else
       ctx.defer do
         cl_name = self.class.name[/\w+$/]
-        self.name = "#{cl_name} #{id}"
+        self.update(:name => "#{cl_name} #{id}")
       end
     end
   end
