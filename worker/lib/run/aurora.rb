@@ -115,8 +115,8 @@ module Run
       end
     end
     
-    def ext_for_mime_type mime
-      type = MIME::Types[mime].first
+    def ext_for_mime_type mime_type
+      type = MIME::Types[mime_type].first
       if type
         type.extensions.first # this seems to be right for pdf, ppt, xls
       end
@@ -126,8 +126,8 @@ module Run
       @progress = 0; update
       
       output_files = []
-      output_types.each_with_index do |mime, i|
-        ext = ext_for_mime_type(mime)
+      output_types.each_with_index do |mime_type, i|
+        ext = ext_for_mime_type(mime_type)
         f = File.join(dir, "output_#{i}")
         f << ".#{ext}" if ext
         output_files << f
@@ -161,7 +161,7 @@ module Run
         return
       end
 
-      output_urls = output_files.zip(output_types).map do |file, type|
+      output_urls = output_files.zip(output_types).map do |file, mime_type|
         data = begin
           File.read(file)
         rescue => e
@@ -170,7 +170,7 @@ module Run
         end
         
         log.debug "output #{file}:\n#{data[0..200].inspect}"
-        store(data, type)
+        store(data, mime_type)
       end
       
       @results = {
@@ -187,20 +187,23 @@ module Run
       @results
     end
     
-    def store data, type = nil
+    def store data, mime_type = nil
       ## need option to store locally for debugging, not s3
       ### Worker should not know about this stuff.
       runweb_user = ENV["RUNWEB_USER"] || "relteq"
       runweb_password = ENV["RUNWEB_PASSWORD"] || "topl5678"
 
+      url = "http://#{runweb_host}:#{runweb_port}/store"
+      
       expiry = 600 # seconds
-      url = "http://" +
-        "#{runweb_host}:#{runweb_port}/store?" +
-        "expiry=#{expiry}"
-            
-      log.info "requesting storage from #{url} with type #{type}"
+      url << "?expiry=#{expiry}"
+
+      ext = ext_for_mime_type(mime_type) if mime_type
+      url << "&ext=#{ext}" if ext
+      
+      log.info "requesting storage from #{url} with type #{mime_type}"
       rsrc = RestClient::Resource.new(url, runweb_user, runweb_password)
-      response = rsrc.post data, :content_type => type
+      response = rsrc.post data, :content_type => mime_type
       ## ok to go thru runweb?
       ## maybe a separate service, so runweb is not blocked?
       ## do these requests in parallel, and runweb uses async_post
