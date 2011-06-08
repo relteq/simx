@@ -187,7 +187,7 @@ helpers do
   end
 
   def can_export?(object, access_token)
-    unexpired_auths = DB[:dbweb_authorizations].filter('expiration > ?', Time.now)
+    unexpired_auths = DB[:dbweb_authorizations].filter('expiration > ?', Time.now.utc)
     applicable_to_object = unexpired_auths.filter(
       :object_id => object[:id], 
       :object_type => object[:type],
