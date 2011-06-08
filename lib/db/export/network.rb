@@ -52,7 +52,7 @@ module Aurora
             rls =
               DB[:route_links].
               filter(:network_id => id, :route_id => route.id).
-              order_by(:order)
+              order_by(:ordinal)
             
             links = rls.map {|rl|
               Link[:network_id => id, :id => rl[:link_id]]}

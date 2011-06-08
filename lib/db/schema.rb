@@ -1,6 +1,6 @@
 ## what indexes do we need?
 
-require 'sequel' ## use sequel_pg in production
+require 'sequel_pg' ## use sequel_pg in production
 require 'db/util'
 
 # For testing, this is a stub.
@@ -193,9 +193,9 @@ create_table? :route_links do
   foreign_key [:network_id, :route_id], :routes, :key => [:network_id, :id]
   foreign_key [:network_id, :link_id], :links, :key => [:network_id, :id]
   
-  integer     :order, :null => false
-  check       {order >= 0}
-  unique      [:network_id, :route_id, :order]
+  integer     :ordinal, :null => false
+  check       {ordinal >= 0}
+  unique      [:network_id, :route_id, :ordinal]
 end
 
 create_table? :sensors do
