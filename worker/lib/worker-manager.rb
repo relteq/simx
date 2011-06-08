@@ -92,6 +92,9 @@ class WorkerManager
         w["runweb_port"] = config["runweb_port"]
         
         w["logdev"] = config["log_file"]
+        
+        w["instance_name"] = instance_name
+        
         threads << Thread.new(w) do |worker_spec|
           run_worker worker_spec
         end
@@ -143,6 +146,8 @@ class WorkerManager
 
   def run_worker_once_in_jruby worker_spec
     require 'worker/aurora-classpath'
+    
+    log.info "Using CLASS_PREFIX = #{Aurora::CLASS_PREFIX}"
 
     run_class = get_scoped_constant(worker_spec["run_class"])
 
@@ -164,7 +169,7 @@ class WorkerManager
       end
 
       case result
-      when /err/i ## better detection
+      when /^JRubyWorker error/i # might be mixed with aurora output
         log.warn "Error in jruby worker pid=#{pid}: #{result}"
         exit 1
       else

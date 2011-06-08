@@ -555,8 +555,8 @@ module Runq
     ### how to periodically purge old records from db?
     ### and check if batch or run is stalled? or sock is dead?
     ### periodically delete worker records that do not have a corr socket
-    
     ### how to restart run if worker went away?
+    ### maybe we can use the update_period (+n) as the period to check?
   end
 end
 

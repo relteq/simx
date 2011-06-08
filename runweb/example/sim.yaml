@@ -1,0 +1,14 @@
+name:           sim1
+engine:         simulator
+group:          topl
+user:           topl
+n_runs:         1
+param:
+  update_period: 1
+  inputs:
+  - http://vii.path.berkeley.edu/~vjoel/test.xml
+# Use local files only when running worker locally:
+#  - /home/vjoel/simx/dbweb/doc/test.xml
+  - <time_range begin_time="25200" duration="10800" />
+  output_types:
+  - text/plain

@@ -73,6 +73,9 @@ namespace :workers do
   end
 end
 
+desc "update canonical test.xml file to its public url"
+task :update_examples
+
 desc "install local cronjob to start daemons after reboot"
 task :crontab
 
@@ -130,9 +133,15 @@ namespace :workers do
   delegated_tasks.each do |name|
     task name do
       result = `cd worker && rake #{name}`
-      puts result
+      puts "workers: #{result}"
     end
   end
+end
+
+task :update_examples do
+  sh "rsync -avz dbweb/doc/test.xml vii:public_html/"
+  ## this is a very special case; later, we should have a library of examples
+  ## somewhere
 end
 
 directory "var"
