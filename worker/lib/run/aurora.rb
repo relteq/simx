@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'tmpdir'
+require 'mime/types'
 
 require 'worker/run/base'
 
@@ -114,11 +115,22 @@ module Run
       end
     end
     
+    def ext_for_mime_type mime
+      type = MIME::Types[mime].first
+      if type
+        type.extensions.first # this seems to be right for pdf, ppt, xls
+      end
+    end
+    
     def work_in_dir dir
       @progress = 0; update
       
-      output_files = (0...output_types.size).map do |i|
-        File.join(dir, "#{i}.out")
+      output_files = []
+      output_types.each_with_index do |mime, i|
+        ext = ext_for_mime_type(mime)
+        f = File.join(dir, "output_#{i}")
+        f << ".#{ext}" if ext
+        output_files << f
       end
 
       updater = ProgressUpdater.new do |pct|
