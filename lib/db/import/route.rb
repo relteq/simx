@@ -27,7 +27,7 @@ module Aurora
             :network_id => network_id,
             :route_id   => id,
             :link_id    => ctx.get_link_id(link_xml_id),
-            :order      => order
+            :ordinal    => order
           }
         end
       end
