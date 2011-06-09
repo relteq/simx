@@ -20,7 +20,7 @@ module Aurora
       # each reference to the node, link, etc. to use the new ID.
       # Unreferenced element types that have numeric IDs can simply be assigned
       # a null ID.
-      def rekey scenario_xml
+      def rekey! scenario_xml
         UNREFERENCED_ELEMENT_TYPES.each do |t|
           scenario_xml.xpath("//#{t}").each do |elt|
             elt["id"] = "" if numeric(elt["id"])
@@ -28,11 +28,11 @@ module Aurora
         end
 
         REFERENCED_ELEMENT_TYPES.each do |t|
-          rekey_for_type t, scenario_xml
+          rekey_for_type! t, scenario_xml
         end
       end
 
-      def rekey_for_type t, scenario_xml
+      def rekey_for_type! t, scenario_xml
         num_id_elt = {} # int => elt
         tmp_id_elt = {} # str => elt
 

@@ -111,7 +111,7 @@ module Aurora
       
       if opts["rekey"]
         require 'db/import/util'
-        ImportUtil.rekey @scenario_xml
+        ImportUtil.rekey! @scenario_xml
       end
       
       if opts["emit"]
