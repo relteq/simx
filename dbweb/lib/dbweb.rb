@@ -7,6 +7,7 @@ require 'logger'
 require 'sequel'
 require 'cgi'
 require 'haml'
+require 'nokogiri'
 
 class MyLogger < Logger
   alias write << # Stupid! See http://groups.google.com/group/rack-devel/browse_thread/thread/ffec93533180e98a
@@ -130,11 +131,24 @@ helpers do
 
     return AWS::S3::S3Object.url_for(key, DBWEB_S3_BUCKET) 
   end
+
+  def s3_fetch filename, bucket_name
+    return AWS::S3::S3Object.value filename, bucket_name
+  end
   
   ### should have rekey option
   def import_xml xml_data
     ###
     [table, id]
+  end
+
+  def import_scenario_xml xml_data, project_id
+    scenario = Aurora::Scenario.create_from_xml(xml_data)
+    network = scenario.network
+    scenario.project_id = project_id
+    network.project_id = project_id
+    network.save
+    scenario.save
   end
   
   def export_scenario_xml scenario_id
@@ -150,6 +164,7 @@ DB = Sequel.connect DB_URL
 LOGGER.info "Connected to DB at #{DB_URL}"
 require 'db/schema'
 require 'db/model/aurora'
+require 'db/import/util'
 require 'db/import/scenario'
 require 'db/export/scenario'
 
@@ -186,7 +201,7 @@ helpers do
     end
   end
 
-  def can_export?(object, access_token)
+  def can_access?(object, access_token)
     unexpired_auths = DB[:dbweb_authorizations].filter('expiration > ?', Time.now.utc)
     applicable_to_object = unexpired_auths.filter(
       :object_id => object[:id], 
@@ -236,6 +251,30 @@ end
 
 ### add user, group, project id params
 
+aget "/import/scenario/:filename" do |filename|
+  protected!
+  params[:access_token] or not_authorized!
+
+  s3
+  LOGGER.info "Attempting to import #{params[:bucket]}/#{filename}"
+
+  if can_access?({:type => 'Project',
+    :id => params[:to_project]}, params[:access_token])
+    EM.defer do
+      xml_plaintext = s3_fetch(filename, params[:bucket])
+      LOGGER.info "loaded XML data from #{filename} for import"
+      xml_data = Nokogiri.XML(xml_plaintext).xpath("/scenario")[0]
+      Aurora::ImportUtil.rekey!(xml_data)
+      scenario = import_scenario_xml(xml_data, params[:to_project])
+      LOGGER.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
+      content_type :html
+      body { haml :import_success }
+    end
+  else
+    not_authorized!
+  end
+end
+
 # /import
 # body is the xml data
 # returns [table, id].to_yaml, where table is name of table of top-level
@@ -281,7 +320,7 @@ aget "/model/scenario/:id.xml" do |id|
   params[:access_token] or not_authorized!
   LOGGER.info "requested scenario #{id} as xml"
 
-  if can_export?({:type => 'Scenario', 
+  if can_access?({:type => 'Scenario', 
                   :id => id}, params[:access_token])
     EM.defer do
       content_type :xml
@@ -317,7 +356,7 @@ aget "/editor/scenario/:id.html" do |id|
   params[:access_token] or not_authorized!
   LOGGER.info "requested scenario #{id} in editor"
   
-  if can_export?({:type => 'Scenario', 
+  if can_access?({:type => 'Scenario', 
                   :id => id}, params[:access_token])
     EM.defer do
       content_type :html
