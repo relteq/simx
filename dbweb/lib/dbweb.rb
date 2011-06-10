@@ -2,12 +2,14 @@ require 'thin'
 require 'sinatra'
 require 'eventmachine'
 require 'sinatra/async'
+require 'sinatra/jsonp'
 require 'yaml'
 require 'logger'
 require 'sequel'
 require 'cgi'
 require 'haml'
 require 'nokogiri'
+require 'json'
 
 class MyLogger < Logger
   alias write << # Stupid! See http://groups.google.com/group/rack-devel/browse_thread/thread/ffec93533180e98a
@@ -250,7 +252,6 @@ end
 ## option to async import: need to poll
 
 ### add user, group, project id params
-
 aget "/import/scenario/:filename" do |filename|
   protected!
   params[:access_token] or not_authorized!
@@ -267,8 +268,16 @@ aget "/import/scenario/:filename" do |filename|
       Aurora::ImportUtil.rekey!(xml_data)
       scenario = import_scenario_xml(xml_data, params[:to_project])
       LOGGER.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
-      content_type :html
-      body { haml :import_success }
+  
+      if params[:jsoncallback]
+        script = jsonp({:success => scenario.id})
+        LOGGER.debug "returning #{script} as JSONP"
+        body { script }
+      else
+        # For debugging, that callback is an annoying parameter to require
+        content_type :json
+        body { {:success => scenario.id}.to_json }
+      end
     end
   else
     not_authorized!

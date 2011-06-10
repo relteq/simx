@@ -22,6 +22,7 @@ mri_18_gems.each do |g|
   gem g, :platforms => :mri_18
 end
 gem 'async_sinatra', '~>0.5', :platforms => :mri_18
+gem 'sinatra-jsonp', :require => 'sinatra/jsonp', :platforms => :mri_18
 
 #------------------------------
 # for worker installations
