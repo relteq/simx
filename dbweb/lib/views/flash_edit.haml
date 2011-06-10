@@ -1,14 +1,15 @@
 !!!
-%html
+%html{:style => 'height: 100%; margin: 0px; padding: 0px;'}
     %head
         %title Network Editor
-    %body
-        .network_editor
+    %body{:style => 'height: 95%;'}
+        .network_editor{:style => 'height: 100%; width: 100%;'}
             %object{ :id => 'NetworkEditor',
                 :classid => 'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000',
                 :codebase => 'http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab',
                 :width => '100%',
-                :height => '100%' }
+                :height => '100%',
+                :style => 'height: 100%; width: 100%;' }
                 %param{:name => 'movie', :value => @network_editor}
                 %param{:name => 'quality', :value => 'high'}
                 %param{:name => 'flashVars', :value => "url=#{@s3_url}"}
