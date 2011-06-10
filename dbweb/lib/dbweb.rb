@@ -182,6 +182,20 @@ USERS = [
 ]
 
 helpers do
+  def defer_cautiously
+    EM.defer do
+      begin
+        yield
+      rescue Exception => e
+        LOGGER.error "error: #{request.url}, params=#{request.params.inspect}"
+        LOGGER.error "error text: #{e.message}"
+        LOGGER.error "error backtrace: #{e.backtrace.inspect}"
+        status 500
+        body { "Internal Error" }
+      end
+    end
+  end
+
   def protected!
     return ### otherwise, flash credentials don't work??
     response['WWW-Authenticate'] = %(Basic realm="the TOPL Project") and \
@@ -261,7 +275,7 @@ aget "/import/scenario/:filename" do |filename|
 
   if can_access?({:type => 'Project',
     :id => params[:to_project]}, params[:access_token])
-    EM.defer do
+    defer_cautiously do
       xml_plaintext = s3_fetch(filename, params[:bucket])
       LOGGER.info "loaded XML data from #{filename} for import"
       xml_data = Nokogiri.XML(xml_plaintext).xpath("/scenario")[0]
@@ -291,7 +305,7 @@ end
 apost "/import" do
   protected!
 
-  EM.defer do
+  defer_cautiously do
     xml_data = request.body.read
     LOGGER.info "importing #{xml_data.size} bytes of xml data"
     table, id = import_xml(xml_data)
@@ -307,7 +321,7 @@ end
 apost "/import_url" do
   protected!
 
-  EM.defer do
+  defer_cautiously do
     xml_url = request.body.read
     LOGGER.info "importing url: #{xml_url.inspect}"
     xml_data = open(xml_url) {|f| f.read} ###
@@ -331,7 +345,7 @@ aget "/model/scenario/:id.xml" do |id|
 
   if can_access?({:type => 'Scenario', 
                   :id => id}, params[:access_token])
-    EM.defer do
+    defer_cautiously do
       content_type :xml
       body export_scenario_xml(id)
     end
@@ -347,7 +361,7 @@ aget "/model/scenario/:id.url" do |id|
   protected!
   LOGGER.info "requested scenario #{id} as url"
   
-  EM.defer do
+  defer_cautiously do
     content_type :text
     xml = export_scenario_xml(id)
     params["ext"] = "xml"
@@ -367,7 +381,7 @@ aget "/editor/scenario/:id.html" do |id|
   
   if can_access?({:type => 'Scenario', 
                   :id => id}, params[:access_token])
-    EM.defer do
+    defer_cautiously do
       content_type :html
 
       xml = export_scenario_xml(id)
@@ -397,7 +411,7 @@ apost "/store" do
   protected!
   s3
 
-  EM.defer do
+  defer_cautiously do
     LOGGER.info "started deferred store operation"
     
     data = request.body.read
