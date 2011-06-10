@@ -1,3 +1,4 @@
+require 'db/import/model'
 require 'db/import/vehicle-type'
 require 'db/import/network'
 require 'db/import/context'

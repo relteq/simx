@@ -75,7 +75,6 @@ end
 
 # create tables if they don't exist
 require 'db/schema'
-
 require 'db/model/aurora'
 require 'db/import/scenario'
 

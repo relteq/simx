@@ -34,6 +34,8 @@ create_table? :scenarios do
   foreign_key :split_ratio_profile_set_id,  :split_ratio_profile_sets
   foreign_key :event_set_id,                :event_sets
   foreign_key :controller_set_id,           :controller_sets
+
+  timestamp   :updated_at
 end
 
 create_table? :vehicle_types do
@@ -96,6 +98,7 @@ create_table? :networks do
   
   text        :directions_cache     ## xml, but could be put in tables
   text        :intersection_cache   ## ditto
+  timestamp   :updated_at
 end
 
 create_table? :network_lists do
@@ -241,6 +244,7 @@ create_table? :split_ratio_profile_sets do
   string      :name
   text        :description
   foreign_key :network_id, :networks, :null => false
+  timestamp   :updated_at
 end
 
 create_table? :capacity_profile_sets do
@@ -248,6 +252,7 @@ create_table? :capacity_profile_sets do
   string      :name
   text        :description
   foreign_key :network_id, :networks, :null => false
+  timestamp   :updated_at
 end
 
 create_table? :demand_profile_sets do
@@ -255,6 +260,7 @@ create_table? :demand_profile_sets do
   string      :name
   text        :description
   foreign_key :network_id, :networks, :null => false
+  timestamp   :updated_at
 end
 
 create_table? :initial_condition_sets do
@@ -269,6 +275,7 @@ create_table? :event_sets do
   string      :name
   text        :description
   foreign_key :network_id, :networks, :null => false
+  timestamp   :updated_at
 end
 
 create_table? :controller_sets do
@@ -276,6 +283,7 @@ create_table? :controller_sets do
   string      :name
   text        :description
   foreign_key :network_id, :networks, :null => false
+  timestamp   :updated_at
 end
 
 # Note on profile, event, and controller tables:
