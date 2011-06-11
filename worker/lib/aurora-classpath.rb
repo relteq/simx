@@ -15,10 +15,10 @@ module Aurora
   # The target dir should be the CLASS_PREFIX on the deployment target host.
   DEPLOYMENT_FILES = %w{ build/aurora.jar icons libGIS libGUI libPDF libPPT }
 
-  classpath_items = ["build/aurora.jar"]###, "lib*/*.jar"]
+  classpath_items = ["build/aurora.jar", "libPDF/*", "libPPT/*", "libGUI/*"]
 
   # Classpath for java and jruby to run aurora.
   CLASSPATH = classpath_items.map {|rel|
     Dir[File.join(CLASS_PREFIX, rel)]
-  }.join(":")
+  }.join(";")
 end
