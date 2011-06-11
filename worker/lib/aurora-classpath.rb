@@ -20,5 +20,5 @@ module Aurora
   # Classpath for java and jruby to run aurora.
   CLASSPATH = classpath_items.map {|rel|
     Dir[File.join(CLASS_PREFIX, rel)]
-  }.join(";")
+  }.join(":")
 end
