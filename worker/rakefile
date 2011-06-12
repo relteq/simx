@@ -59,6 +59,11 @@ FileUtils.mkdir_p sock_dir
 
 #== Tasks
 
+namespace :config do
+  desc "show config for all deployments"
+  task :show
+end
+
 instances = config.keys # unique set of names for all the worker deployments
 ops = %w{ update update_aurora crontab run start stop restart stat log watch }
 
@@ -88,6 +93,11 @@ instances.each do |instance|
     task "restart" => ["stop", "start"]
     
     task "crontab" => "update"
+    
+    namespace :config do
+      desc "show config for #{instance}"
+      task :show
+    end
   end
 
   desc "update and restart #{instance}"
@@ -118,6 +128,23 @@ end
 default_runweb_port = ENV["RUNWEB_PORT"] || (runweb_config && runweb_config["port"])
 if default_runweb_port
   DEFAULT_INSTANCE_CONFIG["runweb_port"] = Integer(default_runweb_port)
+end
+
+namespace :config do
+  task :show do
+    puts config.to_yaml
+  end
+end
+
+instances.each do |instance|
+  namespace instance do
+    namespace :config do
+      task :show do
+        cfg = DEFAULT_INSTANCE_CONFIG.merge(config[instance])
+        puts cfg.to_yaml
+      end
+    end
+  end
 end
 
 def aurora_files
