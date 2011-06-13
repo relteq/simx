@@ -15,5 +15,5 @@ worker:
   log level: debug
 aws:
   s3 bucket: relteq-uploads-dev
-#db:
-#  url: sqlite://var/data/dev.sqlite
+db:
+  url: postgres://redmine:topl5t6y7u8i@relteq-db.dyndns.org/relteq-dev

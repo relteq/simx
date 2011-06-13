@@ -1,6 +1,5 @@
 ## what indexes do we need?
 
-#require 'sequel_pg' ## use sequel_pg in production
 require 'db/util'
 
 # For testing, this is a stub.
