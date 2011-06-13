@@ -15,7 +15,7 @@ module Aurora
       end
 
       # Operates destructively on a scenario element and its descendants.
-      # Every node, link, etc. with a numeric ID is assigned a non-numeric ID
+      # Every node, link, etc. with a positive ID is assigned a negative ID
       # that is unique among existing as well as newly assigned IDs. Updates
       # each reference to the node, link, etc. to use the new ID.
       # Unreferenced element types that have numeric IDs can simply be assigned
@@ -23,7 +23,9 @@ module Aurora
       def rekey! scenario_xml
         UNREFERENCED_ELEMENT_TYPES.each do |t|
           scenario_xml.xpath("//#{t}").each do |elt|
-            elt["id"] = "" if numeric(elt["id"])
+            id = numeric(elt["id"])
+            elt["id"] = "" if id && id > 0
+              # blank ID is ok, since not referenced
           end
         end
 
@@ -38,17 +40,17 @@ module Aurora
 
         scenario_xml.xpath("//#{t}").each do |elt|
           id = numeric(elt["id"])
-          (id ? num_id_elt : tmp_id_elt)[id] = elt
+          (id && id > 0 ? num_id_elt : tmp_id_elt)[id] = elt
         end
 
         delta = make_tmp_ids(num_id_elt, tmp_id_elt)
 
         rekey_attr = proc do |ref_elt, ref_attr|
           id = numeric(ref_elt[ref_attr])
-          if id
+          if id && id > 0
             elt = num_id_elt[id]
             if elt
-              ref_elt[ref_attr] = delta[id]
+              ref_elt[ref_attr] = delta[id].to_s
             else
               warn "broken reference in #{ref_elt.name} to #{ref_attr}=#{id}"
             end
@@ -60,7 +62,7 @@ module Aurora
           ## why is there no #text= ?
           ref_elt.content = ref_elt.text.split(",").map {|s|
             id = numeric(s)
-            if id
+            if id && id > 0
               elt = num_id_elt[id]
               if elt
                 delta[id]
@@ -93,18 +95,18 @@ module Aurora
       end
 
       def make_tmp_ids num_id_elt, tmp_id_elt
-        u = 1
+        u = -1
         delta = {}
 
         num_id_elt.each do |id, elt|
-          new_tmp_id = "new_#{id}_#{u}"
+          new_tmp_id = u
           while tmp_id_elt[new_tmp_id]
-            u += 1
-            new_tmp_id = "new_#{id}_#{u}"
+            u -= 1
+            new_tmp_id = u
           end
           
           tmp_id_elt[new_tmp_id] = elt
-          elt["id"] = new_tmp_id
+          elt["id"] = new_tmp_id.to_s
           delta[id] = new_tmp_id
         end
 

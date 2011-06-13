@@ -95,17 +95,19 @@ module Aurora
   end
 
   def import_id s ##
-    s && Integer(s) rescue nil
+    id = (s && Integer(s) rescue nil)
+    id = nil if id && id <= 0
   end
 end
 
 module AuroraModelClassMethods
   def import_id s
-    s && Integer(s) rescue nil
+    id = (s && Integer(s) rescue nil)
+    id = nil if id && id <= 0
   end
   
   # Creates and return an instance with ID parsed from s. If s is not
-  # parsable as an integer, the instance will be assigned a new id.
+  # parsable as a positive integer, the instance will be assigned a new id.
   # Yields model to block in the context of create, after id assigned:
   #
   #  create_with_id s do |model|

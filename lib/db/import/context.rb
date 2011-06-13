@@ -11,8 +11,8 @@ module Aurora
     attr_reader :scenario
     
     # Translation tables from xml ID to database ID.
-    # These are only needed when the xml ID is non-numeric. Numeric IDs
-    # go directly into the database without translation.
+    # These are only needed when the xml ID is non-numeric or negative.
+    # Positive numeric IDs go directly into the database without translation.
     attr_reader :network_id_for_xml_id
     attr_reader :node_family_id_for_xml_id
     attr_reader :link_family_id_for_xml_id
