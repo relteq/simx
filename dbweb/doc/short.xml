@@ -103,7 +103,7 @@
       <od begin="-1" end="-4">
         <PathList>
           <path id="-1" name="Freeway mainline route">
-            add5,add6,add7
+            -5,-6,-7
           </path>
         </PathList>
       </od>
@@ -121,7 +121,7 @@
           <point lng="-122.29155421257019" lat="37.86734283851613" />
         </display_position>
 
-        <links>add6</links>
+        <links>-6</links>
 
         <parameters>
           <parameter name="data_id" value="400852" />
