@@ -108,14 +108,11 @@ Using this with the relteq redmine apps on heroku:
 
 For the development/staging/etc instances of relteq/redmine:
 
-heroku config:add RUNWEB_HOST=relteq-db.dyndns.com
-heroku config:add RUNWEB_PORT=9097
+heroku config:add RUNWEB_BASE_URL=http://relteq-db.dyndns.org:9097/
 
 For production:
 
-heroku config:add RUNWEB_HOST=relteq-db.dyndns.com
-heroku config:add RUNWEB_PORT=8097
-
+heroku config:add RUNWEB_BASE_URL=http://relteq-db.dyndns.org:8097/
 
 How to set up your own client
 
