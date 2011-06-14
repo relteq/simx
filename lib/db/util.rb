@@ -97,6 +97,7 @@ module Aurora
   def import_id s ##
     id = (s && Integer(s) rescue nil)
     id = nil if id && id <= 0
+    id
   end
 end
 
@@ -104,6 +105,7 @@ module AuroraModelClassMethods
   def import_id s
     id = (s && Integer(s) rescue nil)
     id = nil if id && id <= 0
+    id
   end
   
   # Creates and return an instance with ID parsed from s. If s is not

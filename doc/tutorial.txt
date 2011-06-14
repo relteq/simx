@@ -4,6 +4,7 @@ This file explains:
 
 (B) how to set up a cental simx source tree and use it both to deploy the main simx daemons and to configure and deploy workers on multiple hosts.
 
+(C) some tips for running aurora (as workers or otherwise).
 
 == Basic setup for all cases ==
 
@@ -162,3 +163,21 @@ Host *
   ControlPath ~/tmp/.ssh/%r@%h:%p
 
 (b) as you start working, open one ssh session to each remote host you work with, and leave it open as long as you are working. You can just minimize these terminal windows and forget them.
+
+== Tips for running aurora ==
+
+We're currently using the devel branch of aurora. To build:
+
+"ant jar"
+
+Some of the other tasks will fail because they depend on some hard coded windows paths, but I think these are just for generating the installer for the desktop aurora, which is not relevant to us.
+
+You'll need
+
+AURORA_CLASS_PREFIX=/path/to/aurora
+
+modified as needed. This is how workers find the jars.
+
+If you're testing with aurora, it might be a good idea to use a username that doesn't conflict, since runq does some matching logic. For example, if your batch requests have "user: someuser", and your workers are configured "user: someuser" as well, then your batches will go to your workers, and no wires will cross with whatever other users are doing.
+
+See the worker/jruby-aurora package for some useful jruby scripts to test the java code independently of the whole worker infrastructure. Use "rake runsim" just to make sure your installation works before using simx workers.

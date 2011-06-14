@@ -1,0 +1,1 @@
+Contains jruby scripts to test the java code independently of the whole worker infrastructure. Use "rake runsim" just to make sure your installation works before using simx workers. These scripts are not used by the workers themselves.

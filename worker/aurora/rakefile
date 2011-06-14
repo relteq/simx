@@ -1,0 +1,30 @@
+require 'aurora-classpath'
+
+desc "run simulator using AURORA_CLASS_PREFIX env var to find jars"
+task :runsim do
+  ENV["CLASSPATH"] = Aurora::CLASSPATH
+  sh "jruby sim-wrapper.rb"
+end
+
+desc "run calibrator using AURORA_CLASS_PREFIX env var to find jars"
+task :runcalib do
+  ENV["CLASSPATH"] = Aurora::CLASSPATH
+  sh "jruby calib-wrapper.rb"
+end
+
+desc "run report generator using AURORA_CLASS_PREFIX env var to find jars"
+task :runreport do
+  ENV["CLASSPATH"] = Aurora::CLASSPATH
+  sh "jruby rg-wrapper.rb"
+end
+
+desc "start jirb with the proper classpath"
+task :jirb do
+  ENV["CLASSPATH"] = Aurora::CLASSPATH
+  exec "jirb"
+end
+
+desc "remove generated files"
+task :clean do
+  rm_f ["out.csv", "out.xml", "report.xml", "calib.xml"]
+end
