@@ -30,6 +30,7 @@ gem 'sinatra-jsonp', :require => 'sinatra/jsonp', :platforms => :mri_18
 jruby_gems = %w{
   jruby-openssl
   rest-client
+  mime-types
 }
 
 jruby_gems.each do |g|
