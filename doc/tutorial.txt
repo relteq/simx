@@ -178,6 +178,11 @@ AURORA_CLASS_PREFIX=/path/to/aurora
 
 modified as needed. This is how workers find the jars.
 
+You'll also need your TMPDIR to point to somewhere not public, because jruby seems to be paranoid. For example
+
+TMPDIR=~/tmp
+TMPDIT=/tmp/$USER
+
 If you're testing with aurora, it might be a good idea to use a username that doesn't conflict, since runq does some matching logic. For example, if your batch requests have "user: someuser", and your workers are configured "user: someuser" as well, then your batches will go to your workers, and no wires will cross with whatever other users are doing.
 
 See the worker/jruby-aurora package for some useful jruby scripts to test the java code independently of the whole worker infrastructure. Use "rake runsim" just to make sure your installation works before using simx workers.
