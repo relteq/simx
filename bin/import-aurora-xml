@@ -18,14 +18,14 @@ optdef = {
 
 opts = Argos.parse_options(ARGV, optdef)
 
-if ARGV.size == 0 or ARGV.size > 2 or
+if ARGV.size == 0 or
    not ARGV.grep(/^-./).empty? or opts["h"] or opts["help"]
   puts <<-END
   
-    Usage: #{$0} [opts] aurora_xml_file [db]
+    Usage: #{$0} [opts] [db] aurora_xml_file ...
     
     Read aurora_xml_file, parse according to aurora.xsd, and import into
-    a database. Print the scenario id to stderr.
+    a database. Print the scenario ids to stderr.
     
     The database is either an in-memory sqlite3 database (for testing) or
     specified by the db argument, which may be any valid database connection
@@ -33,6 +33,9 @@ if ARGV.size == 0 or ARGV.size > 2 or
     
       sqlite://foo.db
       postgres://user:password@host:port/database_name
+    
+    If more than one aurora_xml_file is given, import all of them in
+    sequence.
     
     Options:
     
@@ -54,18 +57,22 @@ if ARGV.size == 0 or ARGV.size > 2 or
   exit
 end
 
-xml_file = ARGV[0]
-db_url = ARGV[1]
-
-File.exist? xml_file or abort "no such file: #{xml_file}"
-
 require 'sequel'
 require 'nokogiri'
 
-if db_url
-  DB = Sequel.connect db_url
+CONNECTION_PAT = /^\w+:\/\//
+
+case ARGV[0]
+when CONNECTION_PAT
+  DB = Sequel.connect(ARGV.shift)
 else
   DB = Sequel.sqlite
+end
+
+xml_files = ARGV
+
+xml_files.each do |xml_file|
+  File.exist? xml_file or abort "no such file: #{xml_file}"
 end
 
 if opts["log"]
@@ -104,7 +111,7 @@ module Aurora
     end
     
     # +src+ can be io, string, etc.
-    # Returns the ID of the imported scenario.
+    # Returns the imported scenario.
     def import
       @scenario_xml = parse(src)
       
@@ -130,7 +137,7 @@ module Aurora
         puts scenario.to_xml
       end
       
-      return scenario.id
+      return scenario
     end
     
   end
@@ -140,6 +147,8 @@ module Aurora
   end
 end
 
-scenario_id = Aurora.import(File.read(xml_file), opts)
+scenarios = xml_files.map do |xml_file|
+  Aurora.import(File.read(xml_file), opts)
+end
 
-$stderr.puts scenario_id
+$stderr.puts scenarios.map {|sc| sc.id}.inspect
