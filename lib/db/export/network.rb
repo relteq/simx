@@ -4,7 +4,7 @@ require 'db/export/sensor'
 
 module Aurora
   class Network
-    def build_xml(xml)
+    def build_xml(xml, db = DB)
       attrs = {
         :id           => id,
         :name         => name,
@@ -50,7 +50,7 @@ module Aurora
           
           routes.each do |route|
             rls =
-              DB[:route_links].
+              db[:route_links].
               filter(:network_id => id, :route_id => route.id).
               order_by(:ordinal)
             
