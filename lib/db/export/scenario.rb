@@ -13,7 +13,7 @@ module Aurora
       "1.0.6" ### should read this from xsd
     end
     
-    def build_xml xml
+    def build_xml(xml, db = DB)
       attrs = {
         :id => id,
         :schemaVersion => schema_version
@@ -37,8 +37,11 @@ module Aurora
           }
         }
 
+        # Separated from parts to pass db argument
+        network.build_xml(xml, db)
+
         parts = [
-          network, initial_condition_set, split_ratio_profile_set, 
+          initial_condition_set, split_ratio_profile_set, 
           capacity_profile_set, demand_profile_set, event_set, 
           controller_set
         ]
@@ -47,6 +50,32 @@ module Aurora
           part.build_xml(xml) if part
         end
       }
+    end
+
+    def self.export_and_store_on_s3(id, db = DB)
+      require 'aws/s3'
+      require 'digest/md5'
+      dbweb_s3_bucket = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
+      AWS::S3::Base.establish_connection!(
+          :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
+          :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
+      )
+
+      scenario_xml = Scenario[id].to_xml(db)
+      key = Digest::MD5.hexdigest(scenario_xml)
+      exists =
+        begin
+          AWS::S3::S3Object.find key, dbweb_s3_bucket
+          true
+        rescue AWS::S3::NoSuchKey
+          false
+        end
+
+      unless exists
+        AWS::S3::S3Object.store key, scenario_xml, dbweb_s3_bucket, {} 
+      end
+
+      return AWS::S3::S3Object.url_for(key, dbweb_s3_bucket) 
     end
   end
 end
