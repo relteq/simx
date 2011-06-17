@@ -16,7 +16,6 @@ require 'runq/handlers/from-user'
 
 require 'sequel'
 require 'nokogiri'
-require 'eventmachine'
 
 require 'aws/s3'
 require 'digest/md5'
@@ -40,18 +39,6 @@ module Runq
   class << self
     attr_reader :production
 
-    def defer_cautiously
-      EM.defer do
-        begin
-          yield
-        rescue Exception => e
-          log.error "error text: #{e.message}"
-          log.error "error backtrace: #{e.backtrace.inspect}"
-          return false
-        end
-      end
-    end
-
     def log
       @log ||= Logger.new(@log_file || $stderr, "weekly")
     end
@@ -73,6 +60,12 @@ module Runq
     # Queue for all incoming requests, both from workers and from users.
     def request_queue
       @request_queue ||= Queue.new
+    end
+
+    # Queue for operations which may take long enough that they should not
+    # interrupt request processing
+    def op_queue
+      @op_queue ||= Queue.new
     end
     
     # Last known socket for a worker id; this is the only non-persistent
@@ -129,6 +122,10 @@ module Runq
       req_thread = Thread.new do
         run_request_queue_thread
       end
+
+      deferrable_op_thread = Thread.new do
+        run_deferrable_op_thread
+      end
       
       req_thread.join
       
@@ -138,6 +135,16 @@ module Runq
     rescue Exception => e
       log.error "Main thread: " + [e.inspect, *e.backtrace].join("\n  ")
       raise
+    end
+
+    def run_deferrable_op_thread
+      while op = op_queue.pop
+        op.call
+      end
+    rescue => e
+      log.error "Deferrable op thread: " + [e.inspect, *e.backtrace].join("\n  ")
+      sleep 1
+      retry
     end
     
     def run_server_thread
@@ -445,7 +452,7 @@ module Runq
       
       run = matching_runs.first ## fairer order based on timestamp?
       if run
-        defer_cautiously { send_run_to_worker run, worker }
+        send_run_to_worker run, worker
         return true
       else
         log.info "No matching runs for worker #{worker_id}."
@@ -474,7 +481,7 @@ module Runq
       
       worker = matching_workers.first ## fairer order?
       if worker
-        defer_cautiously { send_run_to_worker run, worker }
+        send_run_to_worker run, worker
         return true
       else
         log.info "No matching workers for run #{run_id}."
@@ -551,16 +558,7 @@ module Runq
       log.debug "run params: #{param.inspect}"
       
       scenario_id = nil 
-      if batch[:engine] == 'simulator' && param['inputs']
-        if match = /@scenario\((\d)\)/.match(param['inputs'].first)
-          scenario_id = match[1] 
-          log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
-          scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
-          log.debug "scenario URL: #{scenario_url}"
-          param['inputs'][0] = scenario_url
-        end
-      end
- 
+      
       msg = Request::RunqAssignRun.new(
         :param        => param,
         :engine       => batch[:engine],
