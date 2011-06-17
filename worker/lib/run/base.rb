@@ -30,6 +30,26 @@ module Run
     # Periodic update on progress of computation.
     class Update < Event
     end
+
+    class Blocked < Event
+      attr_reader :operation_needed
+      attr_reader :operation_params
+
+      def initialize op, params
+        @operation_needed = op
+        @operation_params = params
+      end
+    end
+  end
+
+  class PrerequisitesNotMet < Exception
+    attr_reader :operation_needed
+    attr_reader :operation_params
+
+    def initialize op, params
+      @operation_needed = op
+      @operation_params = params
+    end
   end
 
   # Manages a single run in the context of a worker procress. Each Run subclass
@@ -81,6 +101,7 @@ module Run
       @engine_opts        = h[:engine_opts]
       
       @progress = :waiting
+      @pending_prereq = nil
     end
 
     # Start a thread to perform and monitor the computation and send updates
@@ -152,11 +173,24 @@ module Run
 
     def run
       log.info "starting run in #{self.class}."
+      prereqs
+      log.info "starting run work in #{self.class}."
       work
       log.info "finishing run"
       finish
     rescue Interrupt
       log.info "run interrupted; worker may proceed."
+    rescue PrerequisitesNotMet => prereq
+      unless prereq.operation_needed == @pending_prereq
+        worker_event_queue << Event::Blocked.new(
+          prereq.operation_needed,
+          prereq.operation_params
+        )
+        @pending_prereq = prereq.operation_needed
+      end
+      log.info "Waiting on unmet prerequisite #{prereq.inspect}"
+      sleep 1
+      retry
     rescue Exception => e
       log.error [e.inspect, *e.backtrace].join("\n  ")
       log.info "exiting worker due to error in run"
@@ -170,6 +204,12 @@ module Run
         log.info "exiting worker"
         exit -3
       end
+    end
+
+    # Should be overridden in subclass.
+    def prereqs
+      # Perform prerequisite tasks (for example, get runq to
+      # export a scenario from the database)
     end
 
     # Should be overridden in subclass.
