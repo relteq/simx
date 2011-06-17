@@ -57,6 +57,14 @@ module Runq
       end
     end
     
+    # Worker needs runq to perform an action before
+    # it can continue processing 
+    class WorkerNeedsAssistance < Request
+      attr_accessor :worker_id
+      attr_accessor :runq_assist_method
+      attr_accessor :runq_assist_params
+    end
+
     # Worker has finished a run and is now ready for another.
     class WorkerFinishedRun < Request
       attr_accessor :worker_id
@@ -108,6 +116,17 @@ module Runq
     end
     
     class RunqAbortRun < Request
+    end
+
+    class RunqProvideInformation < Request
+      attr_accessor :sock
+      attr_accessor :worker_id
+      attr_accessor :info_type
+      attr_accessor :info_value
+
+      def handle
+        sock.send_message self.to_yaml
+      end
     end
     
     # ------------------------
