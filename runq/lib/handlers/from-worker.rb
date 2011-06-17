@@ -117,4 +117,13 @@ module Runq
       runq.dispatch_all # not overkill: both run and worker may now be ready
     end
   end
+
+  class Request::WorkerNeedsAssistance
+    include FromWorker
+
+    def handle
+      have_worker_id or return
+      runq.assist_worker(self)
+    end
+  end
 end
