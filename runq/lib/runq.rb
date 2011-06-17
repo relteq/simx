@@ -170,6 +170,7 @@ module Runq
       while msg_str = sock.recv_message
         req = YAML.load(msg_str)
         log.info "Got request from #{sock.peeraddr.inspect}"
+        log.debug "request.inspect = #{req.inspect}"
         req.sock = sock
         req.runq = self
         request_queue << req
@@ -261,6 +262,26 @@ module Runq
         if(batches_scenarios.where(:batch_id => run[:batch_id]).count > 0)
           batches = dbweb_db[:simulation_batches].where(:id => run[:batch_id])
           batches.update(:percent_complete => req.frac_complete*100)
+        end
+      end
+    end
+
+    def assist_worker req
+      if req.runq_assist_method == :scenario_export
+        op_queue << Proc.new do 
+          match = /@scenario\((\d)\)/.match(req.runq_assist_params.first)
+          scenario_id = match[1] 
+          log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
+          scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
+          log.debug "scenario URL: #{scenario_url}"
+
+          info_request = Request::RunqProvideInformation.new
+          info_request.sock = socket_for_worker[req.worker_id] 
+          info_request.worker_id = req.worker_id
+          info_request.info_type = :param_update
+          info_request.info_value = { :scenario_url => scenario_url }
+          request_queue << info_request
+          log.debug "queueing info request #{info_request.inspect}"
         end
       end
     end
