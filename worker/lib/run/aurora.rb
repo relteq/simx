@@ -107,6 +107,26 @@ module Run
       end
     end
 
+    def update_with_info info_req
+      if info_req.info_type == :param_update
+        if info_req.info_value.include?(:scenario_url)
+          log.debug "changing inputs[0] from #{inputs[0]} to #{info_req.info_value[:scenario_url]}"
+          inputs[0] = info_req.info_value[:scenario_url]
+          @pending_prereq = nil if @pending_prereq == :scenario_export
+        else
+          log.warn "unexpected info value in update_with_info #{info_req.info_value}"
+        end
+      else
+        log.warn "unexpected info type in update_with_info #{info_req.inspect}"
+      end
+    end
+
+    def prereqs
+      if inputs.first =~ /@/
+        raise PrerequisitesNotMet.new(:scenario_export, inputs.first)
+      end
+    end
+
     def work
       require 'rest-client' # only need this gem in java
       require 'worker/updater' # this depends on java
