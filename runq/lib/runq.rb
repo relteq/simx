@@ -14,6 +14,13 @@ require 'runq/db'
 require 'runq/handlers/from-worker'
 require 'runq/handlers/from-user'
 
+require 'sequel'
+require 'nokogiri'
+require 'eventmachine'
+
+require 'aws/s3'
+require 'digest/md5'
+
 # We want to log the IP address of connected peers, but don't need full
 # domain info (which may be useless anyway if peer is behind firewall or dhcp).
 Socket.do_not_reverse_lookup = true
@@ -33,6 +40,18 @@ module Runq
   class << self
     attr_reader :production
 
+    def defer_cautiously
+      EM.defer do
+        begin
+          yield
+        rescue Exception => e
+          log.error "error text: #{e.message}"
+          log.error "error backtrace: #{e.backtrace.inspect}"
+          return false
+        end
+      end
+    end
+
     def log
       @log ||= Logger.new(@log_file || $stderr, "weekly")
     end
@@ -42,6 +61,13 @@ module Runq
         FileUtils.mkdir_p DATA_DIR
         Database.new(DB_FILE, :timeout => 10_000, :log => log)
       end
+    end
+
+    def dbweb_db
+      @dbweb_db ||= Sequel.connect ENV['DBWEB_DB_URL']
+      require 'db/model/aurora'
+      require 'db/export/scenario'
+      @dbweb_db
     end
     
     # Queue for all incoming requests, both from workers and from users.
@@ -79,7 +105,7 @@ module Runq
     end
     
     def run
-      log; database; request_queue; socket_for_worker
+      log; dbweb_db; database; request_queue; socket_for_worker
         # prevent race cond before starting threads
       
       log.level = @log_level
@@ -212,6 +238,7 @@ module Runq
       worker_id = req.worker_id
       workers = database[:workers].where(:id => worker_id)
       worker = workers.first
+      batches_scenarios = database[:batches_scenarios]
 
       workers.update(
         :last_contact => Time.now
@@ -221,7 +248,14 @@ module Runq
         :frac_complete  => req.frac_complete
         ## store progress as well?
       )
-      log.info "Updated worker #{worker_id}, frac = #{req.frac_complete}"
+      run = database[:runs].where(:id => worker[:run_id]).first
+
+      if run
+        if(batches_scenarios.where(:batch_id => run[:batch_id]).count > 0)
+          batches = dbweb_db[:simulation_batches].where(:id => run[:batch_id])
+          batches.update(:percent_complete => req.frac_complete*100)
+        end
+      end
     end
     
     # +req+ is WorkerFinishedRun
@@ -411,7 +445,7 @@ module Runq
       
       run = matching_runs.first ## fairer order based on timestamp?
       if run
-        send_run_to_worker run, worker
+        defer_cautiously { send_run_to_worker run, worker }
         return true
       else
         log.info "No matching runs for worker #{worker_id}."
@@ -440,7 +474,7 @@ module Runq
       
       worker = matching_workers.first ## fairer order?
       if worker
-        send_run_to_worker run, worker
+        defer_cautiously { send_run_to_worker run, worker }
         return true
       else
         log.info "No matching workers for run #{run_id}."
@@ -508,23 +542,31 @@ module Runq
       batch_id = run[:batch_id]
       batch_index = run[:batch_index]
       batch = database[:batches].where(:id => batch_id).first
+      frontend_batches = dbweb_db[:simulation_batches]
       worker_id = worker[:id]
       param = YAML.load(batch[:param]) ## cache this per batch
       
       log.info "sending run #{run_id} from batch #{batch_id} to " +
         "worker #{worker_id}"
-      log.debug "run params: #{param.to_yaml}"
+      log.debug "run params: #{param.inspect}"
       
+      scenario_id = nil 
+      if batch[:engine] == 'simulator' && param['inputs']
+        if match = /@scenario\((\d)\)/.match(param['inputs'].first)
+          scenario_id = match[1] 
+          log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
+          scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
+          log.debug "scenario URL: #{scenario_url}"
+          param['inputs'][0] = scenario_url
+        end
+      end
+ 
       msg = Request::RunqAssignRun.new(
         :param        => param,
         :engine       => batch[:engine],
         :batch_index  => batch_index
       )
-      ### TODO: export from database?
-      ### is this a special case based on engine?
-      ### other special cases for pre-processing:
-      ### - validate xml
-      
+     
       begin
         sock = socket_for_worker[worker_id]
         sock.send_message msg.to_yaml
@@ -537,12 +579,29 @@ module Runq
 
       # If the transmission succeeded, mark the run and worker as belonging to
       # each other.
-      database[:runs].where(:id => run_id).update(
-        :worker_id => worker_id
-      )
-      database[:workers].where(:id => worker_id).update(
-        :run_id => run_id
-      )
+      database[:runs].where(:id => run_id).update(:worker_id => worker_id)
+      database[:workers].where(:id => worker_id).update(:run_id => run_id)
+
+      if scenario_id
+        if !database[:batches_scenarios][:scenario_id => scenario_id]
+          database[:batches_scenarios].insert(
+            :batch_id => batch_id,
+            :scenario_id => scenario_id
+          )
+        end
+        if !frontend_batches[:id => batch_id]
+          frontend_batches.insert(
+            :id => batch_id,
+            :name => batch[:name],
+            :number_of_runs => batch[:n_runs],
+            :scenario_id => scenario_id,
+            :percent_complete => 0,
+            :start_time => Time.now,
+            :created_at => Time.now,
+            :updated_at => Time.now
+          )
+        end
+      end
 
       log.info "Dispatched run #{run_id}, " +
         "index #{batch_index} in batch #{batch_id} " +
