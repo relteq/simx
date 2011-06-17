@@ -16,7 +16,7 @@
     </position>
     
     <NodeList>
-      <node name="Node 1" type="S" id="-1">
+      <node name="Node 1" type="T" id="-1">
         <outputs>
           <output link_id="-5"/>
         </outputs>
@@ -51,7 +51,7 @@
           <point lng="-122.29155421257019" lat="37.86734283851613" />
         </position>
       </node>
-      <node name="Node 4" type="S" id="-4">
+      <node name="Node 4" type="T" id="-4">
         <outputs/>
         <inputs>
           <input link_id="-7">
@@ -102,9 +102,7 @@
     <ODList>
       <od begin="-1" end="-4">
         <PathList>
-          <path id="-1" name="Freeway mainline route">
-            -5,-6,-7
-          </path>
+          <path id="-1" name="Freeway mainline route">-5,-6,-7</path>
         </PathList>
       </od>
     </ODList>
