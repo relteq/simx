@@ -305,6 +305,14 @@ class Worker
       :worker_id      => worker_id
     )
   end
+
+  def runq_send_need_assistance(event)
+    runq_send? Runq::Request::WorkerNeedsAssistance.new(
+      :worker_id => worker_id,
+      :runq_assist_method => event.operation_needed,
+      :runq_assist_params => event.operation_params
+    )
+  end
   
   def initial_handshake
     runq_send_ready
@@ -360,6 +368,11 @@ class Worker
       if r=current_run
         r.abort
       end
+
+    when Runq::Request::RunqProvideInformation
+      if r=current_run
+        r.update_with_info req 
+      end
     
     else
       log.warn "Unexpected runq request: #{req.inspect}."
@@ -383,6 +396,8 @@ class Worker
       runq_send_failed event.message
     when Run::Event::Update
       runq_send_update
+    when Run::Event::Blocked
+      runq_send_need_assistance event
     else
       log.warn "Unexpected run event: #{event.inspect}."
     end
