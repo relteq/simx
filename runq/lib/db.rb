@@ -47,7 +47,6 @@ module Runq
         create_workers_table unless table_exists?(:workers)
         create_batches_table unless table_exists?(:batches)
         create_runs_table unless table_exists?(:runs)
-        create_batches_scenarios_table unless table_exists?(:batches_scenarios)
       end
     end
 
@@ -128,14 +127,6 @@ module Runq
         
         index :worker_id
         index :batch_id
-      end
-    end
-
-    def create_batches_scenarios_table
-      create_table :batches_scenarios do
-        foreign_key   :batch_id,      :batches,      :key => :id
-        integer       :scenario_id
-        primary_key   :batch_id
       end
     end
   end

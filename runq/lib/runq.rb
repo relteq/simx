@@ -246,7 +246,6 @@ module Runq
       worker_id = req.worker_id
       workers = database[:workers].where(:id => worker_id)
       worker = workers.first
-      batches_scenarios = database[:batches_scenarios]
 
       workers.update(
         :last_contact => Time.now
@@ -257,13 +256,6 @@ module Runq
         ## store progress as well?
       )
       run = database[:runs].where(:id => worker[:run_id]).first
-
-      if run
-        if(batches_scenarios.where(:batch_id => run[:batch_id]).count > 0)
-          batches = dbweb_db[:simulation_batches].where(:id => run[:batch_id])
-          batches.update(:percent_complete => req.frac_complete*100)
-        end
-      end
     end
 
     def assist_worker req
@@ -602,12 +594,6 @@ module Runq
       database[:workers].where(:id => worker_id).update(:run_id => run_id)
 
       if scenario_id
-        if !database[:batches_scenarios][:scenario_id => scenario_id]
-          database[:batches_scenarios].insert(
-            :batch_id => batch_id,
-            :scenario_id => scenario_id
-          )
-        end
         if !frontend_batches[:id => batch_id]
           frontend_batches.insert(
             :id => batch_id,
