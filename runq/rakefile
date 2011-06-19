@@ -12,6 +12,7 @@ require 'simx/daemon'
 # Read the deployment-specific config file (see config/README).
 config = YAML.load(File.read("../config.yaml"))
 runq_config = config["runq"]
+db_config = config["db"]
  
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
@@ -29,6 +30,10 @@ sock_name   = File.join(sock_dir, "#{proc_name}.sock")
 log_dir     = File.expand_path(File.join(exec_dir, "var/log"))
 log_file    = File.join(log_dir, "#{proc_name}.log")
 err_file    = log_file.sub(/\.log/, ".err")
+
+ENV["DBWEB_DB_URL"] ||=
+  (db_config && db_config["url"]) ||
+    ("sqlite://" + File.join(data_dir, "dbweb.sqlite"))
 
 FileUtils.mkdir_p log_dir
 FileUtils.mkdir_p sock_dir
