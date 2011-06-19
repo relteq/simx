@@ -258,6 +258,7 @@ module Runq
       run = database[:runs].where(:id => worker[:run_id]).first
     end
 
+    # +req+ is WorkerNeedsAssistance
     def assist_worker req
       if req.runq_assist_method == :scenario_export
         op_queue << Proc.new do 
@@ -304,6 +305,7 @@ module Runq
       batch_id = batch[:id]
       new_n_complete = batch[:n_complete] + 1
       n_runs = batch[:n_runs]
+
       if new_n_complete == n_runs
         batches.update(
           :n_complete => new_n_complete,
@@ -313,6 +315,13 @@ module Runq
         batches.update(
           :n_complete => new_n_complete
         )
+      end
+
+      frontend_batch = dbweb_db[:simulation_batches].where(:id => batch_id)
+      if frontend_batch.count > 0
+        percent = new_n_complete.to_f/n_runs.to_f
+        log.debug "Changing percent complete of batch #{batch_id} to #{percent}"
+        frontend_batch.update( :percent_complete => percent )
       end
 
       log.info "Finished run by worker #{worker_id}; " +
@@ -570,8 +579,6 @@ module Runq
         "worker #{worker_id}"
       log.debug "run params: #{param.inspect}"
       
-      scenario_id = nil 
-      
       msg = Request::RunqAssignRun.new(
         :param        => param,
         :engine       => batch[:engine],
@@ -593,19 +600,16 @@ module Runq
       database[:runs].where(:id => run_id).update(:worker_id => worker_id)
       database[:workers].where(:id => worker_id).update(:run_id => run_id)
 
-      if scenario_id
-        if !frontend_batches[:id => batch_id]
-          frontend_batches.insert(
-            :id => batch_id,
-            :name => batch[:name],
-            :number_of_runs => batch[:n_runs],
-            :scenario_id => scenario_id,
-            :percent_complete => 0,
-            :start_time => Time.now,
-            :created_at => Time.now,
-            :updated_at => Time.now
-          )
-        end
+      if !frontend_batches[:id => batch_id]
+        frontend_batches.insert(
+          :id => batch_id,
+          :name => batch[:name],
+          :number_of_runs => batch[:n_runs],
+          :percent_complete => 0,
+          :start_time => Time.now,
+          :created_at => Time.now,
+          :updated_at => Time.now
+        )
       end
 
       log.info "Dispatched run #{run_id}, " +
