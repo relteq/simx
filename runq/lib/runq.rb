@@ -329,6 +329,17 @@ module Runq
         percent = new_n_complete.to_f/n_runs.to_f
         log.debug "Changing percent complete of batch #{batch_id} to #{percent}"
         frontend_batch.update( :percent_complete => percent )
+        log.debug "Adding output file for run by worker #{worker_id} to output_files"
+        if req.data['output_urls']
+          req.data['output_urls'].each do |url|
+            dbweb_db[:output_files] << {
+              :simulation_batch_id => batch_id,
+              :url => url,
+              :created_at => Time.now,
+              :updated_at => Time.now
+            }
+          end
+        end
       end
 
       log.info "Finished run by worker #{worker_id}; " +
