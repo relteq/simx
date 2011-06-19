@@ -53,16 +53,16 @@ module Aurora
     end
 
     def self.export_and_store_on_s3(id, db = DB)
-      require 'aws/s3'
-      require 'digest/md5'
       dbweb_s3_bucket = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
-      AWS::S3::Base.establish_connection!(
-          :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
-          :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
-      )
+      unless AWS::S3::Base.connected? 
+        AWS::S3::Base.establish_connection!(
+            :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
+            :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
+        )
+      end
 
       scenario_xml = Scenario[id].to_xml(db)
-      key = Digest::MD5.hexdigest(scenario_xml)
+      key = Digest::MD5.hexdigest(scenario_xml) + ".xml"
       exists =
         begin
           AWS::S3::S3Object.find key, dbweb_s3_bucket
