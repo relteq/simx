@@ -275,6 +275,13 @@ module Runq
           info_request.info_value = { :scenario_url => scenario_url }
           request_queue << info_request
           log.debug "queueing info request #{info_request.inspect}"
+
+          worker = database[:workers].where(:id => req.worker_id).first
+          run = database[:runs].where(:id => worker[:run_id]).first
+          dbweb_db[:simulation_batches].where(:id => run[:batch_id]).update(
+            :scenario_id => scenario_id
+          )
+          log.debug "setting simulation batch #{run[:batch_id]} scenario ID = #{scenario_id}"
         end
       end
     end
