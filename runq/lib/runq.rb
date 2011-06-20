@@ -262,7 +262,7 @@ module Runq
     def assist_worker req
       if req.runq_assist_method == :scenario_export
         op_queue << Proc.new do 
-          match = /@scenario\((\d)\)/.match(req.runq_assist_params.first)
+          match = /@scenario\((\d+)\)/.match(req.runq_assist_params.first)
           scenario_id = match[1] 
           log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
           scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
