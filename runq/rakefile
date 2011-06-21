@@ -13,7 +13,7 @@ require 'simx/daemon'
 config = YAML.load(File.read("../config.yaml"))
 runq_config = config["runq"]
 db_config = config["db"]
- 
+
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
 port = Integer(ENV["RUNQ_PORT"] || runq_config["port"])

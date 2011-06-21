@@ -164,7 +164,10 @@ DBWEB_S3_BUCKET = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
 DB_URL = ENV["DBWEB_DB_URL"]
 DB = Sequel.connect DB_URL
 LOGGER.info "Connected to DB at #{DB_URL}"
+
 require 'db/schema'
+Aurora.create_tables? DB
+
 require 'db/model/aurora'
 require 'db/import/util'
 require 'db/import/scenario'
