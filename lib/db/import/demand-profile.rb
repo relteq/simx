@@ -14,7 +14,7 @@ module Aurora
       self.dt         = Float(dp_xml["dt"])
       self.start_time = Float(dp_xml["start_time"] || 0)
       self.link_id    = ctx.get_link_id(dp_xml["link_id"])
-      self.knob       = Float(dp_xml["knob"])
+      self.knob       = dp_xml["knob"]
       self.profile    = dp_xml.text
     end
   end
