@@ -645,7 +645,7 @@ module Runq
       database[:runs].where(:id => run_id).update(:worker_id => worker_id)
       database[:workers].where(:id => worker_id).update(:run_id => run_id)
 
-      if param[:engine] == 'simulator' && !frontend_batches[:id => batch_id]
+      if batch[:engine] == 'simulator' && !frontend_batches[:id => batch_id]
         frontend_batches.insert(
           :id => batch_id,
           :name => batch[:name],
