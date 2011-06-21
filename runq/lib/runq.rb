@@ -342,6 +342,12 @@ module Runq
         end
       end
 
+      if run[:engine] == 'report generator' 
+        frontend_report = dbweb_db[:simulation_batch_reports].where(:id => req.data['for_report'])
+        if frontend_report.count > 0
+        end
+      end
+
       log.info "Finished run by worker #{worker_id}; " +
         "#{new_n_complete} of #{n_runs} runs done in batch #{batch_id}"
       log.debug "Run result = #{data.inspect}"
@@ -618,7 +624,7 @@ module Runq
       database[:runs].where(:id => run_id).update(:worker_id => worker_id)
       database[:workers].where(:id => worker_id).update(:run_id => run_id)
 
-      if !frontend_batches[:id => batch_id]
+      if param[:engine] == 'simulator' && !frontend_batches[:id => batch_id]
         frontend_batches.insert(
           :id => batch_id,
           :name => batch[:name],
