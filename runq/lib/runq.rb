@@ -51,9 +51,13 @@ module Runq
     end
 
     def dbweb_db
-      @dbweb_db ||= Sequel.connect ENV['DBWEB_DB_URL']
-      require 'db/model/aurora'
-      require 'db/export/scenario'
+      @dbweb_db ||= begin
+        db = Sequel.connect ENV['DBWEB_DB_URL']
+        log.info "Using aurora model database #{db.inspect}"
+        require 'db/model/aurora'
+        require 'db/export/scenario'
+        db
+      end
       @dbweb_db
     end
     
