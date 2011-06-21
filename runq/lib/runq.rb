@@ -234,11 +234,20 @@ module Runq
       socket_for_worker[worker_id] = req.sock
       
       workers = database[:workers].where(:id => worker_id)
-      workers.update(
-        :last_contact => Time.now,
-        :ipaddr       => req.sock.peeraddr[3] # in case of dhcp, for example
-      )
-      log.info "Reconnected worker #{worker_id}"
+      case workers.count
+      when 0
+        # This case is possible if runq was stopped and its database was
+        # cleared.
+        add_worker req
+      when 1
+        workers.update(
+          :last_contact => Time.now,
+          :ipaddr       => req.sock.peeraddr[3] # in case of dhcp, for example
+        )
+        log.info "Reconnected worker #{worker_id}"
+      else
+        log.error "Too many workers with id=#{worker_id}"
+      end
     end
     
     # +req+ is WorkerUpdate
@@ -511,6 +520,8 @@ module Runq
     def dispatch_run run_id
       run = database[:runs].where(:id => run_id).first
       
+      purge_workers
+      
       # no race cond here because there is only one thread in db
       ready_workers = database[:workers].where(:run_id => nil).
         order_by(:cost, :speed.desc, :priority.desc)
@@ -637,10 +648,28 @@ module Runq
       
       return true
     end
+    
+    # Call this periodically to delete worker records that do not have
+    # an open socket. Does not handle the case of stalled worker with
+    # a run that never finishes.
+    def purge_workers
+      t = Time.now - 24*60*60
+      ws = database[:workers].
+            where(:run_id => nil).
+            where {last_contact < t}.
+            all.select do |w|
+              s = socket_for_worker[w]
+              !s or s.closed?
+            end
+      
+      ws.each do |w|
+        log.info "purging worker #{w.inspect}"
+        ### TODO
+      end
+    end
 
     ### how to periodically purge old records from db?
     ### and check if batch or run is stalled? or sock is dead?
-    ### periodically delete worker records that do not have a corr socket
     ### how to restart run if worker went away?
     ### maybe we can use the update_period (+n) as the period to check?
   end
