@@ -14,12 +14,9 @@ module Aurora
       
       id = import_id(network_xml["id"])
       nw = id && Network[id]
-p nw.id
       if nw
         members_before = nw.select_members
       end
-#puts "members_before: "
-#p members_before
 
       network = create_with_id network_xml["id"] do |nw|
         ctx.defer do
@@ -35,16 +32,7 @@ p nw.id
       if members_before
         ctx.defer do
           members_after = network.select_members
-#puts "deferred delete"
-#puts "members_after"
-#p members_after
           members_before.zip(members_after).each do |(table, set0), (_, set1)|
-#p table
-#set_diff = set0 - set1
-#puts "set_diff = #{set_diff.inspect}"
-#rows = DB[table].where(:id => (set0 - set1).to_a)
-#puts "rows = #{rows.all.inspect}"
-#rows.delete
             DB[table].where(:id => (set0 - set1).to_a).delete
           end
         end
