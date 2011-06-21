@@ -30,7 +30,7 @@ module Aurora
     when "Metric"
       len * 0.62137119 # km to miles
     else
-      raise "Bad units: #{units}"
+      raise "Bad units: #{units.inspect}"
     end
   end
 
@@ -43,7 +43,7 @@ module Aurora
     when "Metric"
       spd * 0.62137119 # kph to mph
     else
-      raise "Bad units: #{units}"
+      raise "Bad units: #{units.inspect}"
     end
   end
 
@@ -56,7 +56,7 @@ module Aurora
     when "Metric"
       den * 1.609344 # v/km to v/mile
     else
-      raise "Bad units: #{units}"
+      raise "Bad units: #{units.inspect}"
     end
   end
   

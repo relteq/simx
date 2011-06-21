@@ -3,7 +3,7 @@
 require 'db/util'
 
 module Aurora
-  def self.create_tables? db
+  def self.create_tables? db=DB
     # For testing, this is a stub.
     create_table? :projects, db do
       primary_key :id

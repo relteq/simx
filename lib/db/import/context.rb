@@ -10,6 +10,9 @@ module Aurora
     # The scenario being imported.
     attr_reader :scenario
     
+    # The scenario is just a container for a network and/or some sets.
+    attr_reader :scenario_is_just_packaging
+    
     # Translation tables from xml ID to database ID.
     # These are only needed when the xml ID is non-numeric or negative.
     # Positive numeric IDs go directly into the database without translation.
@@ -24,8 +27,10 @@ module Aurora
     attr_reader :begin_for_link_xml_id
     attr_reader :end_for_link_xml_id
 
-    def initialize scenario
+    def initialize scenario, opts = {}
       @scenario = scenario
+      
+      @scenario_is_just_packaging = opts[:scenario_is_just_packaging]
       
       @network_id_for_xml_id        = {}
       

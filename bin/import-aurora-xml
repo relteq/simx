@@ -80,8 +80,9 @@ if opts["log"]
   DB.loggers << Logger.new($stderr)
 end
 
-# create tables if they don't exist
 require 'db/schema'
+Aurora.create_tables?
+
 require 'db/model/aurora'
 require 'db/import/scenario'
 
@@ -149,6 +150,11 @@ end
 
 scenarios = xml_files.map do |xml_file|
   Aurora.import(File.read(xml_file), opts)
+end
+
+if scenarios.any? {|sc|sc.nil?}
+  $stderr.puts "Some scenarios were just packaging (id=0)."
+  scenarios = scenarios.compact
 end
 
 $stderr.puts scenarios.map {|sc| sc.id}.inspect

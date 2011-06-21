@@ -14,38 +14,53 @@ module Aurora
     include Aurora
     
     def self.create_from_xml scenario_xml, ctx = nil
+      scenario_is_just_packaging = (
+        scenario_xml["id"] =~ /\A\s*0+\s*\z/
+      )
+      
       scenario = create_with_id scenario_xml["id"] do |sc|
-        ctx ||= ImportContext.new sc
+        ctx ||= ImportContext.new sc,
+          :scenario_is_just_packaging => scenario_is_just_packaging
         sc.import_xml scenario_xml, ctx
       end
       
       ctx.do_deferred
       scenario.save_changes
-      scenario
+      
+      if scenario_is_just_packaging
+        # for packaging only, not a real scenario
+        scenario.delete
+        nil
+      else
+        scenario
+      end
     end
     
     def import_xml scenario_xml, ctx
-      clear_members
+      unless ctx.scenario_is_just_packaging
+        clear_members
       
-      set_name_from scenario_xml["name"], ctx
+        set_name_from scenario_xml["name"], ctx
 
-      descs = scenario_xml.xpath("description").map {|desc_xml| desc_xml.text}
-      self.description = descs.join("\n")
-      
-      scenario_xml.xpath("settings/VehicleTypes/vtype").each do |vtype_xml|
-        ctx.defer do
-          VehicleType.create_from_xml vtype_xml, ctx
+        descs = scenario_xml.xpath("description").map {|desc_xml| desc_xml.text}
+        self.description = descs.join("\n")
+
+        scenario_xml.xpath("settings/VehicleTypes/vtype").each do |vtype_xml|
+          ctx.defer do
+            VehicleType.create_from_xml vtype_xml, ctx
+          end
+        end
+
+        scenario_xml.xpath("settings/display").each do |display_xml|
+          self.dt = Float(display_xml["dt"])
+          self.begin_time = Float(display_xml["timeInitial"] || 0.0)
+          self.duration =
+            Float(display_xml["timeMax"] || begin_time) - begin_time
         end
       end
-      
+
       scenario_xml.xpath("settings/units").each do |units_xml|
         self.units = units_xml.text
-      end
-      
-      scenario_xml.xpath("settings/display").each do |display_xml|
-        self.dt = Float(display_xml["dt"])
-        self.begin_time = Float(display_xml["timeInitial"] || 0.0)
-        self.duration = Float(display_xml["timeMax"] || begin_time) - begin_time
       end
 
       [split_ratio_profile_set, capacity_profile_set, demand_profile_set, 

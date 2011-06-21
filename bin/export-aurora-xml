@@ -50,6 +50,8 @@ if opts["log"]
 end
 
 require 'db/schema'
+Aurora.create_tables?
+
 require 'db/model/aurora'
 require 'db/export/scenario'
 
