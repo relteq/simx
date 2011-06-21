@@ -363,7 +363,10 @@ module Runq
         frontend_report = dbweb_db[:simulation_batch_reports].where(:id => req.data['for_report'])
         if frontend_report.count > 0
           log.info 'Setting report URL in Redmine databse'
-          frontend_report.update(:url => req.data['output_urls'].first)
+          frontend_report.update(
+            :url => req.data['output_urls'].first, 
+            :percent_complete => 1
+          )
         end
       end
 
