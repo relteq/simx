@@ -97,6 +97,9 @@ to start runq and runweb. And to start the workers:
 
   cd workers
 
+  rake all:update
+    # needed the first time to set up the dir structure and rakefile
+
   rake all:update_aurora
     # deploy aurora jars to all remote worker installations
     # note that AURORA_CLASS_PREFIX must be defined on the remote system as

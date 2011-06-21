@@ -35,6 +35,19 @@ module Runq
     # previous connection.
     class WorkerReconnect < Request
       attr_accessor :worker_id
+
+      # Usually, these fields are redundant -- the worker_id corresponds
+      # to a row in the runq database that has all this information.
+      # But if the database was cleared for some reason, the info is gone,
+      # and the WorkerReconnect request must serve as a WorkerReady.
+      attr_accessor :host
+      attr_accessor :pid
+      attr_accessor :group
+      attr_accessor :user
+      attr_accessor :engine
+      attr_accessor :cost
+      attr_accessor :speed
+      attr_accessor :priority
     end
     
     # Worker is checking in periodically or after reconnecting socket.

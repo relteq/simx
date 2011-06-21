@@ -161,8 +161,9 @@ class WorkerManager
     # IO.popen should not be used in the same process that also forks, as in
     # run_worker_once_in_ruby below. So we need an additional fork here.
     fpid = fork do
+      $0 = "#{run_class} jruby worker for #{instance_name}"
+
       result, pid = IO.popen(cmd, "r+") do |jruby|
-        log.info "started #{run_class} jruby worker pid=#{jruby.pid}"
         jruby.puts worker_spec.to_yaml
         jruby.close_write
         [jruby.read, jruby.pid]
@@ -178,6 +179,7 @@ class WorkerManager
       end
     end
 
+    log.info "started #{run_class} jruby worker, ppid=#{fpid}"
     Process.waitpid fpid
     return ($?.exitstatus == 0)
   end

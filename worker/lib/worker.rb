@@ -268,7 +268,17 @@ class Worker
   
   def runq_send_reconnect
     runq_send! Runq::Request::WorkerReconnect.new(
-      :worker_id      => worker_id
+      :worker_id      => worker_id,
+      
+      # usually redundant, but see note in request.rb.
+      :host     => `hostname`.strip,
+      :pid      => $$,
+      :group    => group,
+      :user     => user,
+      :engine   => engine,
+      :cost     => cost,
+      :speed    => speed,
+      :priority => priority
     )
   end
   
