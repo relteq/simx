@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'tmpdir'
 require 'mime/types'
+require 'nokogiri'
 
 require 'worker/run/base'
 
@@ -122,7 +123,7 @@ module Run
     end
 
     def prereqs
-      if inputs.first =~ /@/
+      if inputs.first =~ /@scenario/
         raise PrerequisitesNotMet.new(:scenario_export, inputs.first)
       end
     end
@@ -197,6 +198,12 @@ module Run
         "ok"          => true,
         "output_urls" => output_urls
       }
+
+      if engine == 'report generator'
+        param_doc = Nokogiri::XML::Document.parse(inputs[0])
+        report_id = param_doc.root.xpath('//report_id[1]').first.content.to_i
+        @results['for_report'] = report_id
+      end
       
       log.info "results = #{@results.to_yaml}"
 

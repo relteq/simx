@@ -279,7 +279,7 @@ module Runq
     def assist_worker req
       if req.runq_assist_method == :scenario_export
         op_queue << Proc.new do 
-          match = /@scenario\((\d)\)/.match(req.runq_assist_params.first)
+          match = /@scenario\((\d+)\)/.match(req.runq_assist_params.first)
           scenario_id = match[1] 
           log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
           scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
@@ -356,6 +356,14 @@ module Runq
               :updated_at => Time.now
             }
           end
+        end
+      end
+
+      if batch[:engine] == 'report generator' 
+        frontend_report = dbweb_db[:simulation_batch_reports].where(:id => req.data['for_report'])
+        if frontend_report.count > 0
+          log.info 'Setting report URL in Redmine databse'
+          frontend_report.update(:url => req.data['output_urls'].first)
         end
       end
 
@@ -637,7 +645,7 @@ module Runq
       database[:runs].where(:id => run_id).update(:worker_id => worker_id)
       database[:workers].where(:id => worker_id).update(:run_id => run_id)
 
-      if !frontend_batches[:id => batch_id]
+      if batch[:engine] == 'simulator' && !frontend_batches[:id => batch_id]
         frontend_batches.insert(
           :id => batch_id,
           :name => batch[:name],
