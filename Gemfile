@@ -31,6 +31,7 @@ jruby_gems = %w{
   jruby-openssl
   rest-client
   mime-types
+  nokogiri
 }
 
 jruby_gems.each do |g|
