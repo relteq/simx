@@ -351,9 +351,11 @@ module Runq
         end
       end
 
-      if run[:engine] == 'report generator' 
+      if batch[:engine] == 'report generator' 
         frontend_report = dbweb_db[:simulation_batch_reports].where(:id => req.data['for_report'])
         if frontend_report.count > 0
+          log.info 'Setting report URL in Redmine databse'
+          frontend_report.update(:url => req.data['output_urls'].first)
         end
       end
 
