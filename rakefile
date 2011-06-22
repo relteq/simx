@@ -9,13 +9,19 @@ require 'yaml'
 #== Config
 
 # Read the deployment-specific config file (see config/README).
-config = YAML.load(File.read("config.yaml"))
+config = (YAML.load(File.read("config.yaml")) rescue nil)
 
 ##config_local_gems(topdir)
 
-# destination for the remote task
-dest_host = config["deploy"]["host"]
-dest_path = config["deploy"]["path"]
+if config
+  # destination for the remote task
+  dest_host = config["deploy"]["host"]
+  dest_path = config["deploy"]["path"]
+
+else
+  warn "no config.yaml -- run 'rake git:init', or set it manually;\n" +
+       "then 'git co' a branch; see doc/tutorial.txt for more info"
+end
 
 ## dest_user
 
