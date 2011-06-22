@@ -339,8 +339,7 @@ module Aurora
       float       :dt
       check       {dt > 0}
 
-      float       :knob, :default => 1.0
-      check       {knob > 0}
+      string      :knob
 
       text        :profile # xml text
 
