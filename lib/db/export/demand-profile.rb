@@ -4,7 +4,7 @@ module Aurora
       attrs = {
         :link_id => link_id,
         :dt => "%.1f" % dt,
-        :knob => "%.1f" % knob
+        :knob => knob
       }
       
       attrs[:start_time] = start_time if start_time != 0
