@@ -13,9 +13,17 @@ module Aurora
   
   # List of files under CLASS_PREFIX that need to be rsynced for deployment.
   # The target dir should be the CLASS_PREFIX on the deployment target host.
-  DEPLOYMENT_FILES = %w{ build/aurora.jar icons libGIS libGUI libPDF libPPT }
+  DEPLOYMENT_FILES = %w{
+    build/aurora.jar
+    icons
+    libGIS libGUI libPDF libPPT
+    ppttemplate.pot
+  }
 
-  classpath_items = ["build/aurora.jar", "libPDF/*", "libPPT/*", "libGUI/*"]
+  classpath_items = %w{
+    build/aurora.jar
+    libPDF/* libPPT/* libGUI/*
+  }
 
   # Classpath for java and jruby to run aurora.
   CLASSPATH = classpath_items.map {|rel|
