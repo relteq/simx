@@ -247,7 +247,7 @@ module Run
       AWS::S3::S3Object.store filename, data, S3_BUCKET, opts
       obj = AWS::S3::S3Object.find filename, S3_BUCKET
       
-      return obj.url
+      return "http://s3.amazonaws.com/#{S3_BUCKET}/#{filename}"
     end
 
     def cleanup
