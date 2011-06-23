@@ -20,6 +20,8 @@ require 'nokogiri'
 require 'aws/s3'
 require 'digest/md5'
 
+require 'mime/types'
+
 # We want to log the IP address of connected peers, but don't need full
 # domain info (which may be useless anyway if peer is behind firewall or dhcp).
 Socket.do_not_reverse_lookup = true
@@ -63,6 +65,13 @@ module Runq
         db
       end
       @dbweb_db
+    end
+
+    def ext_for_mime_type mime_type
+      type = MIME::Types[mime_type].first
+      if type
+        type.extensions.first # this seems to be right for pdf, ppt, xls
+      end
     end
     
     # Queue for all incoming requests, both from workers and from users.
@@ -360,13 +369,28 @@ module Runq
       end
 
       if batch[:engine] == 'report generator' 
-        frontend_report = dbweb_db[:simulation_batch_reports].where(:id => req.data['for_report'])
+        batch_param = YAML.load(batch[:param])
+        frontend_report = dbweb_db[:simulation_batch_reports].
+                          where(:id => req.data['for_report'])
         if frontend_report.count > 0
-          log.info 'Setting report URL in Redmine databse'
-          frontend_report.update(
-            :url => req.data['output_urls'].first, 
-            :percent_complete => 1
-          )
+          frontend_report.update(:percent_complete => 1)
+          batch_param['output_types'].each_with_index do |type,index|
+            if frontend_report.count > 0
+              log.info "Setting report export URL for #{type} in Redmine database"
+              ext = ext_for_mime_type(type)
+              field = case ext
+                when "xml" then :url 
+                when "pdf" then :export_pdf_url
+                when "xls" then :export_xls_url
+                when "ppt" then :export_ppt_url
+                else begin 
+                  log.warn "Unrecognized extension #{ext} in report generator"
+                  break
+                end
+              end
+              frontend_report.update(field => req.data['output_urls'][index])
+            end
+          end
         end
       end
 

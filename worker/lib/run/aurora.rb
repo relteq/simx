@@ -2,12 +2,14 @@ require 'open-uri'
 require 'tmpdir'
 require 'mime/types'
 require 'nokogiri'
+require 'aws/s3'
 
 require 'worker/run/base'
 
 # Do not require java (or updater) at load time, because we need to load this
 # class and run its class methods from worker manager. However, it is
 # instantiated only when run in jruby.
+
 
 module Run
   class Aurora < Base
@@ -48,11 +50,13 @@ module Run
     #
     #  report exporter:
     #   * Inputs
-    #     [0]: url pointing to xml file containing the report data
+    #     [0]: url pointing to xml file containing the report data - must
+    #          be wrapped in a <url> tag
     #
     #   * Outputs
     #     [0]: name of the resulting file whose extension (.pdf, .ppt, .xls)
     #          indicates the type of export to be performed
+    S3_BUCKET = ENV["WORKER_S3_BUCKET"] || "relteq-uploads-dev"
 
     attr_reader :param
     
@@ -191,9 +195,10 @@ module Run
         end
         
         log.debug "output #{file}:\n#{data[0..200].inspect}"
+        log.debug "output file size=#{File.size(file)}"
         store(data, mime_type)
       end
-      
+
       @results = {
         "ok"          => true,
         "output_urls" => output_urls
@@ -213,29 +218,36 @@ module Run
     def results
       @results
     end
+
+    def s3
+      unless @s3
+        require 'aws/s3'
+  
+        AWS::S3::Base.establish_connection!(
+          :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
+          :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
+        )
+      
+        @s3 = true
+      end
+    end
     
     def store data, mime_type = nil
+      s3 
       ## need option to store locally for debugging, not s3
       ### Worker should not know about this stuff.
-      runweb_user = ENV["RUNWEB_USER"] || "relteq"
-      runweb_password = ENV["RUNWEB_PASSWORD"] || "topl5678"
 
-      url = "http://#{runweb_host}:#{runweb_port}/store"
-      
+      opts = {:access => :public_read}
       expiry = 600 # seconds
-      url << "?expiry=#{expiry}"
-
       ext = ext_for_mime_type(mime_type) if mime_type
-      url << "&ext=#{ext}" if ext
+      hash = Digest::MD5.hexdigest(data)
+      filename = "#{hash}.#{ext}"
       
-      log.info "requesting storage from #{url} with type #{mime_type}"
-      rsrc = RestClient::Resource.new(url, runweb_user, runweb_password)
-      response = rsrc.post data, :content_type => mime_type
-      ## ok to go thru runweb?
-      ## maybe a separate service, so runweb is not blocked?
-      ## do these requests in parallel, and runweb uses async_post
+      log.info "requesting storage from S3 with type #{mime_type}"
+      AWS::S3::S3Object.store filename, data, S3_BUCKET, opts
+      obj = AWS::S3::S3Object.find filename, S3_BUCKET
       
-      return "#{response.body}" ## use to_s instead?
+      return obj.url
     end
 
     def cleanup
