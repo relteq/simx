@@ -32,6 +32,7 @@ jruby_gems = %w{
   rest-client
   mime-types
   nokogiri
+  aws-s3
 }
 
 jruby_gems.each do |g|
