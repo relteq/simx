@@ -238,7 +238,7 @@ module Run
       ### Worker should not know about this stuff.
 
       opts = {:access => :public_read}
-      expiry = 600 # seconds
+      expiry = :doomsday 
       ext = ext_for_mime_type(mime_type) if mime_type
       hash = Digest::MD5.hexdigest(data)
       filename = "#{hash}.#{ext}"
