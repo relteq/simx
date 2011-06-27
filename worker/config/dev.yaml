@@ -18,15 +18,15 @@ local:
       priority:     1
       retry_delay:  10
 
-#    - run_class:    Run::Dummy
-#      count:        3
-#      group:        topl
-#      user:         topl
-#      engine:       dummy
-#      cost:         0
-#      speed:        1
-#      priority:     1
-#      retry_delay:  10
+    - run_class:    Run::Dummy
+      count:        3
+      group:        topl
+      user:         topl
+      engine:       dummy
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
 
 #    - run_class:    Run::Calibrator
 #      count:        1
@@ -60,7 +60,7 @@ vii-aurora:
       priority:     1
       retry_delay:  10
 
-vii-dev:
+vii-vjoel:
   host:         vii.path.berkeley.edu
   user:         vjoel
   dir:          simx-dev
@@ -71,8 +71,8 @@ vii-dev:
   workers:
     - run_class:    Run::Aurora
       count:        4
-      group:        topl
-      user:         topl
+      group:        vjoel
+      user:         vjoel
       engine:       simulator|calibrator|report generator|report exporter
       cost:         0
       speed:        1
@@ -81,8 +81,8 @@ vii-dev:
 
     - run_class:    Run::Dummy
       count:        3
-      group:        topl
-      user:         topl
+      group:        vjoel
+      user:         vjoel
       engine:       dummy
       cost:         0
       speed:        1
@@ -91,8 +91,8 @@ vii-dev:
     
     - run_class:    Run::Calibrator
       count:        4
-      group:        topl
-      user:         topl
+      group:        vjoel
+      user:         vjoel
       engine:       calibrator
       engine_opts:
         jar_file:   /home/vjoel/topl/calib/fdcalibrate.jar

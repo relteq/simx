@@ -1,8 +1,9 @@
+# curl localhost:9097/batch/new --data-binary @example/batch-req.yam
 name:           test123
 engine:         dummy
 group:          topl
 user:           topl
 n_runs:         3
 param:
-  step_count:   5
+  step_count:   10
   step_delay:   1

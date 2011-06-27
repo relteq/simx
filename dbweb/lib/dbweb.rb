@@ -55,6 +55,20 @@ end
 configure do
   LOGGER.info "DBweb API service starting"
   
+  ne_dir = ENV["NE_DIR"]
+  if ne_dir
+    if File.directory?(ne_dir)
+      set :public, ne_dir
+      LOGGER.info "Public dir: #{ne_dir}"
+    else
+      LOGGER.error "No such dir ENV['NE_DIR']=#{ENV["NE_DIR"].inspect}"
+    end
+  else
+    LOGGER.error "Must set ENV['NE_DIR'] to use network editor"
+  end
+  
+  KEY_TO_ID = {}
+
   services = [
     ### list service points here
   ]
@@ -128,10 +142,12 @@ helpers do
       end
 
       AWS::S3::S3Object.store key, data, DBWEB_S3_BUCKET, opts
-      
     end
+    
+    url = AWS::S3::S3Object.url_for(key, DBWEB_S3_BUCKET)
+    LOGGER.info "url_for returned #{url}"
 
-    return AWS::S3::S3Object.url_for(key, DBWEB_S3_BUCKET) 
+    return url
   end
 
   def s3_fetch filename, bucket_name
@@ -155,10 +171,39 @@ helpers do
   
   def export_scenario_xml scenario_id
     Aurora::Scenario[Integer(scenario_id)].to_xml
+  rescue => e
+    LOGGER.error "export_scenario_xml(#{scenario_id}): #{e}"
+    nil
+  end
+  
+  def export_network_xml network_id
+    Aurora::Network[Integer(network_id)].to_xml
+  rescue => e
+    LOGGER.error "export_network_xml(#{network_id}): #{e}"
+    nil
+  end
+  
+  def export_wrapped_network_xml network_id
+    nw_xml = export_network_xml(network_id)
+    LOGGER.debug "nw_xml = #{nw_xml[0..200]}..."
+    
+    sc_xml = %{\
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario id='0'>
+  <settings>
+    <units>US</units>
+  </settings>
+  #{nw_xml.sub(/.*/, "")}
+</scenario>
+}
+
+    sc_xml
+    
+  rescue => e
+    LOGGER.error "export_wrapped_network_xml(#{network_id}): #{e}"
+    nil
   end
 end
-
-NE_URL = "http://vii.path.berkeley.edu/topl/NetworkEditor/NetworkEditor.swf"
 
 DBWEB_S3_BUCKET = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
 DB_URL = ENV["DBWEB_DB_URL"]
@@ -192,7 +237,7 @@ helpers do
       rescue Exception => e
         LOGGER.error "error: #{request.url}, params=#{request.params.inspect}"
         LOGGER.error "error text: #{e.message}"
-        LOGGER.error "error backtrace: #{e.backtrace.inspect}"
+        LOGGER.error "error backtrace: #{e.backtrace.join("\n  ")}"
         status 500
         body { "Internal Error" }
       end
@@ -213,6 +258,8 @@ helpers do
   end
 
   def authorized?
+return true
+###
     TRUSTED_ADDRS.include?(request.env["REMOTE_ADDR"]) or begin
       @auth ||=  Rack::Auth::Basic::Request.new(request.env)
       @auth.provided? && @auth.basic? && @auth.credentials &&
@@ -221,6 +268,9 @@ helpers do
   end
 
   def can_access?(object, access_token)
+return true ### fix this
+    return true if TRUSTED_ADDRS.include?(request.env["REMOTE_ADDR"])
+
     unexpired_auths = DB[:dbweb_authorizations].filter('expiration > ?', Time.now.utc)
     applicable_to_object = unexpired_auths.filter(
       :object_id => object[:id], 
@@ -257,6 +307,7 @@ get '/crossdomain.xml' do
       <allow-access-from domain="relteq-devel.heroku.com" />
       <allow-access-from domain="relteq-staging.heroku.com" />
       <allow-access-from domain="relteq.heroku.com" />
+      <allow-access-from domain="relteq-db.dyndns.org" />
     </cross-domain-policy>
   END
 end
@@ -271,7 +322,7 @@ end
 ### add user, group, project id params
 aget "/import/scenario/:filename" do |filename|
   protected!
-  params[:access_token] or not_authorized!
+#  params[:access_token] or not_authorized!
 
   s3
   LOGGER.info "Attempting to import #{params[:bucket]}/#{filename}"
@@ -341,9 +392,37 @@ end
 # Exports the scenario and returns the xml string in the response body, with
 # content type application/xml.
 
+aget "/model/scenario-by-key/:key.xml" do |key|
+  ###protected!
+# This route is accessed by key, not id, so no need to check this:
+#  access_token = params[:access_token]
+#  access_token or not_authorized!
+
+  id, time = KEY_TO_ID[key]
+  if !id
+    msg = "No scenario for key=#{key}"
+    LOGGER.warn msg
+    break msg
+  end
+
+  LOGGER.info "requested scenario #{id} as xml"
+
+  if can_access?({:type => 'Scenario', 
+                  :id => id}, params[:access_token])
+    defer_cautiously do
+      content_type :xml
+      body export_scenario_xml(id)
+    end
+  else
+    not_authorized!
+  end
+end
+
 aget "/model/scenario/:id.xml" do |id|
-  protected!
-  params[:access_token] or not_authorized!
+  ###protected!
+  access_token = params[:access_token]
+  access_token or not_authorized!
+
   LOGGER.info "requested scenario #{id} as xml"
 
   if can_access?({:type => 'Scenario', 
@@ -373,13 +452,71 @@ aget "/model/scenario/:id.url" do |id|
   end
 end
 
+aget "/model/network/:id.xml" do |id|
+  ###protected!
+  access_token = params[:access_token]
+  access_token or not_authorized!
+  
+  LOGGER.info "requested wrapped network #{id} as xml"
+  
+  if can_access?({:type => 'Network', 
+                  :id => id}, params[:access_token])
+    defer_cautiously do
+      content_type :xml
+
+      xml = export_network_xml(id)
+      if xml
+        body xml
+      else
+        body "dbweb error -- see logs"
+      end
+    end
+  else
+    not_authorized!
+  end
+end
+
+
+aget "/model/wrapped-network-by-key/:key.xml" do |key|
+  ###protected!
+# This route is accessed by key, not id, so no need to check this:
+#  access_token = params[:access_token]
+#  access_token or not_authorized!
+  
+  id, time = KEY_TO_ID[key]
+  if !id
+    msg = "No network for key=#{key}"
+    LOGGER.warn msg
+    break msg
+  end
+
+  LOGGER.info "requested wrapped network #{id} as xml"
+  
+  if can_access?({:type => 'Network', 
+                  :id => id}, params[:access_token])
+    defer_cautiously do
+      content_type :xml
+
+      xml = export_wrapped_network_xml(id)
+      if xml
+        body xml
+      else
+        body "dbweb error -- see logs"
+      end
+    end
+  else
+    not_authorized!
+  end
+end
+
 # Exports the scenario, uploads the xml string to s3, and returns a html
 # response that, when loaded in the client browser, runs our flash app, which
 # then loads the url passed to it by fashvars.
 
 aget "/editor/scenario/:id.html" do |id|
-  protected!
-  params[:access_token] or not_authorized!
+###  protected!
+  access_token = params[:access_token]
+#  access_token or not_authorized!
   LOGGER.info "requested scenario #{id} in editor"
   
   if can_access?({:type => 'Scenario', 
@@ -387,16 +524,43 @@ aget "/editor/scenario/:id.html" do |id|
     defer_cautiously do
       content_type :html
 
-      xml = export_scenario_xml(id)
-      s3_params = {}
-      s3_params["ext"] = "xml"
-      unusable_s3_url = s3_store(xml, s3_params)
-      # NOTE Full URL escaping will make this fail in some cases, as 
-      # S3Object.url_for creates the correct %xx entities for most special characters
-      @s3_url = 
-        unusable_s3_url.gsub(/%/,'%2525').gsub(/&/,'%26').gsub(/=/,'%3D')
-      @network_editor = NE_URL
-      LOGGER.debug "flash_friendly_s3_url = #{@s3_url}"
+      @network_editor = "/NetworkEditor.swf"
+
+      key = Digest::MD5.hexdigest((access_token||"") + "scenario" + id + Time.now.to_s)
+      @s3_url = ### change name!
+        "/model/scenario-by-key/#{key}.xml"
+      @gmap_key = ENV["GMAP_KEY"]
+
+      KEY_TO_ID[key] = [id, Time.now]
+      ### clear old ones
+
+      body { haml :flash_edit }
+    end
+  else
+    not_authorized!
+  end
+end
+
+aget "/editor/network/:id.html" do |id|
+###  protected!
+  access_token = params[:access_token]
+#  access_token or not_authorized!
+  LOGGER.info "requested network #{id} in editor"
+  
+  if can_access?({:type => 'Network', 
+                  :id => id}, access_token)
+    defer_cautiously do
+      content_type :html
+
+      @network_editor = "/NetworkEditor.swf"
+
+      key = Digest::MD5.hexdigest((access_token||"") + "network" + id + Time.now.to_s)
+      @s3_url = ### change name!
+        "/model/wrapped-network-by-key/#{key}.xml"
+      @gmap_key = ENV["GMAP_KEY"]
+
+      KEY_TO_ID[key] = [id, Time.now]
+      ### clear old ones
 
       body { haml :flash_edit }
     end
@@ -422,6 +586,30 @@ apost "/store" do
 
     LOGGER.info "finished deferred store operation, url = #{url}"
     body url
+  end
+end
+
+# Used by a NetworkEditor instance that was launched from dbweb to save
+# back to the database.
+# params can include "expiry", "ext", "access_token".
+apost "/save" do
+  ###protected!
+
+  access_token = params[:access_token]
+#  params[:access_token] or not_authorized!
+
+  ###LOGGER.info "requested scenario #{id} in editor"
+  
+#  if can_access?({:type => 'Scenario', 
+#                  :id => id}, params[:access_token])
+
+  
+  defer_cautiously do
+    LOGGER.info "saving"
+    
+    data = request.body.read
+    
+    body "done"
   end
 end
 

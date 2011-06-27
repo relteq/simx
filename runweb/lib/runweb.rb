@@ -285,7 +285,7 @@ get "/batch/:batch_id/run/:run_idx/result" do
     else
       # note: /^not finished/ is used by network editor to test for failure
       "not finished: batch_id=#{batch_id}, run_idx=#{run_idx}, " +
-        run[:data] ## ok?
+        "run_data=#{run[:data].inspect}" ## ok?
     end
   else
     "Error: No such run." ## 404?

@@ -12,8 +12,8 @@
                 :style => 'height: 100%; width: 100%;' }
                 %param{:name => 'movie', :value => @network_editor}
                 %param{:name => 'quality', :value => 'high'}
-                %param{:name => 'flashVars', :value => "url=#{@s3_url}"}
+                %param{:name => 'flashVars', :value => "url=#{@s3_url}&key=#{@gmap_key}"}
                 %embed{ :name => 'NetworkEditor', :width => '100%', :height => '100%',
-                    :src => @network_editor, :FlashVars => "url=#{@s3_url}",
+                    :src => @network_editor, :FlashVars => "url=#{@s3_url}&key=#{@gmap_key}",
                     :pluginspage => "http://www.macromedia.com/go/getflashplayer",
                     :type => "application/x-shockwave-flash" }
