@@ -583,6 +583,7 @@ aget "/editor/controller_set/:id.html" do |id|
       cs = Aurora::ControllerSet[Integer(id)]
       network_id = cs.network_id
 
+      @focus = 'controller_set'
       @network_editor = "/NetworkEditor.swf"
 
       key = Digest::MD5.hexdigest((access_token||"") + 
@@ -617,6 +618,7 @@ aget "/editor/demand_profile_set/:id.html" do |id|
       dps = Aurora::DemandProfileSet[Integer(id)]
       network_id = dps.network_id
 
+      @focus = 'demand-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
       key = Digest::MD5.hexdigest((access_token||"") + 
@@ -651,6 +653,7 @@ aget "/editor/split_ratio_profile_set/:id.html" do |id|
       srps = Aurora::SplitRatioProfileSet[Integer(id)]
       network_id = srps.network_id
 
+      @focus = 'split-ratio-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
       key = Digest::MD5.hexdigest((access_token||"") + 
@@ -685,6 +688,7 @@ aget "/editor/capacity_profile_set/:id.html" do |id|
       cps = Aurora::CapacityProfileSet[Integer(id)]
       network_id = cps.network_id
 
+      @focus = 'capacity-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
       key = Digest::MD5.hexdigest((access_token||"") + 
@@ -719,6 +723,7 @@ aget "/editor/event_set/:id.html" do |id|
       es = Aurora::EventSet[Integer(id)]
       network_id = es.network_id
 
+      @focus = 'event-set'
       @network_editor = "/NetworkEditor.swf"
 
       key = Digest::MD5.hexdigest((access_token||"") + 
