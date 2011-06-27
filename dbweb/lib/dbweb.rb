@@ -23,6 +23,7 @@ NETWORK_ERRORS = [Errno::ECONNRESET, Errno::ECONNABORTED,
 
 configure do
   set :raise_errors, false
+  set :public, 'public/'
   
   MY_ENV = {}
 
@@ -568,6 +569,177 @@ aget "/editor/network/:id.html" do |id|
     not_authorized!
   end
 end
+
+aget "/editor/controller_set/:id.html" do |id|
+###  protected!
+  access_token = params[:access_token]
+#  access_token or not_authorized!
+  LOGGER.info "requested controller set #{id} in editor"
+  
+  if can_access?({:type => 'ControllerSet', 
+                  :id => id}, access_token)
+    defer_cautiously do
+      content_type :html
+      cs = Aurora::ControllerSet[Integer(id)]
+      network_id = cs.network_id
+
+      @network_editor = "/NetworkEditor.swf"
+
+      key = Digest::MD5.hexdigest((access_token||"") + 
+        "network" + 
+        network_id.to_s + 
+        Time.now.to_s
+      )
+      @s3_url = ### change name!
+        "/model/wrapped-network-by-key/#{key}.xml"
+      @gmap_key = ENV["GMAP_KEY"]
+
+      KEY_TO_ID[key] = [network_id, Time.now]
+      ### clear old ones
+
+      body { haml :flash_edit }
+    end
+  else
+    not_authorized!
+  end
+end
+
+aget "/editor/demand_profile_set/:id.html" do |id|
+###  protected!
+  access_token = params[:access_token]
+#  access_token or not_authorized!
+  LOGGER.info "requested demand profile set #{id} in editor"
+  
+  if can_access?({:type => 'DemandProfileSet', 
+                  :id => id}, access_token)
+    defer_cautiously do
+      content_type :html
+      dps = Aurora::DemandProfileSet[Integer(id)]
+      network_id = dps.network_id
+
+      @network_editor = "/NetworkEditor.swf"
+
+      key = Digest::MD5.hexdigest((access_token||"") + 
+        "network" + 
+        network_id.to_s + 
+        Time.now.to_s
+      )
+      @s3_url = ### change name!
+        "/model/wrapped-network-by-key/#{key}.xml"
+      @gmap_key = ENV["GMAP_KEY"]
+
+      KEY_TO_ID[key] = [network_id, Time.now]
+      ### clear old ones
+
+      body { haml :flash_edit }
+    end
+  else
+    not_authorized!
+  end
+end
+
+aget "/editor/split_ratio_profile_set/:id.html" do |id|
+###  protected!
+  access_token = params[:access_token]
+#  access_token or not_authorized!
+  LOGGER.info "requested split ratio profile set #{id} in editor"
+  
+  if can_access?({:type => 'SplitRatioProfileSet', 
+                  :id => id}, access_token)
+    defer_cautiously do
+      content_type :html
+      srps = Aurora::SplitRatioProfileSet[Integer(id)]
+      network_id = srps.network_id
+
+      @network_editor = "/NetworkEditor.swf"
+
+      key = Digest::MD5.hexdigest((access_token||"") + 
+        "network" + 
+        network_id.to_s + 
+        Time.now.to_s
+      )
+      @s3_url = ### change name!
+        "/model/wrapped-network-by-key/#{key}.xml"
+      @gmap_key = ENV["GMAP_KEY"]
+
+      KEY_TO_ID[key] = [network_id, Time.now]
+      ### clear old ones
+
+      body { haml :flash_edit }
+    end
+  else
+    not_authorized!
+  end
+end
+
+aget "/editor/capacity_profile_set/:id.html" do |id|
+###  protected!
+  access_token = params[:access_token]
+#  access_token or not_authorized!
+  LOGGER.info "requested capacity profile set #{id} in editor"
+  
+  if can_access?({:type => 'CapacityProfileSet', 
+                  :id => id}, access_token)
+    defer_cautiously do
+      content_type :html
+      cps = Aurora::CapacityProfileSet[Integer(id)]
+      network_id = cps.network_id
+
+      @network_editor = "/NetworkEditor.swf"
+
+      key = Digest::MD5.hexdigest((access_token||"") + 
+        "network" + 
+        network_id.to_s + 
+        Time.now.to_s
+      )
+      @s3_url = ### change name!
+        "/model/wrapped-network-by-key/#{key}.xml"
+      @gmap_key = ENV["GMAP_KEY"]
+
+      KEY_TO_ID[key] = [network_id, Time.now]
+      ### clear old ones
+
+      body { haml :flash_edit }
+    end
+  else
+    not_authorized!
+  end
+end
+
+aget "/editor/event_set/:id.html" do |id|
+###  protected!
+  access_token = params[:access_token]
+#  access_token or not_authorized!
+  LOGGER.info "requested event set #{id} in editor"
+  
+  if can_access?({:type => 'EventSet', 
+                  :id => id}, access_token)
+    defer_cautiously do
+      content_type :html
+      es = Aurora::EventSet[Integer(id)]
+      network_id = es.network_id
+
+      @network_editor = "/NetworkEditor.swf"
+
+      key = Digest::MD5.hexdigest((access_token||"") + 
+        "network" + 
+        network_id.to_s + 
+        Time.now.to_s
+      )
+      @s3_url = ### change name!
+        "/model/wrapped-network-by-key/#{key}.xml"
+      @gmap_key = ENV["GMAP_KEY"]
+
+      KEY_TO_ID[key] = [network_id, Time.now]
+      ### clear old ones
+
+      body { haml :flash_edit }
+    end
+  else
+    not_authorized!
+  end
+end
+
 
 # Request s3 storage; returns the s3 key, which is
 # a md5 hash of the data, plus the specified file extension, if any, which
