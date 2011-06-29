@@ -350,20 +350,24 @@ module Runq
         )
       end
 
-      frontend_batch = dbweb_db[:simulation_batches].where(:id => batch_id)
-      if frontend_batch.count > 0
-        percent = new_n_complete.to_f/n_runs.to_f
-        log.debug "Changing percent complete of batch #{batch_id} to #{percent}"
-        frontend_batch.update( :percent_complete => percent )
-        log.debug "Adding output file for run by worker #{worker_id} to output_files"
-        if req.data['output_urls']
-          req.data['output_urls'].each do |url|
-            dbweb_db[:output_files] << {
-              :simulation_batch_id => batch_id,
-              :url => url,
-              :created_at => Time.now,
-              :updated_at => Time.now
-            }
+      if batch[:engine] == 'simulator'
+        batch_param = YAML.load(batch[:param])
+        simulation_batch_id = batch_param[:redmine_simulation_batch_id]
+        frontend_batch = dbweb_db[:simulation_batches].where(:id => simulation_batch_id)
+        if frontend_batch.count > 0
+          percent = new_n_complete.to_f/n_runs.to_f
+          log.debug "Changing percent complete of batch #{batch_id} to #{percent}"
+          frontend_batch.update( :percent_complete => percent )
+          log.debug "Adding output file for run by worker #{worker_id} to output_files"
+          if req.data['output_urls']
+            req.data['output_urls'].each do |url|
+              dbweb_db[:output_files] << {
+                :simulation_batch_id => batch_id,
+                :url => url,
+                :created_at => Time.now,
+                :updated_at => Time.now
+              }
+            end
           end
         end
       end
@@ -672,16 +676,11 @@ module Runq
       database[:runs].where(:id => run_id).update(:worker_id => worker_id)
       database[:workers].where(:id => worker_id).update(:run_id => run_id)
 
-      if batch[:engine] == 'simulator' && !frontend_batches[:id => batch_id]
-        frontend_batches.insert(
-          :id => batch_id,
-          :name => batch[:name],
-          :number_of_runs => batch[:n_runs],
-          :percent_complete => 0,
-          :start_time => Time.now,
-          :created_at => Time.now,
-          :updated_at => Time.now
-        )
+      if batch[:engine] == 'simulator'
+        batch_param = YAML.load(batch[:param])
+        simulation_batch_id = batch_param[:redmine_simulation_batch_id]
+        frontend_batches.where(:id => simulation_batch_id).
+          update(:number_of_runs => batch[:n_runs], :start_time => Time.now)
       end
 
       log.info "Dispatched run #{run_id}, " +
