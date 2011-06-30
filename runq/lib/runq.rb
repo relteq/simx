@@ -282,6 +282,19 @@ module Runq
         ## store progress as well?
       )
       run = database[:runs].where(:id => worker[:run_id]).first
+
+      batch = database[:batches].where(:id => run[:batch_id]).first
+      if batch[:engine] == 'simulator'
+        progress = database[:runs].where(:batch_id => run[:batch_id]).
+                     avg(:frac_complete)
+        batch_param = YAML.load(batch[:param])
+        simulation_batch_id = batch_param[:redmine_simulation_batch_id]
+        dbweb_db[:simulation_batches].where(:id => simulation_batch_id).
+          update(:percent_complete => progress)      
+      end
+
+      if batch[:engine] == 'report generator'
+      end
     end
 
     # +req+ is WorkerNeedsAssistance
@@ -362,7 +375,7 @@ module Runq
           if req.data['output_urls']
             req.data['output_urls'].each do |url|
               dbweb_db[:output_files] << {
-                :simulation_batch_id => batch_id,
+                :simulation_batch_id => simulation_batch_id,
                 :url => url,
                 :created_at => Time.now,
                 :updated_at => Time.now
