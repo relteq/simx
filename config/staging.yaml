@@ -1,0 +1,19 @@
+deploy:
+  host: simx
+  path: simx-staging
+runq:
+  port: 8596
+  log level: debug
+runweb:
+  port: 8597
+  log level: debug
+dbweb:
+  port: 8598
+  log level: debug
+worker:
+  config file: staging.yaml
+  log level: debug
+aws:
+  s3 bucket: relteq-uploads-staging
+db:
+  url: postgres://redmine:topl5t6y7u8i@relteq-db.dyndns.org/relteq-staging

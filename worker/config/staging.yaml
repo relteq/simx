@@ -1,0 +1,81 @@
+local:
+  # in this case we can use defaults:
+  # host:         localhost
+  # user:         same
+  # dir:          .
+  # runq_host:    localhost
+  # runq_port:    env var or default
+  # runweb_host:  localhost
+  # runweb_port:  env var or default
+  workers:
+    - run_class:    Run::Aurora
+      count:        1
+      group:        topl
+      user:         topl
+      engine:       simulator
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
+    - run_class:    Run::Dummy
+      count:        3
+      group:        topl
+      user:         topl
+      engine:       dummy
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
+#    - run_class:    Run::Calibrator
+#      count:        1
+#      group:        topl
+#      user:         topl
+#      engine:       calibrator
+#      engine_opts:
+#        jar_file:   /home/vjoel/topl/calib/tmp/fdcalibrate.jar
+#        sensor_dir: /home/vjoel/topl/calib/tmp/
+#      cost:         0
+#      speed:        1
+#      priority:     1
+#      retry_delay:  10
+
+vii-aurora:
+  host:         vii.path.berkeley.edu
+  user:         aurora
+  dir:          simx-staging
+  runq_host:    relteq-db.dyndns.org
+  runq_port:    8596
+  runweb_host:  relteq-db.dyndns.org
+  runweb_port:  8597
+  workers:
+    - run_class:    Run::Aurora
+      count:        4
+      group:        topl
+      user:         topl
+      engine:       simulator|calibrator|report generator|report exporter
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
+vii-aurora:
+  host:         vii.path.berkeley.edu
+  user:         aurora
+  dir:          simx-staging
+  runq_host:    relteq-db.dyndns.org
+  runq_port:    8596
+  runweb_host:  relteq-db.dyndns.org
+  runweb_port:  8597
+  workers:
+    - run_class:    Run::Aurora
+      count:        4
+      group:        relteq
+      user:         relteq
+      engine:       simulator|calibrator|report generator|report exporter
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
