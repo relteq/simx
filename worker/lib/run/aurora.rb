@@ -204,12 +204,6 @@ module Run
         "output_urls" => output_urls
       }
 
-      if engine == 'report generator'
-        param_doc = Nokogiri::XML::Document.parse(inputs[0])
-        report_id = param_doc.root.xpath('//report_id[1]').first.content.to_i
-        @results['for_report'] = report_id
-      end
-      
       log.info "results = #{@results.to_yaml}"
 
       @progress = 1; update

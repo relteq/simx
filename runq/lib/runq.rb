@@ -294,6 +294,13 @@ module Runq
       end
 
       if batch[:engine] == 'report generator'
+        progress = database[:runs].where(:batch_id => run[:batch_id]).
+                     avg(:frac_complete)
+        batch_param = YAML.load(batch[:param])
+        simulation_batch_report_id = batch_param[:redmine_batch_report_id]
+        dbweb_db[:simulation_batch_reports].
+          where(:id => simulation_batch_report_id).
+          update(:percent_complete => progress)
       end
     end
 
@@ -308,7 +315,7 @@ module Runq
           log.debug "scenario URL: #{scenario_url}"
 
           info_request = Request::RunqProvideInformation.new
-          info_request.sock = socket_for_worker[req.worker_id] 
+          info_request.sock = socket_for_worker[req.worker_id]
           info_request.worker_id = req.worker_id
           info_request.info_type = :param_update
           info_request.info_value = { :scenario_url => scenario_url }
@@ -388,7 +395,7 @@ module Runq
       if batch[:engine] == 'report generator' 
         batch_param = YAML.load(batch[:param])
         frontend_report = dbweb_db[:simulation_batch_reports].
-                          where(:id => req.data['for_report'])
+                          where(:id => batch_param[:redmine_batch_report_id])
         if frontend_report.count > 0
           frontend_report.update(:percent_complete => 1)
           batch_param['output_types'].each_with_index do |type,index|
