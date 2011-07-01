@@ -1,12 +1,13 @@
 module Runq
   class << self
-    def add_redmine_callbacks run_id, engine
+    def add_redmine_callbacks run_id, engine, param
       log.debug "Add redmine callbacks run=#{run_id}, engine=#{engine}"
       run = database[:runs].filter(:id => run_id)
-      if engine == 'simulator'
+      if engine == 'simulator' && param[:redmine_simulation_batch_id]
         run.update :update_callback => 'update_simulation_callback',
                    :finish_callback => 'finish_simulation_callback'
-      elsif engine == 'report generator'
+      elsif engine == 'report generator' && 
+            param[:redmine_batch_report_id]
         run.update :update_callback => 'update_report_generator_callback',
                    :finish_callback => 'finish_report_generator_callback'
       end

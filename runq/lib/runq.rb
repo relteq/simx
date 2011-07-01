@@ -658,7 +658,7 @@ module Runq
           update(:number_of_runs => batch[:n_runs], :start_time => Time.now)
       end
 
-      add_redmine_callbacks run_id, batch[:engine]
+      add_redmine_callbacks run_id, batch[:engine], param
 
       log.info "Dispatched run #{run_id}, " +
         "index #{batch_index} in batch #{batch_id} " +
