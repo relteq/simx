@@ -22,6 +22,8 @@ require 'digest/md5'
 
 require 'mime/types'
 
+require 'runq/redmine-callbacks'
+
 # We want to log the IP address of connected peers, but don't need full
 # domain info (which may be useless anyway if peer is behind firewall or dhcp).
 Socket.do_not_reverse_lookup = true
@@ -284,52 +286,43 @@ module Runq
       run = database[:runs].where(:id => worker[:run_id]).first
 
       batch = database[:batches].where(:id => run[:batch_id]).first
-      if batch[:engine] == 'simulator'
-        progress = database[:runs].where(:batch_id => run[:batch_id]).
-                     avg(:frac_complete)
-        batch_param = YAML.load(batch[:param])
-        simulation_batch_id = batch_param[:redmine_simulation_batch_id]
-        dbweb_db[:simulation_batches].where(:id => simulation_batch_id).
-          update(:percent_complete => progress)      
-      end
 
-      if batch[:engine] == 'report generator'
-        progress = database[:runs].where(:batch_id => run[:batch_id]).
-                     avg(:frac_complete)
-        batch_param = YAML.load(batch[:param])
-        simulation_batch_report_id = batch_param[:redmine_batch_report_id]
-        dbweb_db[:simulation_batch_reports].
-          where(:id => simulation_batch_report_id).
-          update(:percent_complete => progress)
+      log.debug "Run update callback = #{run[:update_callback]}"
+      if run[:update_callback]
+        self.send run[:update_callback], {
+          :worker => worker,
+          :batch_param => YAML.load(batch[:param]),
+          :run => run,
+          :req => req
+        }
       end
     end
 
     # +req+ is WorkerNeedsAssistance
     def assist_worker req
-      if req.runq_assist_method == :scenario_export
-        op_queue << Proc.new do 
-          match = /@scenario\((\d+)\)/.match(req.runq_assist_params.first)
-          scenario_id = match[1] 
-          log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
-          scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
-          log.debug "scenario URL: #{scenario_url}"
-
-          info_request = Request::RunqProvideInformation.new
-          info_request.sock = socket_for_worker[req.worker_id]
-          info_request.worker_id = req.worker_id
-          info_request.info_type = :param_update
-          info_request.info_value = { :scenario_url => scenario_url }
-          request_queue << info_request
-          log.debug "queueing info request #{info_request.inspect}"
-
-          worker = database[:workers].where(:id => req.worker_id).first
-          run = database[:runs].where(:id => worker[:run_id]).first
-          dbweb_db[:simulation_batches].where(:id => run[:batch_id]).update(
-            :scenario_id => scenario_id
-          )
-          log.debug "setting simulation batch #{run[:batch_id]} scenario ID = #{scenario_id}"
+      allowed_methods = [:scenario_export]
+      if allowed_methods.include?(req.runq_assist_method)
+        op_queue << Proc.new do
+          send(req.runq_assist_method, req)
         end
       end
+    end
+
+    def scenario_export req
+      params = req.runq_assist_params
+      match = /@scenario\((\d+)\)/.match(params.first)
+      scenario_id = match[1] 
+      log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
+      scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
+      log.debug "scenario URL: #{scenario_url}"
+
+      info_request = Request::RunqProvideInformation.new
+      info_request.sock = socket_for_worker[req.worker_id]
+      info_request.worker_id = req.worker_id
+      info_request.info_type = :param_update
+      info_request.info_value = { :scenario_url => scenario_url }
+      request_queue << info_request
+      log.debug "queueing info request #{info_request.inspect}"
     end
     
     # +req+ is WorkerFinishedRun
@@ -370,52 +363,14 @@ module Runq
         )
       end
 
-      if batch[:engine] == 'simulator'
-        batch_param = YAML.load(batch[:param])
-        simulation_batch_id = batch_param[:redmine_simulation_batch_id]
-        frontend_batch = dbweb_db[:simulation_batches].where(:id => simulation_batch_id)
-        if frontend_batch.count > 0
-          percent = new_n_complete.to_f/n_runs.to_f
-          log.debug "Changing percent complete of batch #{batch_id} to #{percent}"
-          frontend_batch.update( :percent_complete => percent )
-          log.debug "Adding output file for run by worker #{worker_id} to output_files"
-          if req.data['output_urls']
-            req.data['output_urls'].each do |url|
-              dbweb_db[:output_files] << {
-                :simulation_batch_id => simulation_batch_id,
-                :url => url,
-                :created_at => Time.now,
-                :updated_at => Time.now
-              }
-            end
-          end
-        end
-      end
-
-      if batch[:engine] == 'report generator' 
-        batch_param = YAML.load(batch[:param])
-        frontend_report = dbweb_db[:simulation_batch_reports].
-                          where(:id => batch_param[:redmine_batch_report_id])
-        if frontend_report.count > 0
-          frontend_report.update(:percent_complete => 1)
-          batch_param['output_types'].each_with_index do |type,index|
-            if frontend_report.count > 0
-              log.info "Setting report export URL for #{type} in Redmine database"
-              ext = ext_for_mime_type(type)
-              field = case ext
-                when "xml" then :url 
-                when "pdf" then :export_pdf_url
-                when "xls" then :export_xls_url
-                when "ppt" then :export_ppt_url
-                else begin 
-                  log.warn "Unrecognized extension #{ext} in report generator"
-                  break
-                end
-              end
-              frontend_report.update(field => req.data['output_urls'][index])
-            end
-          end
-        end
+      if run[:finish_callback]
+        self.send run[:finish_callback], {
+          :worker => worker,
+          :batch_param => YAML.load(batch[:param]),
+          :n_complete => new_n_complete,
+          :n_runs => n_runs,
+          :req => req
+        }
       end
 
       log.info "Finished run by worker #{worker_id}; " +
@@ -702,6 +657,8 @@ module Runq
         frontend_batches.where(:id => simulation_batch_id).
           update(:number_of_runs => batch[:n_runs], :start_time => Time.now)
       end
+
+      add_redmine_callbacks run_id, batch[:engine]
 
       log.info "Dispatched run #{run_id}, " +
         "index #{batch_index} in batch #{batch_id} " +

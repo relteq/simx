@@ -124,6 +124,9 @@ module Runq
         
         float       :frac_complete
         constraint  nil, :frac_complete => 0..1
+
+        text        :update_callback # name of function to call when worker updates
+        text        :finish_callback # name of function to call when worker finishes
         
         index :worker_id
         index :batch_id
