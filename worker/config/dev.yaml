@@ -41,6 +41,25 @@ local:
 #      priority:     1
 #      retry_delay:  10
 
+relteq-worker:
+  host:         relteq-worker.dyndns.org
+  user:         ubuntu
+  dir:          simx-dev
+  runq_host:    relteq-db.dyndns.org
+  runq_port:    9096
+  runweb_host:  relteq-db.dyndns.org
+  runweb_port:  9097
+  workers:
+    - run_class:    Run::Aurora
+      count:        1
+      group:        relteq
+      user:         relteq
+      engine:       simulator|calibrator|report generator|report exporter
+      cost:         0
+      speed:        1
+      priority:     2
+      retry_delay:  10
+
 vii-aurora:
   host:         vii.path.berkeley.edu
   user:         aurora
