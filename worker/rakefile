@@ -194,8 +194,8 @@ def update instance, instance_config
   sh "rsync -Cavz --delete --exclude='*.bck'" +
      " lib rakefile #{userhost}:#{wdir}/"
 
-#  sh "cd .. && rsync -Cavz --delete --exclude='*.bck'" +
-#     " rakefile config config.yaml bin lib runq #{userhost}:#{dir}/"
+  sh "cd .. && rsync -Cavz --delete --exclude='*.bck'" +
+     " rakefile config config.yaml bin lib runq #{userhost}:#{dir}/"
 
   ic = instance_config.dup
   %w{ dir host user }.each do |k|
