@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.7">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.11">
 
   <xs:element name="scenario">
     <xs:complexType>
@@ -343,12 +343,13 @@
         <xs:element ref="qmax" />
       </xs:all>
       <xs:attribute name="name" type="xs:string" use="optional" />
+      <xs:attribute name="road_name" type="xs:string" use="optional" />
       <xs:attribute name="lanes" type="xs:decimal" use="required" />
       <xs:attribute name="length" type="xs:decimal" use="required" />
       <xs:attribute name="type" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:pattern value="FW|HW|HOV|HOT|HV|ETC|OR|FR|IC|ST|D"/>
+            <xs:pattern value="HOV|HOT|HV|ETC|OR|FR|IC|ST|D"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -535,6 +536,7 @@
         <xs:element ref="controller" minOccurs="0" />
         <xs:element ref="wfm" minOccurs="0" />
         <xs:element ref="control" minOccurs="0" />
+        <xs:element ref="display_position" minOccurs="0" />
       </xs:all>
       <xs:attribute name="tstamp" type="xs:decimal" use="required" />
       <xs:attribute name="node_id" type="xs:string" use="optional" default="" />
@@ -599,6 +601,7 @@
         <xs:element ref="limits" minOccurs="0" />
         <xs:element ref="qcontroller" minOccurs="0" />
         <xs:element ref="table" minOccurs="0" />
+        <xs:element ref="display_position" minOccurs="0" />
       </xs:all>
       <xs:attribute name="type" use="required">
         <xs:simpleType>
@@ -760,6 +763,7 @@
         <xs:element ref="EncodedPolyline" />
       </xs:all>
       <xs:attribute name="avoidHighways" type="xs:boolean" use="required" />
+      <xs:attribute name="road_name" type="xs:string" use="optional" />
     </xs:complexType>
   </xs:element>
 
