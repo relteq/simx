@@ -13,6 +13,23 @@ module Aurora
 
     one_to_many :vehicle_types
 
+    # This has to save or else copied vehicle types cannot
+    # be attached.
+    def shallow_copy
+      s = Scenario.new
+      s.columns.each do |c|
+        s.set(c => self[c]) if c != :id
+      end
+      s.save
+
+      vehicle_types.each do |vtype|
+        copy = vtype.copy
+        copy.scenario_id = s.id
+        copy.save
+      end
+      return s
+    end
+
     def clear_members
       vehicle_types.each do |vtype|
         vtype.destroy

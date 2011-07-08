@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+
+topdir = File.expand_path("..", File.dirname(__FILE__))
+libdir = File.join(topdir, "lib")
+$LOAD_PATH.unshift libdir
+
+db_url = ARGV[0]
+
+require 'sequel'
+require 'nokogiri'
+
+DB = Sequel.connect db_url
+
+require 'db/model/aurora'
+require 'db/model/scenario'
+
+module Aurora
+	COPY_TYPES = {
+		'scenario' => Aurora::Scenario,
+		'network' => Aurora::Network,
+		'split_ratio_profile_set' => Aurora::SplitRatioProfileSet,
+		'capacity_profile_set' => Aurora::CapacityProfileSet,
+		'event_set' => Aurora::EventSet,
+		'controller_set' => Aurora::ControllerSet,
+		'demand_profile_set' => Aurora::DemandProfileSet
+	}
+
+	module Util
+		def list
+		end
+	end
+
+	module Copier
+    def self.copy(options = {})
+      default_options = { :deep => false, :verbose => true }
+      default_options.merge!(options)
+      options = default_options
+      if options[:type] && COPY_TYPES.include?(options[:type]) && options[:id]
+        unless options[:deep]
+          obj_type = COPY_TYPES[options[:type]]
+
+          if options[:verbose]
+            puts "New copy of #{obj_type}, ID=#{options[:id]}:"
+          end
+
+          obj = obj_type[:id => options[:id].to_i]
+          new_obj = obj.shallow_copy
+         
+          if options[:verbose]
+            puts new_obj.inspect
+          end
+
+          puts "New #{obj_type} ID = #{new_obj.id}"
+        else
+        end
+      else
+        puts self.usage_message   
+      end
+    end
+
+    def self.usage_message
+<<-END
+Usage: #{$0} db object_type object_id [opts] 
+
+Duplicate object specified by object_id and object_type. Prints 
+duplicate object ID to stdout.
+
+The db argument may be any valid database connection string:
+
+\tsqlite://foo.db
+\tpostgres://user:password@host:port/database_name
+
+The following are valid object types:
+\t#{COPY_TYPES.keys.join("\n\t")}
+
+Options:
+\t--deep		Create new network and network-related objects with distinct 
+\t                IDS.
+\t--quiet   Do not print new structures
+END
+    end
+	end
+end
+
+Aurora::Copier.copy(:type => ARGV[1], 
+                    :id => ARGV[2], 
+                    :opts => ARGV[3,])
