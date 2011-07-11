@@ -2,6 +2,13 @@ module Aurora
   class Controller
     plugin :single_table_inheritance, :type
     many_to_one :controller_set, :key => :controller_set_id
+
+    def copy
+      controller = Controller.new
+      controller.columns.each do |c|
+        controller.set(c => self[c]) if c != :id
+      end
+    end
   end
 
   class NetworkController < Controller

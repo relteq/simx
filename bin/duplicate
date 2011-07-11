@@ -34,6 +34,9 @@ module Aurora
     def self.copy(options = {})
       default_options = { :deep => false, :verbose => true }
       default_options.merge!(options)
+      if options[:flags] && options[:flags].include?('--quiet')
+        default_options[:verbose] = false
+      end
       options = default_options
       if options[:type] && COPY_TYPES.include?(options[:type]) && options[:id]
         unless options[:deep]
@@ -84,4 +87,4 @@ end
 
 Aurora::Copier.copy(:type => ARGV[1], 
                     :id => ARGV[2], 
-                    :opts => ARGV[3,])
+                    :flags => ARGV[3,])

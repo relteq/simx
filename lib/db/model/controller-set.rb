@@ -6,6 +6,21 @@ module Aurora
     one_to_many :scenarios, :key => :controller_set_id
     one_to_many :controllers, :key => :controller_set_id
 
+    def shallow_copy
+      c = ControllerSet.new
+      c.columns.each do |col|
+        c.set(col => self[col]) if col != :id
+      end
+      c.save
+
+      controllers.each do |controller|
+        ccopy = controller.copy
+        ccopy.controller_set_id = c.id
+        ccopy.save
+      end
+      return c
+    end
+
     def clear_members
       controllers.each do |controller|
         controller.destroy
