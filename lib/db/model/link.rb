@@ -15,5 +15,14 @@ module Aurora
       :right_key => [:network_id, :route_id]
 
     one_to_many :sensors, :key => [:network_id, :link_id]
+
+    def copy
+      Link.unrestrict_primary_key
+      l = Link.new
+      l.columns.each do |col|
+        l.set(col => self[col]) unless (col == :network_id)
+      end
+      return l
+    end
   end
 end

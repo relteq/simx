@@ -9,5 +9,14 @@ module Aurora
 
     one_to_many :inputs,  :class => Link, :key => [:network_id, :end_id]
     one_to_many :outputs, :class => Link, :key => [:network_id, :begin_id]
+
+    def copy
+      Node.unrestrict_primary_key
+			n = Node.new
+      n.columns.each do |col|
+        n.set(col => self[col]) unless (col == :network_id)
+      end
+      return n
+    end
   end
 end

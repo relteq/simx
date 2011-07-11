@@ -11,6 +11,15 @@ module Aurora
       :left_key  => [:network_id, :route_id],
       :right_key => [:network_id, :link_id]
 
+    def copy
+      Route.unrestrict_primary_key
+      r = Route.new
+      r.columns.each do |col|
+        r.set(col => self[col]) unless (col == :network_id)
+      end
+      return r
+    end
+
     def before_destroy
       DB[:route_links].filter(:network_id => network_id, :route_id => id).delete
       super
