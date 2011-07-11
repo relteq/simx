@@ -53,7 +53,7 @@ module Aurora
             puts new_obj.inspect
           end
 
-          puts "New #{obj_type} ID = #{new_obj.id}"
+          puts "New #{obj_type} ID = #{new_obj.values[:id]}"
         else
         end
       else
