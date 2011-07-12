@@ -30,6 +30,19 @@ module Aurora
       return s
     end
 
+    def deep_copy
+      s = shallow_copy()
+      s.network = network.shallow_copy
+      s.initial_condition_set = initial_condition_set.shallow_copy
+      s.split_ratio_profile_set = 
+        split_ratio_profile_set.shallow_copy
+      s.capacity_profile_set = capacity_profile_set.shallow_copy
+      s.demand_profile_set = demand_profile_set.shallow_copy
+      s.event_set = event_set.shallow_copy
+      s.controller_set = controller_set.shallow_copy
+      s.save
+    end
+
     def clear_members
       vehicle_types.each do |vtype|
         vtype.destroy
