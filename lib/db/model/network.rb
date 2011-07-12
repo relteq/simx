@@ -53,8 +53,16 @@ module Aurora
           :ordinal => rl[:ordinal]
         }
       end
-      
-      return n
+
+      children.each do |child|
+        child_copy = child.shallow_copy
+        db[:network_lists] << {
+          :network_id => n.id,
+          :child_id => child_copy.id
+        }
+      end
+
+      return n 
     end
 
     # The following relations are so we know which network to use when
