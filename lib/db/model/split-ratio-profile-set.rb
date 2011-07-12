@@ -19,6 +19,7 @@ module Aurora
 				copy.split_ratio_profile_set_id = srp.id
 				copy.save
 			end
+			return srp
 		end
 
     def clear_members
