@@ -32,26 +32,35 @@ module Aurora
 
 	module Copier
     def self.copy(options = {})
-      default_options = { :deep => false, :verbose => true }
+      default_options = { 
+        :deep => !options[:flags].include?('--shallow'),
+        :verbose => !options[:flags].include?('--quiet') 
+      }
       default_options.merge!(options)
-      if options[:flags] && options[:flags].include?('--quiet')
-        default_options[:verbose] = false
-      end
       options = default_options
       if options[:type] && COPY_TYPES.include?(options[:type]) && options[:id]
-        unless options[:deep]
-          obj_type = COPY_TYPES[options[:type]]
+        obj_type = COPY_TYPES[options[:type]]
 
-          if options[:verbose]
-            puts "New copy of #{obj_type}, ID=#{options[:id]}:"
-          end
+        if options[:verbose]
+          puts "New copy of #{obj_type}, ID=#{options[:id]}:"
+        end
+          
+        obj = obj_type[:id => options[:id].to_i]
+        unless obj
+          puts "No #{options[:type]} with ID #{options[:id]} found"
+          exit 1
+        end
 
-          obj = obj_type[:id => options[:id].to_i]
-          unless obj
-            puts "No #{options[:type]} with ID #{options[:id]} found"
-            exit 1
+        if options[:deep]
+          puts "Deep mode" if options[:verbose]
+          
+          if obj.respond_to?(:deep_copy)
+            new_obj = obj.deep_copy
+          else
+            puts "Deep copy not supported by #{options[:type]}"
+            puts "Using shallow copy"
+            new_obj = obj.shallow_copy
           end
-          new_obj = obj.shallow_copy
          
           if options[:verbose]
             puts new_obj.inspect
@@ -59,6 +68,15 @@ module Aurora
 
           puts "New #{obj_type} ID = #{new_obj.values[:id]}"
         else
+          puts "Shallow mode" if options[:verbose]
+          
+          new_obj = obj.shallow_copy
+
+          if options[:verbose]
+            puts new_obj.inspect
+          end
+
+          puts "New #{obj_type} ID = #{new_obj.values[:id]}"
         end
       else
         puts self.usage_message   
@@ -81,8 +99,9 @@ The following are valid object types:
 \t#{COPY_TYPES.keys.join("\n\t")}
 
 Options:
-\t--deep		Create new network and network-related objects with distinct 
-\t                IDS.
+\t--deep    Create new network and network-related objects with distinct 
+\t                IDs (for scenario).
+
 \t--quiet   Do not print new structures
 END
     end
@@ -91,4 +110,4 @@ end
 
 Aurora::Copier.copy(:type => ARGV[1], 
                     :id => ARGV[2], 
-                    :flags => ARGV[3,])
+                    :flags => (ARGV[3,] or []))
