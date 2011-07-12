@@ -47,6 +47,10 @@ module Aurora
           end
 
           obj = obj_type[:id => options[:id].to_i]
+          unless obj
+            puts "No #{options[:type]} with ID #{options[:id]} found"
+            exit 1
+          end
           new_obj = obj.shallow_copy
          
           if options[:verbose]
