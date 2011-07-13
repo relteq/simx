@@ -372,7 +372,7 @@ aget "/duplicate/:type/:id" do |type, id|
     raise "bad type for duplicate"
   end
 
-  if can_access?({ :type => received_type.to_s, 
+  if can_access?({ :type => received_type.to_s.split('::').last, 
                    :id => numeric_id },
                  params[:access_token])
     defer_cautiously do
