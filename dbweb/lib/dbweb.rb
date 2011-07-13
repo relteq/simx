@@ -81,6 +81,18 @@ configure do
 end
 
 helpers do
+  def type_translator
+    @type_translator ||= { 
+      'event_set' => Aurora::EventSet,
+      'capacity_profile_set' => Aurora::CapacityProfileSet,
+      'split_ratio_profile_set' => Aurora::SplitRatioProfileSet,
+      'demand_profile_set' => Aurora::DemandProfileSet,
+      'controller_set' => Aurora::ControllerSet,
+      'network' => Aurora::Network,
+      'scenario'=> Aurora::Scenario 
+    }
+  end
+
   def s3
     unless @s3
       require 'aws/s3'
@@ -346,6 +358,40 @@ aget "/import/scenario/:filename" do |filename|
         # For debugging, that callback is an annoying parameter to require
         content_type :json
         body { {:success => scenario.id}.to_json }
+      end
+    end
+  else
+    not_authorized!
+  end
+end
+
+aget "/duplicate/:type/:id" do |type, id|
+  received_type = type_translator[type]
+  numeric_id = id.to_i
+  if !received_type
+    LOGGER.error "bad type #{type} for duplicate of #{type}:#{id}"
+    raise "bad type for duplicate"
+  end
+
+  if can_access?({ :type => received_type.to_s, 
+                   :id => numeric_id },
+                 params[:access_token])
+    defer_cautiously do
+      object = received_type[numeric_id]
+      if object 
+        copy = object.shallow_copy
+ 
+        if params[:jsoncallback]
+          script = jsonp({:success => copy.id})
+          LOGGER.debug "returning #{script} as JSONP"
+          body { script }
+        else
+          # For debugging, that callback is an annoying parameter to require
+          content_type :json
+          body { {:success => copy.id}.to_json }
+        end
+      else
+        body { {:failure => "#{type} not found"}.to_json }
       end
     end
   else
