@@ -281,7 +281,6 @@ return true
   end
 
   def can_access?(object, access_token)
-return true ### fix this
     return true if TRUSTED_ADDRS.include?(request.env["REMOTE_ADDR"])
 
     unexpired_auths = DB[:dbweb_authorizations].filter('expiration > ?', Time.now.utc)
@@ -379,6 +378,11 @@ aget "/duplicate/:type/:id" do |type, id|
     defer_cautiously do
       object = received_type[numeric_id]
       if object 
+        if params[:deep]
+          if object.respond_to?(:deep_copy)
+            copy = object.deep_copy
+          end
+        end
         copy = object.shallow_copy
  
         if params[:jsoncallback]
