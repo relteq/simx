@@ -378,12 +378,11 @@ aget "/duplicate/:type/:id" do |type, id|
     defer_cautiously do
       object = received_type[numeric_id]
       if object 
-        if params[:deep]
-          if object.respond_to?(:deep_copy)
-            copy = object.deep_copy
-          end
+        if params[:deep] && object.respond_to?(:deep_copy)
+          copy = object.deep_copy
+        else
+          copy = object.shallow_copy
         end
-        copy = object.shallow_copy
  
         if params[:jsoncallback]
           script = jsonp({:success => copy.id})
