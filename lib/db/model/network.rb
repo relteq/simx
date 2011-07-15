@@ -14,40 +14,20 @@ module Aurora
     one_to_many :sensors, :key => :network_id
     one_to_many :routes,  :key => :network_id
 
+    def shallow_copy_children
+      [nodes,links,sensors,routes].flatten
+    end
+
+    def shallow_copy_parent_field
+      :network_id
+    end
+
     def shallow_copy(db=DB)
-      n = Network.new
-      n.columns.each do |col|
-        n.set(col => self[col]) if col != :id
-      end
-      n.save
-
-      nodes.each do |node|
-        ncopy = node.copy
-        ncopy.network_id = n.id
-        ncopy.save
-      end
-
-      links.each do |link|
-        lcopy = link.copy
-        lcopy.network_id = n.id
-        lcopy.save
-      end
-
-      sensors.each do |sensor|
-        scopy = sensor.copy
-        scopy.network_id = n.id
-        scopy.save
-      end
-
-      routes.each do |route|
-        rcopy = route.copy
-        rcopy.network_id = n.id
-        rcopy.save
-      end
+      me_copy = super(db)
 
       db[:route_links].where(:network_id => self.id).each do |rl|
         db[:route_links] << {
-          :network_id => n.id,
+          :network_id => me_copy.id,
           :route_id => rl[:route_id],
           :link_id => rl[:link_id],
           :ordinal => rl[:ordinal]
@@ -57,12 +37,12 @@ module Aurora
       children.each do |child|
         child_copy = child.shallow_copy
         db[:network_lists] << {
-          :network_id => n.id,
+          :network_id => me_copy.id,
           :child_id => child_copy.id
         }
       end
 
-      return n 
+      return me_copy
     end
 
     # The following relations are so we know which network to use when

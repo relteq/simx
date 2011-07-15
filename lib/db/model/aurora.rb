@@ -1,5 +1,29 @@
 module Aurora
-  module Model; end # a place to put things, e.g. in export/model.rb
+  module Model
+    def shallow_copy(db=DB)
+      me_copy = self.class.new
+      v = self.values.clone; v.delete :id
+      me_copy.set(v)
+      me_copy.name = '*' + me_copy.name
+      me_copy.save
+
+      if(respond_to?(:shallow_copy_children) &&
+         respond_to?(:shallow_copy_parent_field))
+        sc_children = shallow_copy_children
+        set_field = shallow_copy_parent_field
+        sc_children.each do |child|
+          #puts "Processing child #{child}"
+          child_copy = child.copy
+          child_copy.set(set_field => me_copy.id)
+          child_copy.save
+        end
+      else
+        puts me_copy.class
+      end
+
+      return me_copy
+    end
+  end # a place to put things, e.g. in export/model.rb
   
   class NodeFamily < Sequel::Model; end
   class LinkFamily < Sequel::Model; end

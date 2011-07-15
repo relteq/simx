@@ -7,20 +7,13 @@ module Aurora
     one_to_many :srps, :key => :split_ratio_profile_set_id, 
                 :class => SplitRatioProfile
 
-		def shallow_copy
-			srp = SplitRatioProfileSet.new
-			srp.columns.each do |c|
-				srp.set(c => self[c]) if c != :id
-			end
-			srp.save
+    def shallow_copy_children
+      srps
+    end
 
-			srps.each do |s|
-				copy = s.copy
-				copy.split_ratio_profile_set_id = srp.id
-				copy.save
-			end
-			return srp
-		end
+    def shallow_copy_parent_field
+      :split_ratio_profile_set_id
+    end
 
     def clear_members
       srps.each do |srp|
