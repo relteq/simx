@@ -32,12 +32,20 @@ module Aurora
 
 	module Copier
     def self.copy(options = {})
+      puts options.inspect
       default_options = { 
         :deep => !options[:flags].include?('--shallow'),
-        :verbose => !options[:flags].include?('--quiet') 
+        :verbose => !options[:flags].include?('--quiet'),
+        :overrides => {}
       }
+      options[:flags].grep(/@(.+)=(.+)/) do |override|
+        puts "Adding override #{$1} = #{$2}"
+        default_options[:overrides][$1.to_sym] = $2
+      end
       default_options.merge!(options)
+      puts "Overrides = #{default_options[:overrides].inspect}"
       options = default_options
+      puts "Overrides = #{options[:overrides].inspect}"
       if options[:type] && COPY_TYPES.include?(options[:type]) && options[:id]
         obj_type = COPY_TYPES[options[:type]]
 
@@ -55,11 +63,11 @@ module Aurora
           puts "Deep mode" if options[:verbose]
           
           if obj.respond_to?(:deep_copy)
-            new_obj = obj.deep_copy
+            new_obj = obj.deep_copy(DB, options[:overrides])
           else
             puts "Deep copy not supported by #{options[:type]}"
             puts "Using shallow copy"
-            new_obj = obj.shallow_copy
+            new_obj = obj.shallow_copy(DB, options[:overrides])
           end
          
           if options[:verbose]
@@ -70,7 +78,7 @@ module Aurora
         else
           puts "Shallow mode" if options[:verbose]
           
-          new_obj = obj.shallow_copy
+          new_obj = obj.shallow_copy(DB, options[:overrides])
 
           if options[:verbose]
             puts new_obj.inspect
@@ -103,6 +111,10 @@ Options:
 \t                IDs (for scenario).
 
 \t--quiet   Do not print new structures
+
+Variable Overrides (within options):
+
+\t@{variable name}=value e.g. @project_id=40
 END
     end
 	end
@@ -110,4 +122,4 @@ end
 
 Aurora::Copier.copy(:type => ARGV[1], 
                     :id => ARGV[2], 
-                    :flags => (ARGV[3,] or []))
+                    :flags => (ARGV[3..ARGV.length] or []))

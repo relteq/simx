@@ -1,10 +1,13 @@
 module Aurora
   module Model
-    def shallow_copy(db=DB)
+    def shallow_copy(db=DB, overrides = {})
+      puts overrides.inspect
       me_copy = self.class.new
-      v = self.values.clone; v.delete :id
+      v = self.values.clone 
+      v.delete :id
+      v.merge! overrides
       me_copy.set(v)
-      me_copy.name = '*' + me_copy.name
+      me_copy.name = '*' + me_copy.name unless overrides[:name]
       me_copy.save
 
       if(respond_to?(:shallow_copy_children) &&
@@ -12,7 +15,6 @@ module Aurora
         sc_children = shallow_copy_children
         set_field = shallow_copy_parent_field
         sc_children.each do |child|
-          #puts "Processing child #{child}"
           child_copy = child.copy
           child_copy.set(set_field => me_copy.id)
           child_copy.save

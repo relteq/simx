@@ -21,8 +21,8 @@ module Aurora
       :scenario_id
     end
 
-    def deep_copy
-      s = shallow_copy()
+    def deep_copy(db = DB, overrides = {})
+      s = shallow_copy(db, overrides)
       s.network = network.shallow_copy
       s.initial_condition_set = initial_condition_set.shallow_copy
       s.split_ratio_profile_set = 
