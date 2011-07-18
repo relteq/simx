@@ -24,13 +24,20 @@ module Aurora
     def deep_copy(db = DB, overrides = {})
       s = shallow_copy(db, overrides)
       s.network = network.shallow_copy
-      s.initial_condition_set = initial_condition_set.shallow_copy
+      
+      if overrides[:project_id]
+        s.network.project_id = overrides[:project_id]
+        s.network.save
+      end
+
+      n_id = s.network.id
+      s.initial_condition_set = initial_condition_set.shallow_copy(db, :network_id => n_id)
       s.split_ratio_profile_set = 
-        split_ratio_profile_set.shallow_copy
-      s.capacity_profile_set = capacity_profile_set.shallow_copy
-      s.demand_profile_set = demand_profile_set.shallow_copy
-      s.event_set = event_set.shallow_copy
-      s.controller_set = controller_set.shallow_copy
+        split_ratio_profile_set.shallow_copy(db, :network_id => n_id)
+      s.capacity_profile_set = capacity_profile_set.shallow_copy(db, :network_id => n_id)
+      s.demand_profile_set = demand_profile_set.shallow_copy(db, :network_id => n_id)
+      s.event_set = event_set.shallow_copy(db, :network_id => n_id)
+      s.controller_set = controller_set.shallow_copy(db, :network_id => n_id)
       s.save
     end
 

@@ -6,19 +6,12 @@ module Aurora
     one_to_many :scenarios, :key => :ic_set_id
     one_to_many :initial_conditions, :key => :initial_condition_set_id
 
-    def shallow_copy
-      ics = InitialConditionSet.new
-      ics.columns.each do |c|
-        ics.set(c => self[c]) if c != :id
-      end
-      ics.save
+    def shallow_copy_children
+      initial_conditions
+    end
 
-      initial_conditions.each do |ic|
-        icopy = ic.copy
-        icopy.initial_condition_set_id = ics.id
-        icopy.save
-      end
-      return ics
+    def shallow_copy_parent_field
+      :initial_condition_set_id
     end
 
     def clear_members

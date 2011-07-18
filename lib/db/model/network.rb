@@ -22,8 +22,8 @@ module Aurora
       :network_id
     end
 
-    def shallow_copy(db=DB)
-      me_copy = super(db)
+    def shallow_copy(db=DB, overrides = {})
+      me_copy = super(db, overrides)
 
       db[:route_links].where(:network_id => self.id).each do |rl|
         db[:route_links] << {

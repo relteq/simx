@@ -367,6 +367,10 @@ end
 aget "/duplicate/:type/:id" do |type, id|
   received_type = type_translator[type]
   numeric_id = id.to_i
+  overrides = {}
+  project_dest = params[:to_project]
+  overrides[:project_id] = project_dest if project_dest
+
   if !received_type
     LOGGER.error "bad type #{type} for duplicate of #{type}:#{id}"
     raise "bad type for duplicate"
@@ -379,9 +383,9 @@ aget "/duplicate/:type/:id" do |type, id|
       object = received_type[numeric_id]
       if object 
         if params[:deep] && object.respond_to?(:deep_copy)
-          copy = object.deep_copy
+          copy = object.deep_copy(DB, overrides)
         else
-          copy = object.shallow_copy
+          copy = object.shallow_copy(DB, overrides)
         end
  
         if params[:jsoncallback]
