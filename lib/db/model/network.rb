@@ -45,6 +45,23 @@ module Aurora
       return me_copy
     end
 
+    def deep_copy(db = DB, overrides = {})
+      n = shallow_copy(db, overrides)
+
+      [:split_ratio_profile_set, :capacity_profile_set,
+       :demand_profile_set, :initial_condition_set,
+       :event_set, :controller_set].each do |set_type|
+        set = self.send(set_type)
+        set.each do |member|
+          m_copy = member.shallow_copy
+          m_copy.network_id = n.id
+          m_copy.save
+        end
+      end
+
+      return n
+    end
+
     # The following relations are so we know which network to use when
     # editing a set. It doesn't restrict which networks can be used with
     # the set in a scenario.
