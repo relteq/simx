@@ -460,15 +460,9 @@ aget "/model/scenario-by-key/:key.xml" do |key|
   end
 
   LOGGER.info "requested scenario #{id} as xml"
-
-  if can_access?({:type => 'Scenario', 
-                  :id => id}, params[:access_token])
-    defer_cautiously do
-      content_type :xml
-      body export_scenario_xml(id)
-    end
-  else
-    not_authorized!
+  defer_cautiously do
+    content_type :xml
+    body export_scenario_xml(id)
   end
 end
 
@@ -546,20 +540,15 @@ aget "/model/wrapped-network-by-key/:key.xml" do |key|
 
   LOGGER.info "requested wrapped network #{id} as xml"
   
-  if can_access?({:type => 'Network', 
-                  :id => id}, params[:access_token])
-    defer_cautiously do
-      content_type :xml
+  defer_cautiously do
+    content_type :xml
 
-      xml = export_wrapped_network_xml(id)
-      if xml
-        body xml
-      else
-        body "dbweb error -- see logs"
-      end
+    xml = export_wrapped_network_xml(id)
+    if xml
+      body xml
+    else
+      body "dbweb error -- see logs"
     end
-  else
-    not_authorized!
   end
 end
 
