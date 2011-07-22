@@ -13,14 +13,17 @@ module Aurora
   class Scenario
     include Aurora
     
-    def self.create_from_xml scenario_xml, ctx = nil
+    def self.create_from_xml scenario_xml, ctx_options = {} 
       scenario_is_just_packaging = (
         scenario_xml["id"] =~ /\A\s*0+\s*\z/
       )
       
+      ctx_options[:scenario_is_just_packaging] =
+        scenario_is_just_packaging
+
+      ctx = nil
       scenario = create_with_id scenario_xml["id"] do |sc|
-        ctx ||= ImportContext.new sc,
-          :scenario_is_just_packaging => scenario_is_just_packaging
+        ctx = ImportContext.new sc, ctx_options
         sc.import_xml scenario_xml, ctx
       end
       
@@ -40,6 +43,9 @@ module Aurora
       unless ctx.scenario_is_just_packaging
         clear_members
       
+        self.user_id_creator = ctx.redmine_user_id
+        self.user_id_modifier = ctx.redmine_user_id
+
         set_name_from scenario_xml["name"], ctx
 
         descs = scenario_xml.xpath("description").map {|desc_xml| desc_xml.text}
