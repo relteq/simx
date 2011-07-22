@@ -35,6 +35,8 @@ module Aurora
       foreign_key :split_ratio_profile_set_id,  :split_ratio_profile_sets
       foreign_key :event_set_id,                :event_sets
       foreign_key :controller_set_id,           :controller_sets
+      integer     :user_id_creator
+      integer     :user_id_modifier
 
       timestamp   :updated_at
     end
@@ -99,6 +101,9 @@ module Aurora
 
       text        :directions_cache     ## xml, but could be put in tables
       text        :intersection_cache   ## ditto
+
+      integer     :user_id_creator
+      integer     :user_id_modifier
       timestamp   :updated_at
     end
 
@@ -245,6 +250,8 @@ module Aurora
       string      :name
       text        :description
       foreign_key :network_id, :networks, :null => false
+      integer     :user_id_creator
+      integer     :user_id_modifier
       timestamp   :updated_at
     end
 
@@ -253,6 +260,8 @@ module Aurora
       string      :name
       text        :description
       foreign_key :network_id, :networks, :null => false
+      integer     :user_id_creator
+      integer     :user_id_modifier
       timestamp   :updated_at
     end
 
@@ -261,6 +270,8 @@ module Aurora
       string      :name
       text        :description
       foreign_key :network_id, :networks, :null => false
+      integer     :user_id_creator
+      integer     :user_id_modifier
       timestamp   :updated_at
     end
 
@@ -276,6 +287,8 @@ module Aurora
       string      :name
       text        :description
       foreign_key :network_id, :networks, :null => false
+      integer     :user_id_creator
+      integer     :user_id_modifier
       timestamp   :updated_at
     end
 
@@ -284,6 +297,8 @@ module Aurora
       string      :name
       text        :description
       foreign_key :network_id, :networks, :null => false
+      integer     :user_id_creator
+      integer     :user_id_modifier
       timestamp   :updated_at
     end
 
