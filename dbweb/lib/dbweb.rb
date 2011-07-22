@@ -331,7 +331,7 @@ end
 
 ## option to async import: need to poll
 
-### add user, group, project id params
+### add user, group id params
 aget "/import/scenario/:filename" do |filename|
   protected!
 #  params[:access_token] or not_authorized!
