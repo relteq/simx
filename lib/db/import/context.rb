@@ -12,6 +12,9 @@ module Aurora
     
     # The scenario is just a container for a network and/or some sets.
     attr_reader :scenario_is_just_packaging
+
+    # ID of Redmine user to show as creator/modifier
+    attr_reader :redmine_user_id
     
     # Translation tables from xml ID to database ID.
     # These are only needed when the xml ID is non-numeric or negative.
@@ -31,6 +34,7 @@ module Aurora
       @scenario = scenario
       
       @scenario_is_just_packaging = opts[:scenario_is_just_packaging]
+      @redmine_user_id = opts[:redmine_user_id]
       
       @network_id_for_xml_id        = {}
       
