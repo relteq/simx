@@ -173,8 +173,8 @@ helpers do
     [table, id]
   end
 
-  def import_scenario_xml xml_data, project_id
-    scenario = Aurora::Scenario.create_from_xml(xml_data)
+  def import_scenario_xml xml_data, project_id, options = {}
+    scenario = Aurora::Scenario.create_from_xml(xml_data, options)
     network = scenario.network
     scenario.project_id = project_id
     network.project_id = project_id
@@ -230,6 +230,7 @@ require 'db/model/aurora'
 require 'db/import/util'
 require 'db/import/scenario'
 require 'db/export/scenario'
+require 'db/import/context'
 
 ## don't need this
 TRUSTED_ADDRS = Set[*%w{
@@ -339,6 +340,12 @@ aget "/import/scenario/:filename" do |filename|
   s3
   LOGGER.info "Attempting to import #{params[:bucket]}/#{filename}"
 
+  import_options = {}
+
+  if params[:from_user]
+    import_options[:redmine_user_id] = params[:from_user]
+  end
+
   if can_access?({:type => 'Project',
     :id => params[:to_project]}, params[:access_token])
     defer_cautiously do
@@ -346,7 +353,7 @@ aget "/import/scenario/:filename" do |filename|
       LOGGER.info "loaded XML data from #{filename} for import"
       xml_data = Nokogiri.XML(xml_plaintext).xpath("/scenario")[0]
       Aurora::ImportUtil.rekey!(xml_data)
-      scenario = import_scenario_xml(xml_data, params[:to_project])
+      scenario = import_scenario_xml(xml_data, params[:to_project], import_options)
       LOGGER.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
   
       if params[:jsoncallback]
