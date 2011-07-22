@@ -21,6 +21,7 @@ module Aurora
 
       descs = dp_set_xml.xpath("description").map {|desc_xml| desc_xml.text}
       self.description = descs.join("\n")
+      self.user_id_modifier = ctx.redmine_user_id
       
       dp_set_xml.xpath("demand").each do |dp_xml|
         ctx.defer do

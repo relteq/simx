@@ -21,6 +21,7 @@ module Aurora
 
       descs = srp_set_xml.xpath("description").map {|desc_xml| desc_xml.text}
       self.description = descs.join("\n")
+      self.user_id_modifier = ctx.redmine_user_id
       
       srp_set_xml.xpath("splitratios").each do |srp_xml|
         ctx.defer do

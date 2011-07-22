@@ -50,6 +50,7 @@ module Aurora
       self.dt           = Float(network_xml["dt"])
       self.ml_control   = import_boolean(network_xml["ml_control"])
       self.q_control    = import_boolean(network_xml["q_control"])
+      self.user_id_modifier = ctx.redmine_user_id
 
       network_xml.xpath("position/point").each do |point_xml|
         self.lat = Float(point_xml["lat"])
