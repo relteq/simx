@@ -201,6 +201,7 @@ module Run
 
       @results = {
         "ok"          => true,
+        "bucket"      => S3_BUCKET,
         "output_urls" => output_urls
       }
 

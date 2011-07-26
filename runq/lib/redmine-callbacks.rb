@@ -33,7 +33,8 @@ module Runq
         frontend_batch.update( :percent_complete => percent )
 
         if req.data['ok']
-          frontend_batch.update( :succeeded => true )
+          frontend_batch.update( :succeeded => true,
+                                 :s3_bucket => req.data['bucket'])
           if req.data['output_urls']
             req.data['output_urls'].each do |url|
               dbweb_db[:output_files] << {
@@ -60,7 +61,8 @@ module Runq
       if frontend_report.count > 0
         frontend_report.update(:percent_complete => 1)
         if req.data['ok']
-          frontend_report.update(:succeeded => true)
+          frontend_report.update(:succeeded => true, 
+                                 :s3_bucket => req.data['bucket'])
           batch_param['output_types'].each_with_index do |type,index|
             if frontend_report.count > 0
               log.info "Setting report export URL for #{type} in Redmine database"
