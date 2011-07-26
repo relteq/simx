@@ -33,13 +33,13 @@ module Runq
         frontend_batch.update( :percent_complete => percent )
 
         if req.data['ok']
-          frontend_batch.update( :succeeded => true,
-                                 :s3_bucket => req.data['bucket'])
+          frontend_batch.update(:succeeded => true)
           if req.data['output_urls']
-            req.data['output_urls'].each do |url|
+            req.data['output_urls'].each do |key|
               dbweb_db[:output_files] << {
                 :simulation_batch_id => simulation_batch_id,
-                :url => url,
+                :s3_bucket => req.data['bucket'],
+                :key => key,
                 :created_at => Time.now,
                 :updated_at => Time.now
               }
@@ -65,13 +65,13 @@ module Runq
                                  :s3_bucket => req.data['bucket'])
           batch_param['output_types'].each_with_index do |type,index|
             if frontend_report.count > 0
-              log.info "Setting report export URL for #{type} in Redmine database"
+              log.info "Setting report export S3 key for #{type} in Redmine database"
               ext = ext_for_mime_type(type)
               field = case ext
-                when "xml" then :url 
-                when "pdf" then :export_pdf_url
-                when "xls" then :export_xls_url
-                when "ppt" then :export_ppt_url
+                when "xml" then :xml_key 
+                when "pdf" then :pdf_key
+                when "xls" then :xls_key
+                when "ppt" then :ppt_key
                 else begin 
                   log.warn "Unrecognized extension #{ext} in report generator"
                   break

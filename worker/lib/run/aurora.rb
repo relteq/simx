@@ -232,7 +232,7 @@ module Run
       ## need option to store locally for debugging, not s3
       ### Worker should not know about this stuff.
 
-      opts = {:access => :public_read}
+      opts = {}
       expiry = :doomsday 
       ext = ext_for_mime_type(mime_type) if mime_type
       hash = Digest::MD5.hexdigest(data)
@@ -242,7 +242,7 @@ module Run
       AWS::S3::S3Object.store filename, data, S3_BUCKET, opts
       obj = AWS::S3::S3Object.find filename, S3_BUCKET
       
-      return "http://s3.amazonaws.com/#{S3_BUCKET}/#{filename}"
+      return filename
     end
 
     def cleanup
