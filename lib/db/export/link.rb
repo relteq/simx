@@ -9,6 +9,8 @@ module Aurora
       }
       
       attrs[:name] = name unless !name or name.empty?
+      attrs[:road_name] = road_name unless !road_name or road_name.empty?
+      attrs[:lane_offset] = lane_offset unless !lane_offset
 
       xml.link(attrs) {
         xml.description description unless !description or description.empty?

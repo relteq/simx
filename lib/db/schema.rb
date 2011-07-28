@@ -161,6 +161,8 @@ module Aurora
       float       :lanes # fractional lanes is allowed
       float       :length
       text        :type_link
+      text        :road_name, :default => ""
+      decimal     :lane_offset, :default => 0
 
       check       {lanes >= 0}
       check       {length >= 0}
