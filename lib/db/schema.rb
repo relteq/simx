@@ -236,6 +236,12 @@ module Aurora
       float       :elevation, :default => 0
     end
 
+    create_table? :signalized_intersections, db do
+      foreign_key :node_id, :node_families, :null => false
+      foreign_key :input_link_id, :link_families, :null => false
+      integer     :phase
+    end
+
     # The following tables, including various sets, profiles, events, and
     # controllers, are edited externally to the networks. They can be mixed
     # and matched with networks when specifying a scenario.
