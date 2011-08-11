@@ -436,5 +436,18 @@ module Aurora
                   :controller_sets,
                   :null => false
     end
+
+    # Not complete table, just keeping columns we need
+    create_table? :simulation_batch_reports, db do
+      primary_key :id
+      
+      integer  :simulation_batch_list_id
+      boolean  :or_perf_c
+      boolean  :route_perf_c
+      boolean  :route_tt_c
+      string   :report_type
+      string   :xml_key
+      string   :s3_bucket
+    end
   end
 end

@@ -65,6 +65,8 @@ module Aurora
   class NetworkController < Controller; end
   class NodeController < Controller; end
   class LinkController < Controller; end
+
+  class SimulationBatchReport < Sequel::Model; end
   
   constants.each do |const|
     c = const_get(const)
