@@ -794,6 +794,28 @@ aget "/editor/event_set/:id.html" do |id|
   end
 end
 
+aget "/reports/:report_id/report_xml" do |report_id|
+  s3
+  access_token = params[:access_token]
+  LOGGER.debug "report_id = #{report_id}"
+
+  if can_access?({:type => 'SimulationBatchReport', 
+                  :id => id}, access_token)
+    defer_cautiously do
+      @report = Aurora::SimulationBatchReport[report_id]
+      if params[:jsoncallback]
+        script = jsonp({:xml => @report.s3_xml})
+        body { script }
+      else
+        # For debugging, that callback is an annoying parameter to require
+        content_type :xml
+        body { @report.s3_xml }
+      end
+    end
+  else
+    not_authorized!
+  end
+end
 
 # Request s3 storage; returns the s3 key, which is
 # a md5 hash of the data, plus the specified file extension, if any, which
