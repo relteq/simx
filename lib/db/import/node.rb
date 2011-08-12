@@ -32,8 +32,8 @@ module Aurora
           self.elevation = Float(point_xml["elevation"])
         end
       end
-      
-      self.lock = import_boolean(node_xml["lock"])
+
+      self.lock = import_boolean(node_xml["lock"], false)
       
       # Note: we scan the NodeList section before the LinkList section,
       # so store these here for Link#import_xml to use later.
