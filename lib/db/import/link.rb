@@ -40,11 +40,21 @@ module Aurora
         self.dynamics = dynamics_xml["type"]
       end
 
-      self.begin_node, self.begin_order =
-        ctx.begin_for_link_xml_id[link_xml["id"]]
+      begin_stuff = ctx.begin_for_link_xml_id[link_xml["id"]]
+      end_stuff = ctx.end_for_link_xml_id[link_xml["id"]]
+      
+      if not begin_stuff
+        raise ImportError, "begin node for link #{link_xml["id"]} " +
+          "is missing or has no output to the link."
+      end
 
-      self.end_node, self.end_order, self.weaving_factors =
-        ctx.end_for_link_xml_id[link_xml["id"]]
+      if not end_stuff
+        raise ImportError, "end node for link #{link_xml["id"]} " +
+          "is missing or has no input to the link."
+      end
+
+      self.begin_node, self.begin_order = begin_stuff
+      self.end_node, self.end_order, self.weaving_factors = end_stuff
     end
   end
 end
