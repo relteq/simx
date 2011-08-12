@@ -1,7 +1,7 @@
 module Aurora
   class Node
     def build_xml(xml)
-      xml.node(:id => id, :name => name, :type => type_node) {
+      xml.node(:id => id, :name => name, :type => type_node, :lock => lock) {
         xml.description description unless !description or description.empty?
         
         #unless outputs.empty? # xsd doesn't like this

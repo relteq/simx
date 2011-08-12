@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scenario schemaVersion="1.0.6" name="short">
+<scenario schemaVersion="1.0.14" name="short">
   <settings>
     <units>US</units>
     <display dt="300" timeout="50" timeInitial="23400" timeMax="39600" />
@@ -12,7 +12,7 @@
   <network name="My Network" ml_control="false" q_control="false" dt="1" id="1">
     
     <NodeList>
-      <node name="Node 1" type="S" id="1">
+      <node name="Node 1" type="S" id="1" lock="true">
         <outputs>
           <output link_id="5"/>
         </outputs>
@@ -21,7 +21,7 @@
           <point lng="-122.29111433029176" lat="37.85117239046442" />
         </position>
       </node>
-      <node name="Node 2" type="S" id="2">
+      <node name="Node 2" type="S" id="2" lock="false">
         <outputs/>
         <inputs>
           <input link_id="5">

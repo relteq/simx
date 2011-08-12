@@ -33,6 +33,8 @@ module Aurora
         end
       end
       
+      self.lock = import_boolean(node_xml["lock"])
+      
       # Note: we scan the NodeList section before the LinkList section,
       # so store these here for Link#import_xml to use later.
       node_xml.xpath("outputs/output").each_with_index do |xml, ord|

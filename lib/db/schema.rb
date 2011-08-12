@@ -149,6 +149,7 @@ module Aurora
       float       :lat
       float       :lng
       float       :elevation, :default => 0
+      boolean     :lock
     end
 
     create_table? :links, db do
