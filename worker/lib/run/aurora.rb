@@ -238,9 +238,15 @@ module Run
       hash = Digest::MD5.hexdigest(data)
       filename = "#{hash}.#{ext}"
       
-      log.info "requesting storage from S3 with type #{mime_type}"
-      AWS::S3::S3Object.store filename, data, S3_BUCKET, opts
-      obj = AWS::S3::S3Object.find filename, S3_BUCKET
+      obj = (AWS::S3::S3Object.find filename, S3_BUCKET rescue nil)
+      if obj
+        log.info "reusing storage on S3 with type #{mime_type} at #{filename}"
+      else
+        log.info "requesting storage from S3 with type #{mime_type}" +
+          " at #{filename}"
+        AWS::S3::S3Object.store filename, data, S3_BUCKET, opts
+        obj = AWS::S3::S3Object.find filename, S3_BUCKET
+      end
       
       return filename
     end
