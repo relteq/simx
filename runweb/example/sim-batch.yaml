@@ -1,0 +1,15 @@
+# example of a batch request for testing warmup
+# curl localhost:9097/batch/new --data-binary @sim-batch.yaml
+
+name:           sim-batch-test
+engine:         simulator
+group:          topl
+user:           topl
+n_runs:         3
+param:
+  update_period: 1
+  inputs:
+  - /home/vjoel/simx/dbweb/doc/test.xml
+  - <time_range begin_time="25200" duration="10800" />
+  output_types:
+  - text/plain

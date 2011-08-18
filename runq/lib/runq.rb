@@ -369,6 +369,7 @@ module Runq
           :batch_param => YAML.load(batch[:param]),
           :n_complete => new_n_complete,
           :n_runs => n_runs,
+          :run => run,
           :req => req
         }
       end

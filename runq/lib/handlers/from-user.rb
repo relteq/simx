@@ -1,6 +1,7 @@
 require 'yaml'
 
 require 'runq/request'
+require 'runq/warmup-callbacks'
 
 module Runq
   # Functionality added to requests received at runq from user (runweb).
@@ -57,6 +58,61 @@ module Runq
         "batch_id" => batch_id
       )
 
+      if engine == "simulator"
+        time_range_xml = param["inputs"][1] ## shouldn't hard-code this
+        
+        if time_range_xml
+          begin_time =
+            (Integer(time_range_xml[/begin_time="(\d+)/, 1]) rescue nil)
+          
+          if begin_time and begin_time > 0
+            start_batch_with_warmup batch_id, begin_time
+            return
+          end
+        end
+      end
+
+      start_batch_without_warmup batch_id
+    end
+    
+    def start_batch_with_warmup batch_id, begin_time
+      warmup_param = Marshal.load(Marshal.dump(param))
+      
+      warmup_param["orig_batch_id"] = batch_id
+      
+      warmup_param["inputs"][1].sub!(/begin_time="\d+"/,
+        "begin_time=\"0\"")
+      warmup_param["inputs"][1].sub!(/duration="\d+"/,
+        "duration=\"#{begin_time}\"")
+
+      warmup_param["output_types"][1] = "application/xml"
+
+      dummy_batch_id = runq.database[:batches] << {
+        :name           => name + " dummy",
+        :group          => group,
+        :user           => user,
+        :engine         => engine,
+        :n_runs         => 1,
+        :param          => warmup_param.to_yaml,
+
+        :start_time     => Time.now,
+        :execution_time => nil,
+        :n_complete     => 0
+      }
+
+      run_id = runq.database[:runs] << {
+        :batch_id         => dummy_batch_id,
+        :worker_id        => nil,
+        :batch_index      => 0,
+        :frac_complete    => 0,
+        :update_callback  => 'update_warmup_callback',
+        :finish_callback  => 'finish_warmup_callback'
+      }
+      
+      runq.dispatch_run run_id
+    end
+    
+    def start_batch_without_warmup batch_id
       run_ids = n_runs.times.map do |i|
         runq.database[:runs] << {
           :batch_id     => batch_id,
