@@ -45,6 +45,8 @@ module Aurora
         wf = xml.xpath("weavingfactors").first
         ctx.end_for_link_xml_id[ xml["link_id"] ] = [self, ord, wf]
       end
+      
+      ctx.node_for_xml_id[ node_xml["id"] ] = self
     end
   end
 end

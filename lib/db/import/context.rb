@@ -29,6 +29,9 @@ module Aurora
     # for each link listed (as an xml id) under the node.
     attr_reader :begin_for_link_xml_id
     attr_reader :end_for_link_xml_id
+    
+    # Cache nodes by xml id.
+    attr_reader :node_for_xml_id
 
     def initialize scenario, opts = {}
       @scenario = scenario
@@ -45,6 +48,8 @@ module Aurora
       
       @begin_for_link_xml_id        = {}
       @end_for_link_xml_id          = {}
+      
+      @node_for_xml_id              = {}
       
       @deferred = []
     end

@@ -43,18 +43,51 @@ module Aurora
       begin_stuff = ctx.begin_for_link_xml_id[link_xml["id"]]
       end_stuff = ctx.end_for_link_xml_id[link_xml["id"]]
       
-      if not begin_stuff
-        raise ImportError, "begin node for link #{link_xml["id"]} " +
-          "is missing or has no output to the link."
+      if begin_stuff
+        self.begin_node, self.begin_order = begin_stuff
+      
+      else
+        link_xml.xpath("begin").each do |begin_xml|
+          b_node = ctx.node_for_xml_id[ begin_xml["node_id"] ]
+          
+          if b_node
+            if not b_node.type_node == "T"
+              raise ImportError, "begin node for link #{link_xml["id"]} " +
+                "has no output to the link."
+            end
+          
+          else
+            raise ImportError, "begin node for link #{link_xml["id"]} " +
+              "is missing."
+          end
+          
+          self.begin_node = b_node
+          break
+        end
       end
 
-      if not end_stuff
-        raise ImportError, "end node for link #{link_xml["id"]} " +
-          "is missing or has no input to the link."
+      if end_stuff
+        self.end_node, self.end_order, self.weaving_factors = end_stuff
+      
+      else
+        link_xml.xpath("end").each do |end_xml|
+          e_node = ctx.node_for_xml_id[ end_xml["node_id"] ]
+          
+          if e_node
+            if not e_node.type_node == "T"
+              raise ImportError, "end node for link #{link_xml["id"]} " +
+                "has no input from the link."
+            end
+            
+          else
+            raise ImportError, "end node for link #{link_xml["id"]} " +
+              "is missing."
+          end
+          
+          self.end_node = e_node
+          break
+        end
       end
-
-      self.begin_node, self.begin_order = begin_stuff
-      self.end_node, self.end_order, self.weaving_factors = end_stuff
     end
   end
 end
