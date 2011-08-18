@@ -362,7 +362,7 @@
       <xs:attribute name="type" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:pattern value="HOV|HOT|HV|ETC|OR|FR|IC|ST|LT|RT|D"/>
+            <xs:pattern value="FW|HW|HOV|HOT|HV|ETC|OR|FR|IC|ST|LT|RT|D"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>

@@ -9,7 +9,7 @@ module Aurora
   
   UNITS             = %w{ US Metric }
   NODE_TYPES        = %w{ F H S P O T }
-  LINK_TYPES        = %w{ HOV HOT HV ETC OR FR IC ST LT RT D }
+  LINK_TYPES        = %w{ FW HW HOV HOT HV ETC OR FR IC ST LT RT D }
   SENSOR_TYPES      = %w{ loop radar camera sensys }
   SENSOR_LINK_TYPES = %w{ ML HV OR FR }
   EVENT_TYPES       = %w{ FD DEMAND QLIM SRM WFM SCONTROL NCONTROL CCONTROL
