@@ -800,7 +800,7 @@ aget "/reports/:report_id/report_xml" do |report_id|
   LOGGER.debug "report_id = #{report_id}"
 
   if can_access?({:type => 'SimulationBatchReport', 
-                  :id => id}, access_token)
+                  :id => report_id}, access_token)
     defer_cautiously do
       @report = Aurora::SimulationBatchReport[report_id]
       if params[:jsoncallback]
