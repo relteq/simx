@@ -153,7 +153,8 @@ class WorkerManager
 
     cmd = "env RUBYLIB=$simx_lib:$RUBYLIB " +
           "CLASSPATH=#{Aurora::CLASSPATH} " +
-          "jruby -e 'require \"worker/jruby-worker\"; JRubyWorker.new.run' " +
+          "jruby " + "-J-Xmx512M " +
+          "-e 'require \"worker/jruby-worker\"; JRubyWorker.new.run' " +
           "2>&1"
     
     log.info "starting jruby with: #{cmd.inspect}"
