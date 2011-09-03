@@ -21,6 +21,11 @@ module Aurora
       set_name_from route_xml["name"], ctx
       
       ctx.defer do # the route doesn't exist yet
+        self.class.db[:route_links].where(
+          :network_id => network_id,
+          :route_id   => id
+        ).delete
+        
         link_xml_ids = route_xml.text.split(",").map{|s|s.strip}
         link_xml_ids.each_with_index do |link_xml_id, order|
           self.class.db[:route_links] << {
