@@ -31,11 +31,14 @@ module Aurora
       end
 
       n_id = s.network.id
-      s.initial_condition_set = initial_condition_set.shallow_copy(db, :network_id => n_id)
+      s.initial_condition_set =
+        initial_condition_set.shallow_copy(db, :network_id => n_id)
       s.split_ratio_profile_set = 
         split_ratio_profile_set.shallow_copy(db, :network_id => n_id)
-      s.capacity_profile_set = capacity_profile_set.shallow_copy(db, :network_id => n_id)
-      s.demand_profile_set = demand_profile_set.shallow_copy(db, :network_id => n_id)
+      s.capacity_profile_set =
+        capacity_profile_set.shallow_copy(db, :network_id => n_id)
+      s.demand_profile_set =
+        demand_profile_set.shallow_copy(db, :network_id => n_id)
       s.event_set = event_set.shallow_copy(db, :network_id => n_id)
       s.controller_set = controller_set.shallow_copy(db, :network_id => n_id)
       s.save

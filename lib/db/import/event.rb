@@ -22,7 +22,8 @@ module Aurora
       if /\S/ === event_xml["network_id"]
         self.type = 'NetworkEvent'
         ctx.defer do
-          self.update(:network_id => ctx.get_network_id(event_xml["network_id"]))
+          self.update(:network_id =>
+            ctx.get_network_id(event_xml["network_id"]))
         end
       end
 
