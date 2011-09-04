@@ -13,10 +13,9 @@ module Aurora
       members_before = nil
       
       id = import_id(network_xml["id"])
-      nw = id && Network[id]
-      if nw
-        members_before = nw.select_members
-      end
+
+      old_nw = id && Network[id]
+      old_nw.clear_members if old_nw
 
       network = create_with_id network_xml["id"] do |nw|
         ctx.defer do
@@ -27,15 +26,6 @@ module Aurora
         end
         
         nw.import_xml network_xml, ctx, parent
-      end
-      
-      if members_before
-        ctx.defer do
-          members_after = network.select_members
-          members_before.zip(members_after).each do |(table, set0), (_, set1)|
-            DB[table].where(:id => (set0 - set1).to_a).delete
-          end
-        end
       end
       
       return network
@@ -82,20 +72,6 @@ module Aurora
       network_xml.xpath("IntersectionCache").each do |int_cache_xml|
         self.intersection_cache = int_cache_xml
       end
-    end
-
-    # returns [ [:nodes, <set of node ids>], [:links, ...], ... ]
-    def select_members
-      members =
-        [:links, :nodes, :routes, :sensors].map do |table|
-          [table, Set.new(send(table).map{|m| m.id})]
-        end
-      members <<
-        [
-          :networks,
-          Set.new(send(:children).map{|h| h[:id]})
-            ## is this correct in case of grandchildren?
-        ]
     end
   end
 end
