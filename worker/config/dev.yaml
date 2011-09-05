@@ -43,7 +43,7 @@ local:
 
 relteq-worker:
   host:         relteq-worker.dyndns.org
-  user:         ubuntu
+  user:         aurora
   dir:          simx-dev
   runq_host:    relteq-db.dyndns.org
   runq_port:    9096
