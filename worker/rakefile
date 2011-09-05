@@ -169,6 +169,8 @@ def update_aurora instance, instance_config
     raise "No AURORA_CLASS_PREFIX on #{userhost}"
   end
   
+  sh "ssh #{userhost} 'mkdir -p #{dest_dir}'"
+  
   sh "cd $AURORA_CLASS_PREFIX && rsync -Cavz --relative --delete" +
      " #{aurora_files.join(" ")} #{userhost}:#{dest_dir}/"
 end
