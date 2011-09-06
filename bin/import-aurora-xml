@@ -134,8 +134,12 @@ module Aurora
       end
       
       if opts["round-trip"]
-        require 'db/export/scenario'
-        puts scenario.to_xml
+        if scenario
+          require 'db/export/scenario'
+          puts scenario.to_xml
+        else
+          $stderr.puts "scenario cannot be exported: id=0 implies packaging"
+        end
       end
       
       return scenario
