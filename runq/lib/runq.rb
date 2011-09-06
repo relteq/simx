@@ -615,6 +615,10 @@ module Runq
         return false
       end
       
+      log.debug {
+        "worker #{worker.inspect} matches run #{run.inspect}"
+      }
+
       return true
     end
     
