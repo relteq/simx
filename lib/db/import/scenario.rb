@@ -32,8 +32,8 @@ module Aurora
       
       if scenario_is_just_packaging
         # for packaging only, not a real scenario
-        scenario.delete
-        nil
+###        scenario.delete
+        scenario # return the object anyway so we can get the network from it
       else
         scenario
       end

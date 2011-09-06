@@ -56,7 +56,7 @@ end
 configure do
   LOGGER.info "DBweb API service starting"
   
-  ne_dir = ENV["NE_DIR"]
+  ne_dir = ENV["NE_DIR"] ### obsolete?
   if ne_dir
     if File.directory?(ne_dir)
       set :public, ne_dir
@@ -203,6 +203,7 @@ helpers do
     sc_xml = %{\
 <?xml version="1.0" encoding="UTF-8"?>
 <scenario id='0'>
+  <description>Scenario generated for editing network</description>
   <settings>
     <units>US</units>
   </settings>
@@ -580,6 +581,8 @@ aget "/editor/scenario/:id.html" do |id|
       @s3_url = ### change name!
         "/model/scenario-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
+      
+      @dbweb_key = key
 
       KEY_TO_ID[key] = [id, Time.now]
       ### clear old ones
@@ -608,6 +611,8 @@ aget "/editor/network/:id.html" do |id|
       @s3_url = ### change name!
         "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
+
+      @dbweb_key = key
 
       KEY_TO_ID[key] = [id, Time.now]
       ### clear old ones
@@ -856,8 +861,33 @@ apost "/save" do
     LOGGER.info "saving"
     
     data = request.body.read
+    LOGGER.debug "saving xml = #{data[0..200]}..."
     
     body "done"
+  end
+end
+
+apost "/save/:key.xml" do |key|
+  id, time = KEY_TO_ID[key]
+  if !id
+    msg = "No scenario for key=#{key}"
+    LOGGER.warn msg
+    break msg
+  end
+
+  LOGGER.info "saving by key #{key}"
+
+  defer_cautiously do
+    xml_string = request.body.read
+    LOGGER.debug "saving xml = #{xml_string[0..200]}..."
+    
+    xml = Nokogiri.XML(xml_string).xpath("/scenario")[0]
+    
+    scenario = import_scenario_xml(xml, 0, {})
+###    scenario = import_scenario_xml(xml_data, params[:to_project], import_options) -- need to store project_id and user_id in KEY_TO_ID
+    LOGGER.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
+    
+    body "done: scenario.id = #{scenario.id}"
   end
 end
 
