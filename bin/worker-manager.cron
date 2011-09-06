@@ -1,2 +1,1 @@
 bin/onboot var/worker-manager.started rake workers:stop workers:start 1>var/worker-manager.onboot.out 2>var/worker-manager.onboot.err
->>>>>>> dev
