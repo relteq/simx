@@ -31,12 +31,15 @@ module Aurora
   class LinkFamily < Sequel::Model; end
   class RouteFamily < Sequel::Model; end
   class SensorFamily < Sequel::Model; end
+  class SignalFamily < Sequel::Model; end
   
   class Network < Sequel::Model; end
   class Node < Sequel::Model; end
   class Link < Sequel::Model; end
   class Route < Sequel::Model; end
   class Sensor < Sequel::Model; end
+  class Signal < Sequel::Model; end
+  class Phase < Sequel::Model; end
 
   class Scenario < Sequel::Model; end
   class VehicleType < Sequel::Model; end

@@ -56,7 +56,8 @@ module Aurora
           ["LinkList/link", Link],
           ["NetworkList/network", Network],
           ["ODList/od/PathList/path", Route],
-          ["SensorList/sensor", Sensor]
+          ["SensorList/sensor", Sensor],
+          ["SignalList/signal", Signal]
         ].
         each do |elt_xpath, elt_class|
           network_xml.xpath(elt_xpath).each do |elt_xml|

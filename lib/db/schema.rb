@@ -84,6 +84,10 @@ module Aurora
       primary_key :id
     end
 
+    create_table? :signal_families, db do
+      primary_key :id
+    end
+
     create_table? :networks, db do
       primary_key :id
       foreign_key :project_id, :projects
@@ -237,10 +241,50 @@ module Aurora
       float       :elevation, :default => 0
     end
 
-    create_table? :signalized_intersections, db do
+    create_table? :signals, db do
+      foreign_key :network_id, :networks, :null => false
+      foreign_key :id, :sensor_families, :null => false
+      primary_key [:network_id, :id]
+
       foreign_key :node_id, :node_families, :null => false
-      foreign_key :input_link_id, :link_families, :null => false
-      integer     :phase
+    end
+
+    create_table? :phases, db do
+      primary_key :id ## this doesn't need network_id, does it?
+    
+      foreign_key :network_id, :networks, :null => false
+      integer     :signal_id, :null => false
+
+      foreign_key [:network_id, :signal_id], :signals,
+                  :key => [:network_id, :id]
+
+      integer     :nema
+      check       {nema > 0}
+      unique      [:network_id, :signal_id, :nema]
+      
+      float       :yellow_time
+      float       :red_clear_time
+      float       :min_green_time
+      
+      check       {yellow_time >= 0}
+      check       {red_clear_time >= 0}
+      check       {min_green_time >= 0}
+
+      boolean     :protected
+      boolean     :permissive
+      boolean     :lag
+      boolean     :recall
+    end
+
+    create_table? :phase_links, db do
+      foreign_key :network_id, :networks, :null => false
+      integer     :phase_id, :null => false
+      integer     :link_id, :null => false
+
+      primary_key [:network_id, :phase_id, :link_id]
+
+      foreign_key :phase_id, :phases
+      foreign_key [:network_id, :link_id], :links, :key => [:network_id, :id]
     end
 
     # The following tables, including various sets, profiles, events, and
