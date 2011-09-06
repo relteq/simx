@@ -150,8 +150,10 @@ class WorkerManager
     log.info "Using CLASS_PREFIX = #{Aurora::CLASS_PREFIX}"
 
     run_class = get_scoped_constant(worker_spec["run_class"])
+    
+    rubylib = [ ENV['simx_lib'] , ENV['RUBYLIB'] ].compact.join(":")
 
-    cmd = "env RUBYLIB=$simx_lib:$RUBYLIB " +
+    cmd = "env RUBYLIB=#{rubylib} " +
           "CLASSPATH=#{Aurora::CLASSPATH} " +
           "jruby " + "-J-Xmx512M " +
           "-e 'require \"worker/jruby-worker\"; JRubyWorker.new.run' " +

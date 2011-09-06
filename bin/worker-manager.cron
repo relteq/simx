@@ -1,4 +1,4 @@
-source ~/.zshenv
+. ~/.zshenv
 
 env \
   PATH=/usr/local/bin:$PATH \
