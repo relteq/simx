@@ -13,6 +13,7 @@ module Aurora
     one_to_many :links,   :key => :network_id
     one_to_many :sensors, :key => :network_id
     one_to_many :routes,  :key => :network_id
+    one_to_many :signals, :key => :network_id
 
     def shallow_copy_children
       [nodes,links,sensors,routes].flatten

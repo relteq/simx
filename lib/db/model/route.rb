@@ -11,6 +11,10 @@ module Aurora
       :left_key  => [:network_id, :route_id],
       :right_key => [:network_id, :link_id]
 
+    many_to_many :phases, :join_table => :phase_links,
+      :left_key  => [:network_id, :link_id],
+      :right_key => :phase_id
+
     def copy
       Route.unrestrict_primary_key
       r = Route.new

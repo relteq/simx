@@ -1,6 +1,6 @@
 module Aurora
   class Phase
-    many_to_one :signals, :key => [:network_id, :signal_id]
+    many_to_one :signal
 
     many_to_many :links, :join_table => :phase_links,
       :left_key  => :phase_id,

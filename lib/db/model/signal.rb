@@ -1,14 +1,9 @@
 module Aurora
-  class SignalFamily
-    one_to_many :signal, :key => :id
-  end
-  
   class Signal
-    many_to_one :network, :key => :network_id
-    many_to_one :signal_family, :key => :id
+    one_to_many :phases
 
-    one_to_many :phases,  :key => [:network_id, :signal_id]
-    many_to_one :node_family, :key => :node_id
+    many_to_one :network, :class => Network, :key => :network_id
+    many_to_one :node,    :class => Node, :key => [:network_id, :node_id]
 
     def copy
       ###

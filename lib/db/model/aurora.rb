@@ -31,7 +31,6 @@ module Aurora
   class LinkFamily < Sequel::Model; end
   class RouteFamily < Sequel::Model; end
   class SensorFamily < Sequel::Model; end
-  class SignalFamily < Sequel::Model; end
   
   class Network < Sequel::Model; end
   class Node < Sequel::Model; end

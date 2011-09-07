@@ -16,10 +16,10 @@ module Aurora
   end
 
   class NodeController < Controller
-    many_to_one :node_family, :key => :node_family_id
+    many_to_one :node_family, :key => :node_id
   end
 
   class LinkController < Controller
-    many_to_one :link_family, :key => :link_family_id
+    many_to_one :link_family, :key => :link_id
   end
 end
