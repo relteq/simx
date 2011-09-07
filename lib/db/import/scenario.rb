@@ -13,10 +13,48 @@ module Aurora
   class Scenario
     include Aurora
     
+    class Dummy
+      PARTS = [
+        :id,
+        :project_id,
+        :network,
+        :split_ratio_profile_set,
+        :capacity_profile_set,
+        :demand_profile_set,
+        :initial_condition_set,
+        :event_set,
+        :controller_set
+      ]
+
+      attr_accessor *PARTS
+
+      def initialize scenario = nil
+        @id = 0
+        
+        if scenario
+          PARTS.each do |part|
+            self.send "#{part}=", scenario.send(part)
+          end
+        end
+      end
+      
+      def save
+        # no-op
+      end
+    end
+
+    # If the scenario has id=0, it will not be added to the database, but
+    # its network, profiles, etc will. In that case, this method returns
+    # a Dummy instead of a real scenario.
     def self.create_from_xml scenario_xml, ctx_options = {} 
       scenario_is_just_packaging = (
-        scenario_xml["id"] =~ /\A\s*0+\s*\z/
+        scenario_xml["id"] =~ /\A\s*(0+|null)\s*\z/i
       )
+      
+      if scenario_is_just_packaging
+        sc0 = Scenario[0]
+        sc0.destroy if sc0
+      end
       
       ctx_options[:scenario_is_just_packaging] =
         scenario_is_just_packaging
@@ -31,9 +69,10 @@ module Aurora
       scenario.save_changes
       
       if scenario_is_just_packaging
-        # for packaging only, not a real scenario
-###        scenario.delete
-        scenario # return the object anyway so we can get the network from it
+        sc0 = Scenario[0]
+        sc0.destroy if sc0
+
+        Dummy.new(scenario)
       else
         scenario
       end
@@ -69,7 +108,7 @@ module Aurora
         self.units = units_xml.text
       end
 
-      [split_ratio_profile_set, capacity_profile_set, demand_profile_set, 
+      [split_ratio_profile_set, capacity_profile_set, demand_profile_set,
        initial_condition_set, event_set, controller_set].each do |set|
         set.clear_members if set
           # in case the network elts they refer to are no longer present

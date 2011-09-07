@@ -173,13 +173,15 @@ helpers do
     [table, id]
   end
 
+  # project_id can be nil
   def import_scenario_xml xml_data, project_id, options = {}
     scenario = Aurora::Scenario.create_from_xml(xml_data, options)
     network = scenario.network
     scenario.project_id = project_id
     network.project_id = project_id
     network.save
-    scenario.save
+    scenario.save # note: this is a no-op if scenario.id == 0
+    scenario
   end
   
   def export_scenario_xml scenario_id
@@ -219,9 +221,11 @@ helpers do
   end
 end
 
+## this should be in config block?
 DBWEB_S3_BUCKET = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
 DB_URL = ENV["DBWEB_DB_URL"]
 DB = Sequel.connect DB_URL
+DB.loggers << LOGGER ## how to switch?
 LOGGER.info "Connected to DB at #{DB_URL}"
 
 require 'db/schema'
@@ -460,7 +464,7 @@ aget "/model/scenario-by-key/:key.xml" do |key|
 #  access_token = params[:access_token]
 #  access_token or not_authorized!
 
-  id, time = KEY_TO_ID[key]
+  id, time, project_id = KEY_TO_ID[key]
   if !id
     msg = "No scenario for key=#{key}"
     LOGGER.warn msg
@@ -539,7 +543,7 @@ aget "/model/wrapped-network-by-key/:key.xml" do |key|
 #  access_token = params[:access_token]
 #  access_token or not_authorized!
   
-  id, time = KEY_TO_ID[key]
+  id, time, project_id = KEY_TO_ID[key]
   if !id
     msg = "No network for key=#{key}"
     LOGGER.warn msg
@@ -584,7 +588,7 @@ aget "/editor/scenario/:id.html" do |id|
       
       @dbweb_key = key
 
-      KEY_TO_ID[key] = [id, Time.now]
+      KEY_TO_ID[key] = [id, Time.now, params[:to_project]]
       ### clear old ones
 
       body { haml :flash_edit }
@@ -614,7 +618,7 @@ aget "/editor/network/:id.html" do |id|
 
       @dbweb_key = key
 
-      KEY_TO_ID[key] = [id, Time.now]
+      KEY_TO_ID[key] = [id, Time.now, params[:to_project]]
       ### clear old ones
 
       body { haml :flash_edit }
@@ -649,7 +653,7 @@ aget "/editor/controller_set/:id.html" do |id|
         "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
       ### clear old ones
 
       body { haml :flash_edit }
@@ -684,7 +688,7 @@ aget "/editor/demand_profile_set/:id.html" do |id|
         "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
       ### clear old ones
 
       body { haml :flash_edit }
@@ -719,7 +723,7 @@ aget "/editor/split_ratio_profile_set/:id.html" do |id|
         "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
       ### clear old ones
 
       body { haml :flash_edit }
@@ -754,7 +758,7 @@ aget "/editor/capacity_profile_set/:id.html" do |id|
         "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
       ### clear old ones
 
       body { haml :flash_edit }
@@ -789,7 +793,7 @@ aget "/editor/event_set/:id.html" do |id|
         "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
       ### clear old ones
 
       body { haml :flash_edit }
@@ -868,7 +872,7 @@ apost "/save" do
 end
 
 apost "/save/:key.xml" do |key|
-  id, time = KEY_TO_ID[key]
+  id, time, project_id = KEY_TO_ID[key]
   if !id
     msg = "No scenario for key=#{key}"
     LOGGER.warn msg
@@ -883,8 +887,8 @@ apost "/save/:key.xml" do |key|
     
     xml = Nokogiri.XML(xml_string).xpath("/scenario")[0]
     
-    scenario = import_scenario_xml(xml, 0, {})
-###    scenario = import_scenario_xml(xml_data, params[:to_project], import_options) -- need to store project_id and user_id in KEY_TO_ID
+    scenario = import_scenario_xml(xml, project_id, {})
+      ###  need to store import_options and user_id in KEY_TO_ID
     LOGGER.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
     
     body "done: scenario.id = #{scenario.id}"
