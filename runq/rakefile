@@ -30,6 +30,7 @@ sock_name   = File.join(sock_dir, "#{proc_name}.sock")
 log_dir     = File.expand_path(File.join(exec_dir, "var/log"))
 log_file    = File.join(log_dir, "#{proc_name}.log")
 err_file    = log_file.sub(/\.log/, ".err")
+data_dir    = File.expand_path(File.join(exec_dir, "var/data"))
 
 ENV["DBWEB_DB_URL"] ||=
   (db_config && db_config["url"]) ||
