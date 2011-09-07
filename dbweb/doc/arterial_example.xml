@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scenario id="null" name="null" schemaVersion="1.0.14">
+<scenario id="-1" name="null" schemaVersion="1.0.14">
   <network name="New Network" ml_control="false" q_control="false" dt="300" id="-1">
     <description>Created by Network Editor version xsd-1.0.12-12-gc2353bf</description>
     <position>
