@@ -65,6 +65,10 @@ class WorkerManager
     log.info "#{self.class} starting."
     
     $0 = "#{self.class} for #{instance_name}"
+    
+    FileUtils.makedirs(Dir.tmpdir)
+      # or else mktmpdir falls back to system tmp dir, which may be /tmp
+      # which jruby fails to write to.
 
     sid = Process.setsid
     log.info "sid = #{sid}"
