@@ -225,7 +225,9 @@ end
 DBWEB_S3_BUCKET = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
 DB_URL = ENV["DBWEB_DB_URL"]
 DB = Sequel.connect DB_URL
-DB.loggers << LOGGER ## how to switch?
+if ENV["DBWEB_LOG_SQL"]
+  DB.loggers << LOGGER
+end
 LOGGER.info "Connected to DB at #{DB_URL}"
 
 require 'db/schema'
