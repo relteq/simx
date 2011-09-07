@@ -4,6 +4,7 @@ require 'db/import/node'
 require 'db/import/link'
 require 'db/import/route'
 require 'db/import/sensor'
+require 'db/import/signal'
 
 module Aurora
   class Network
