@@ -1,6 +1,7 @@
 require 'db/export/node'
 require 'db/export/link'
 require 'db/export/sensor'
+require 'db/export/signal'
 
 module Aurora
   class Network
@@ -28,7 +29,8 @@ module Aurora
           ["NodeList", nodes],
           ["LinkList", links],
           ["NetworkList", children],
-          ["SensorList", sensors]
+          ["SensorList", sensors],
+          ["SignalList", signals]
         ]
         
         lists.each do |elt_name, models|
@@ -41,7 +43,7 @@ module Aurora
           end
         end
         
-        if not routes.empty?
+        if not routes.empty? ## put this in route.rb?
           od_routes = Hash.new do |h, k|
             h[k] = []
           end
