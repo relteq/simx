@@ -35,7 +35,7 @@ log_file    = File.join(log_dir, "#{proc_name}.log")
 err_file    = log_file.sub(/\.log/, ".err")
 data_dir    = File.expand_path(File.join(exec_dir, "var/data"))
 
-db_url = db_config && db_config["url"]
+db_url = ENV["DBWEB_DB_URL"] || (db_config && db_config["url"])
 if not db_url
   db_file = File.join(data_dir, "dbweb.sqlite")
   db_url = "sqlite://" + db_file
