@@ -11,7 +11,9 @@ module Aurora
     end
     
     def clear_members
-      DB[:phase_links].filter(:network_id => network_id, :phase_id => id).delete
+      DB[:phase_links].filter(
+        :network_id => signal.network_id, :phase_id => id
+      ).delete
     end
 
     def before_destroy

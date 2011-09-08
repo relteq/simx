@@ -77,7 +77,7 @@ module Aurora
     end
 
     def clear_members
-      [sensors, routes, links, nodes].each do |models|
+      [signals, sensors, routes, links, nodes].each do |models|
         models.each do |model|
           model.destroy
         end
