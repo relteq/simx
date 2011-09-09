@@ -21,7 +21,7 @@ module Aurora
             :lat => lat,
             :lng => lng
           }
-          point_attrs[:elevation] = elevation if elevation != 0
+          point_attrs[:elevation] = elevation if elevation && elevation != 0
           xml.point point_attrs
         }
         
