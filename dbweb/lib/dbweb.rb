@@ -482,8 +482,6 @@ end
 
 aget "/model/scenario/:id.xml" do |id|
   ###protected!
-  access_token = params[:access_token]
-  access_token or not_authorized!
 
   LOGGER.info "requested scenario #{id} as xml"
 
@@ -516,8 +514,6 @@ end
 
 aget "/model/network/:id.xml" do |id|
   ###protected!
-  access_token = params[:access_token]
-  access_token or not_authorized!
   
   LOGGER.info "requested wrapped network #{id} as xml"
   
