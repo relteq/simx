@@ -9,48 +9,6 @@ module Aurora
       primary_key :id
     end
 
-    create_table? :scenarios, db do
-      primary_key :id
-      foreign_key :project_id, :projects
-
-      string      :name
-      text        :description
-
-      float       :dt
-      float       :begin_time
-      float       :duration
-
-      check        {dt > 0}
-      check        {begin_time >= 0}
-      check        {duration >= 0}
-
-      string      :units
-      check       :units => Aurora::UNITS
-
-      foreign_key :network_id, :networks, :null => false
-
-      foreign_key :initial_condition_set_id,    :initial_condition_sets
-      foreign_key :demand_profile_set_id,       :demand_profile_sets
-      foreign_key :capacity_profile_set_id,     :capacity_profile_sets
-      foreign_key :split_ratio_profile_set_id,  :split_ratio_profile_sets
-      foreign_key :event_set_id,                :event_sets
-      foreign_key :controller_set_id,           :controller_sets
-      integer     :user_id_creator
-      integer     :user_id_modifier
-
-      timestamp   :updated_at
-    end
-
-    create_table? :vehicle_types, db do
-      primary_key :id
-
-      string      :name, :null => false
-      float       :weight
-      check       {weight > 0}
-
-      foreign_key :scenario_id, :scenarios, :null => false
-    end
-
     # The next set of tables just keep track of ids. Each id in one of these
     # tables corresponds to a whole family of nodes (or links or ...) that all
     # have the same id, but different network_id. This id is used as the second
@@ -169,9 +127,9 @@ module Aurora
       check       {length >= 0}
       check       :type_link => Aurora::LINK_TYPES
 
-      string      :fd
+      text        :fd
       float       :qmax
-      string      :dynamics, :default => "CTM"
+      text        :dynamics, :default => "CTM"
       check       :dynamics => Aurora::DYNAMICS
 
       # Applies to end node.
@@ -192,7 +150,7 @@ module Aurora
       foreign_key :id, :route_families, :null => false
       primary_key [:network_id, :id]
 
-      string      :name
+      text        :name
     end
 
     create_table? :route_links, db do
@@ -220,10 +178,10 @@ module Aurora
       integer     :link_id, :null => true
       foreign_key [:network_id, :link_id], :links, :key => [:network_id, :id]
 
-      string      :type_sensor
+      text        :type_sensor
       check       :type_sensor => Aurora::SENSOR_TYPES
 
-      string      :link_type
+      text        :link_type
       check       :link_type => Aurora::SENSOR_LINK_TYPES
 
       text        :parameters
@@ -293,7 +251,7 @@ module Aurora
 
     create_table? :split_ratio_profile_sets, db do
       primary_key :id
-      string      :name
+      text        :name
       text        :description
       foreign_key :network_id, :networks, :null => false
       integer     :user_id_creator
@@ -303,7 +261,7 @@ module Aurora
 
     create_table? :capacity_profile_sets, db do
       primary_key :id
-      string      :name
+      text        :name
       text        :description
       foreign_key :network_id, :networks, :null => false
       integer     :user_id_creator
@@ -313,7 +271,7 @@ module Aurora
 
     create_table? :demand_profile_sets, db do
       primary_key :id
-      string      :name
+      text        :name
       text        :description
       foreign_key :network_id, :networks, :null => false
       integer     :user_id_creator
@@ -323,14 +281,14 @@ module Aurora
 
     create_table? :initial_condition_sets, db do
       primary_key :id
-      string      :name
+      text        :name
       text        :description
       foreign_key :network_id, :networks, :null => false
     end
 
     create_table? :event_sets, db do
       primary_key :id
-      string      :name
+      text        :name
       text        :description
       foreign_key :network_id, :networks, :null => false
       integer     :user_id_creator
@@ -340,7 +298,7 @@ module Aurora
 
     create_table? :controller_sets, db do
       primary_key :id
-      string      :name
+      text        :name
       text        :description
       foreign_key :network_id, :networks, :null => false
       integer     :user_id_creator
@@ -400,7 +358,7 @@ module Aurora
       float       :dt
       check       {dt > 0}
 
-      string      :knob
+      text        :knob
 
       text        :profile # xml text
 
@@ -424,7 +382,7 @@ module Aurora
     create_table? :events, db do
       primary_key :id
 
-      string      :type, :null => false
+      text        :type, :null => false
       check       :type => Aurora::EVENT_STI_TYPES
 
       # Rails app requires these three foreign keys, does not
@@ -434,7 +392,7 @@ module Aurora
       foreign_key :link_id, :link_families
       foreign_key :network_id, :networks
 
-      string      :event_type
+      text        :event_type
       check       :event_type => Aurora::EVENT_TYPES
 
       float       :time
@@ -450,7 +408,7 @@ module Aurora
     create_table? :controllers, db do
       primary_key :id
 
-      string      :type, :null => false
+      text        :type, :null => false
       check       :type => Aurora::CONTROL_STI_TYPES
 
       # Rails app requires these three foreign keys, does not
@@ -460,7 +418,7 @@ module Aurora
       foreign_key :link_id, :link_families, :key => :id
       foreign_key :network_id, :networks, :key => :id
 
-      string      :controller_type
+      text        :controller_type
       check       :controller_type => Aurora::CONTROLLER_TYPES
 
       float       :dt
@@ -483,9 +441,51 @@ module Aurora
       boolean  :or_perf_c
       boolean  :route_perf_c
       boolean  :route_tt_c
-      string   :report_type
-      string   :xml_key
-      string   :s3_bucket
+      text     :report_type
+      text     :xml_key
+      text     :s3_bucket
+    end
+
+    create_table? :scenarios, db do
+      primary_key :id
+      foreign_key :project_id, :projects
+
+      text        :name
+      text        :description
+
+      float       :dt
+      float       :begin_time
+      float       :duration
+
+      check        {dt > 0}
+      check        {begin_time >= 0}
+      check        {duration >= 0}
+
+      text        :units
+      check       :units => Aurora::UNITS
+
+      foreign_key :network_id, :networks, :null => false
+
+      foreign_key :initial_condition_set_id,    :initial_condition_sets
+      foreign_key :demand_profile_set_id,       :demand_profile_sets
+      foreign_key :capacity_profile_set_id,     :capacity_profile_sets
+      foreign_key :split_ratio_profile_set_id,  :split_ratio_profile_sets
+      foreign_key :event_set_id,                :event_sets
+      foreign_key :controller_set_id,           :controller_sets
+      integer     :user_id_creator
+      integer     :user_id_modifier
+
+      timestamp   :updated_at
+    end
+
+    create_table? :vehicle_types, db do
+      primary_key :id
+
+      text        :name, :null => false
+      float       :weight
+      check       {weight > 0}
+
+      foreign_key :scenario_id, :scenarios, :null => false
     end
   end
 end
