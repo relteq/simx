@@ -27,9 +27,20 @@ module Aurora
       ]
 
       attr_accessor *PARTS
+      
+      attr_accessor :name, :description, :units, :vehicle_types
+      attr_accessor :dt, :begin_time, :duration
 
       def initialize scenario = nil
         @id = 0
+        @name = "dummy scenario"
+        @description = "for packaging only"
+        @units = ""
+        @vehicle_types = []
+
+        @dt = 1
+        @begin_time = 0
+        @duration = 0
         
         if scenario
           PARTS.each do |part|
