@@ -2,3 +2,4 @@ var/
 config.yaml
 .bundle/
 *.swp
+lib/simx/version.rb

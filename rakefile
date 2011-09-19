@@ -109,7 +109,7 @@ namespace :remote do
     end
   end
   
-  task :update_me do
+  task :update_me => "git:version" do
     sh "rsync -Cavz --delete --exclude='*.bck' #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
   end
   
@@ -183,6 +183,22 @@ END
         f.puts post_checkout
       end
       sh "chmod +x .git/hooks/post-checkout"
+    end
+    
+    desc "write version file"
+    task :version => "lib/simx/version.rb"
+    
+    file "lib/simx/version.rb" do |t|
+      tag = `git describe --tags 2>/dev/null`.chomp
+      if tag.empty?
+        tag = nil
+        commit = `git rev-parse HEAD`.chomp
+      end
+      ## should also check if working tree is different from HEAD
+      ver = tag || commit
+      File.open(t.name, "w") do |f|
+        f.puts ver
+      end
     end
   end
 end

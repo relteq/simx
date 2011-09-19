@@ -411,8 +411,8 @@ module Aurora
       text        :type, :null => false
       check       :type => Aurora::CONTROL_STI_TYPES
 
-      # Rails app requires these three foreign keys, does not
-      # know about link_controller, node_controller, and 
+      # Rails app requires these three foreign keys; it did not
+      # work with three separate link_controller, node_controller, and
       # network_controller tables.
       foreign_key :node_id, :node_families, :key => :id
       foreign_key :link_id, :link_families, :key => :id
