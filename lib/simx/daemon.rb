@@ -1,4 +1,9 @@
 require 'timeout'
+begin
+  require 'simx/version'
+rescue
+  SIMX_VERSION = "unknown"
+end
 
 module Daemon
   REQUEST_TIMEOUT = 5
@@ -177,7 +182,7 @@ module Daemon
       when /\Astat\z/i
         start_time,pcpu = `ps h -ostart_time,pcpu #{pid}`.split
         s.send "running, pid=#{pid}, start=#{start_time}," +
-          " pcpu=#{pcpu}, ver=???", 0 ## version?
+          " pcpu=#{pcpu}, ver=#{SIMX_VERSION[0..20]}", 0
         s.close
       
       else

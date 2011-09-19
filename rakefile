@@ -197,7 +197,7 @@ END
       ## should also check if working tree is different from HEAD
       ver = tag || commit
       File.open(t.name, "w") do |f|
-        f.puts ver
+        f.puts "SIMX_VERSION = '#{ver}'"
       end
     end
   end
