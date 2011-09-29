@@ -61,6 +61,8 @@ module Runq
         
         require 'db/schema'
         Aurora.create_tables? db
+        ## if network is not accessible, hangs here and INT fails
+        ## how to time out?
         
         require 'db/model/aurora'
         require 'db/export/scenario'
@@ -146,6 +148,7 @@ module Runq
         run_deferrable_op_thread
       end
       
+      ## better to use a thwait here?
       req_thread.join
       
     rescue Interrupt, SignalException
