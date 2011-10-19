@@ -32,7 +32,7 @@ remote_files = FileList[
   "config.yaml",
   "lib",
   "bin",
-  "worker" # need the lib, but not the daemon
+  "worker/lib" # need the lib, but not the daemon
 ]
 ## refactor libs so that runq doesn't get sent to worker hosts, worker
 ## doesn't get sent to runq hosts, etc.
@@ -121,7 +121,8 @@ namespace :remote do
   end
   
   task :update_me => "git:version" do
-    sh "rsync -Cavz --delete --exclude='*.bck' #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
+    sh "rsync -Cavz --delete --relative --exclude='*.bck'" +
+       " #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
   end
   
   delegated_tasks.each do |name|
