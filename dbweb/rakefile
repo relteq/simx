@@ -11,9 +11,9 @@ require 'simx/daemon'
 
 # Read the deployment-specific config file (see config/README).
 config = YAML.load(File.read("../config.yaml"))
-dbweb_config = config["dbweb"]
-aws_config = config["aws"]
-db_config = config["db"]
+dbweb_config = config["dbweb"] || {}
+aws_config = config["aws"] || {}
+db_config = config["db"] || {}
 
 ENV["DBWEB_S3_BUCKET"] ||= aws_config["s3 bucket"]
 
