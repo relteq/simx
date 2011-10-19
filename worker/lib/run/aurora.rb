@@ -27,7 +27,7 @@ module Run
     #     [0]: xml buffer with scenario configuration
     #
     #   * Outputs
-    #     [0]: name of the xml configuration file tha needs to be generated
+    #     [0]: name of the xml configuration file that needs to be generated
     #
     #  simulator:
     #   * Inputs
@@ -56,8 +56,7 @@ module Run
     #   * Outputs
     #     [0]: name of the resulting file whose extension (.pdf, .ppt, .xls)
     #          indicates the type of export to be performed
-    S3_BUCKET = ENV["WORKER_S3_BUCKET"] || "relteq-uploads-dev"
-
+    #
     attr_reader :param
     
     # period between updates in seconds
@@ -70,6 +69,8 @@ module Run
     # Array of mime types that are expected from the engine.
     attr_reader :output_types
     
+    S3_BUCKET = ENV["WORKER_S3_BUCKET"] || "relteq-uploads-dev"
+
     INTERPRETER = "jruby"
 
     def initialize *args

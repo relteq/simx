@@ -23,7 +23,7 @@ NETWORK_ERRORS = [Errno::ECONNRESET, Errno::ECONNABORTED,
 
 configure do
   set :raise_errors, false
-  set :public, 'public/'
+  set :public_folder, 'public/'
   
   MY_ENV = {}
 
@@ -59,7 +59,7 @@ configure do
   ne_dir = ENV["NE_DIR"] ### obsolete?
   if ne_dir
     if File.directory?(ne_dir)
-      set :public, ne_dir
+      set :public_folder, ne_dir
       LOGGER.info "Public dir: #{ne_dir}"
     else
       LOGGER.error "No such dir ENV['NE_DIR']=#{ENV["NE_DIR"].inspect}"
