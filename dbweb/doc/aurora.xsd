@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.15">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.17">
 
   <xs:element name="scenario">
     <xs:complexType>
@@ -230,7 +230,13 @@
     <xs:complexType>
       <xs:attribute name="url" type="xs:string" use="required" />
       <xs:attribute name="dt" type="xs:decimal" use="required" />
-      <xs:attribute name="format" type="xs:string" use="required" />
+      <xs:attribute name="format" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="PeMS Data Clearinghouse|Caltrans DBX|BHL"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 
@@ -575,6 +581,7 @@
         <xs:element ref="controller" minOccurs="0" />
         <xs:element ref="wfm" minOccurs="0" />
         <xs:element ref="control" minOccurs="0" />
+        <xs:element ref="lane_count_change" minOccurs="0" />
         <xs:element ref="display_position" minOccurs="0" />
       </xs:all>
       <xs:attribute name="tstamp" type="xs:decimal" use="required" />
@@ -585,7 +592,7 @@
       <xs:attribute name="type" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:pattern value="FD|DEMAND|QLIM|SRM|WFM|SCONTROL|NCONTROL|CCONTROL|TCONTROL|MONITOR"/>
+            <xs:pattern value="FD|DEMAND|QLIM|SRM|WFM|LC|SCONTROL|NCONTROL|CCONTROL|TCONTROL|MONITOR"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -606,6 +613,14 @@
     <xs:complexType>
       <xs:attribute name="mainline" type="xs:boolean" use="required" />
       <xs:attribute name="queue" type="xs:boolean" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="lane_count_change">
+    <xs:complexType>
+      <xs:attribute name="reset_to_nominal" type="xs:boolean" use="optional"
+        default="false" />
+      <xs:attribute name="delta" type="xs:decimal" use="optional" default="0" />
     </xs:complexType>
   </xs:element>
 
@@ -644,6 +659,7 @@
         <xs:element ref="PlanSequence" minOccurs="0" />
         <xs:element ref="PlanList" minOccurs="0" />
       </xs:all>
+      <xs:attribute name="name" type="xs:string" use="optional" />
       <xs:attribute name="type" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
