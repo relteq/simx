@@ -94,6 +94,9 @@ instances.each do |instance|
     
     task "crontab" => "update"
     
+    desc "set up new installation"
+    task :init => [:update, :crontab, :start]
+    
     namespace :config do
       desc "show config for #{instance}"
       task :show
