@@ -1,0 +1,19 @@
+deploy:
+  host: aurora@vii
+  path: simx
+runq:
+  port: 9096
+  log level: debug
+runweb:
+  port: 9097
+  log level: debug
+dbweb:
+  port: 9098
+  log level: debug
+worker:
+  config file: vii.yaml
+  log level: debug
+#aws:
+#  s3 bucket: relteq-uploads-dev
+db:
+  url: sqlite://var/data/dbweb.sqlite

@@ -1,0 +1,48 @@
+local:
+  # in this case we can use defaults:
+  # host:         localhost
+  # user:         same
+  # dir:          .
+  # runq_host:    localhost
+  # runq_port:    env var or default
+  # runweb_host:  localhost
+  # runweb_port:  env var or default
+  workers:
+    - run_class:    Run::Aurora
+      count:        2
+      group:        topl
+      user:         topl
+      engine:       simulator|calibrator|report generator|report exporter
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
+    - run_class:    Run::Dummy
+      count:        3
+      group:        topl
+      user:         topl
+      engine:       dummy
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
+vii:
+  host:         vii.path.berkeley.edu
+  user:         aurora
+  dir:          simx
+  runq_host:    vii.path.berkeley.edu
+  runq_port:    9096
+  runweb_host:  vii.path.berkeley.edu
+  runweb_port:  9097
+  workers:
+    - run_class:    Run::Aurora
+      count:        8
+      group:        topl
+      user:         topl
+      engine:       simulator|calibrator|report generator|report exporter
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
