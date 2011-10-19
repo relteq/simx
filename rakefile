@@ -43,6 +43,10 @@ daemon_dirs = %w{
   dbweb
 }
 
+DATA_DIR = "var/data/"
+
+directory DATA_DIR
+
 # tasks that can be delegated to all of the daemon_dirs
 delegated_tasks = [:start, :stop, :restart, :stat]
 
@@ -52,6 +56,9 @@ desc "update and restart remote daemons, #{dest_host}:#{dest_path}"
 task :remote => %w{ remote:stop remote:update remote:start }
 
 namespace :remote do
+  desc "set up new installation"
+  task :init => [:update, :data_dir, :crontab, :start]
+  
   desc "update to #{dest_host}:#{dest_path}, including subdirs"
   task :update => :update_me
   
@@ -61,6 +68,10 @@ namespace :remote do
   delegated_tasks.each do |name|
     desc "#{name} remote daemons"
     task name
+  end
+  
+  task :data_dir do
+    sh "ssh #{dest_host} 'cd #{dest_path} && rake #{DATA_DIR}'"
   end
 
   desc "install remote cronjob to start daemons after reboot"
@@ -215,7 +226,3 @@ end
 ##task GEMDIR do |t|
 ##  sh "bin/crown -v #{t.name} #{GEMLIST.join(" ")} >#{GEMENV}"
 ##end
-
-DATA_DIR = "var/data/"
-
-directory DATA_DIR
