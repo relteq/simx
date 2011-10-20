@@ -1,1 +1,7 @@
-bin/onboot var/worker-manager.started rake workers:stop workers:start 1>var/worker-manager.onboot.out 2>var/worker-manager.onboot.err
+test -f "$HOME/.aurora_env" && . "$HOME/.aurora_env"
+
+env \
+  PATH=/usr/local/bin:$PATH \
+  RUBYOPT=rubygems \
+  JRUBY_OPTS=-rubygems \
+  bin/onboot var/worker-manager.started rake workers:stop workers:start 1>var/worker-manager.onboot.out 2>var/worker-manager.onboot.err

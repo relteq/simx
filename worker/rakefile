@@ -368,7 +368,7 @@ end
 
 def do_crontab instance, instance_config
   path = File.expand_path("..") # n.b.
-  cron_cmd = "*/5 * * * * cd #{path} && zsh bin/worker-manager.cron || true"
+  cron_cmd = "*/5 * * * * cd #{path} && bin/worker-manager.cron || true"
     ## remove rubygems
   
   ct = `crontab -l`
