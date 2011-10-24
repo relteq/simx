@@ -15,8 +15,6 @@ runweb_config = config["runweb"] || {}
 runq_config = config["runq"] || {}
 aws_config = config["aws"] || {}
 
-ENV["RUNWEB_S3_BUCKET"] ||= aws_config["s3 bucket"]
-
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
 port = Integer(ENV["RUNWEB_PORT"] || runweb_config["port"])
