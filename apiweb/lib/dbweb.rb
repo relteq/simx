@@ -126,7 +126,7 @@ end
 # content type application/xml.
 
 aget "/model/scenario-by-key/:key.xml" do |key|
-  ###protected!
+  protected!
 # This route is accessed by key, not id, so no need to check this:
 #  access_token = params[:access_token]
 #  access_token or not_authorized!
@@ -146,7 +146,7 @@ aget "/model/scenario-by-key/:key.xml" do |key|
 end
 
 aget "/model/scenario/:id.xml" do |id|
-  ###protected!
+  protected!
 
   LOGGER.info "requested scenario #{id} as xml"
 
@@ -178,7 +178,7 @@ aget "/model/scenario/:id.url" do |id|
 end
 
 aget "/model/network/:id.xml" do |id|
-  ###protected!
+  protected!
   
   LOGGER.info "requested wrapped network #{id} as xml"
   
@@ -201,7 +201,7 @@ end
 
 
 aget "/model/wrapped-network-by-key/:key.xml" do |key|
-  ###protected!
+  protected!
 # This route is accessed by key, not id, so no need to check this:
 #  access_token = params[:access_token]
 #  access_token or not_authorized!
@@ -232,7 +232,7 @@ end
 # then loads the url passed to it by fashvars.
 
 aget "/editor/scenario/:id.html" do |id|
-###  protected!
+  protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
   LOGGER.info "requested scenario #{id} in editor"
@@ -262,7 +262,7 @@ aget "/editor/scenario/:id.html" do |id|
 end
 
 aget "/editor/network/:id.html" do |id|
-###  protected!
+  protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
   LOGGER.info "requested network #{id} in editor"
@@ -292,7 +292,7 @@ aget "/editor/network/:id.html" do |id|
 end
 
 aget "/editor/controller_set/:id.html" do |id|
-###  protected!
+  protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
   LOGGER.info "requested controller set #{id} in editor"
@@ -327,7 +327,7 @@ aget "/editor/controller_set/:id.html" do |id|
 end
 
 aget "/editor/demand_profile_set/:id.html" do |id|
-###  protected!
+  protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
   LOGGER.info "requested demand profile set #{id} in editor"
@@ -362,7 +362,7 @@ aget "/editor/demand_profile_set/:id.html" do |id|
 end
 
 aget "/editor/split_ratio_profile_set/:id.html" do |id|
-###  protected!
+  protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
   LOGGER.info "requested split ratio profile set #{id} in editor"
@@ -397,7 +397,7 @@ aget "/editor/split_ratio_profile_set/:id.html" do |id|
 end
 
 aget "/editor/capacity_profile_set/:id.html" do |id|
-###  protected!
+  protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
   LOGGER.info "requested capacity profile set #{id} in editor"
@@ -432,7 +432,7 @@ aget "/editor/capacity_profile_set/:id.html" do |id|
 end
 
 aget "/editor/event_set/:id.html" do |id|
-###  protected!
+  protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
   LOGGER.info "requested event set #{id} in editor"
@@ -520,7 +520,7 @@ end
 # back to the database.
 # params can include "expiry", "ext", "access_token".
 apost "/save" do
-  ###protected!
+  protected!
 
   access_token = params[:access_token]
 #  params[:access_token] or not_authorized!
