@@ -16,6 +16,7 @@ mri_18_gems = %w{
   sequel_pg
   rest-client
   haml
+  fsdb
 }
 
 mri_18_gems.each do |g|

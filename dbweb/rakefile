@@ -16,6 +16,7 @@ aws_config = config["aws"] || {}
 db_config = config["db"] || {}
 
 ENV["DBWEB_S3_BUCKET"] ||= aws_config["s3 bucket"]
+ENV["DBWEB_S3_MOCK"] ||= aws_config["mock"].to_s
 
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
@@ -41,6 +42,8 @@ if not db_url
   db_url = "sqlite://" + db_file
 end
 ENV["DBWEB_DB_URL"] = db_url
+
+ENV["DBWEB_DATA_DIR"] ||= data_dir
 
 FileUtils.mkdir_p log_dir
 FileUtils.mkdir_p sock_dir

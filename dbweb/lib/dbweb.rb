@@ -95,78 +95,31 @@ helpers do
 
   def s3
     unless @s3
-      require 'aws/s3'
-
-      AWS::S3::Base.establish_connection!(
-        :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
-        :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
-      )
+      ## sync?
+      data_dir = ENV["DBWEB_DATA_DIR"]
       
-      @s3 = true
+      if ENV["DBWEB_S3_MOCK"] == "true"
+        require 'simx/s3-mock'
+        @s3 = S3_Mock.new(
+          :dir      => File.join(data_dir, "s3-mock", DBWEB_S3_BUCKET),
+          :url_base => "/file",
+          :log      => LOGGER
+        )
+
+      else
+        require 'simx/s3-aws'
+        @s3 = S3_AWS.new(
+          :creds => {
+            :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
+            :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
+          },
+          :bucket => DBWEB_S3_BUCKET,
+          :log    => LOGGER
+        )
+      end
     end
   end
 
-  # params can include "expiry", "ext"; returns url
-  def s3_store data, params
-    s3
-    expiry_str = params["expiry"]
-    expiry =
-      begin
-        expiry_str && Float(expiry_str)
-      rescue => e
-        LOGGER.warn e
-        nil
-      end
-
-    ext = params["ext"]
-
-    require 'digest/md5'
-    key = Digest::MD5.hexdigest(data)
-    if ext
-      if /\./ =~ ext
-        ext = ext[/\.([^.]*?)$/, 1]
-      end
-      key << "." << ext
-    end
-
-    # check if key already exists on s3 and don't upload if so
-    exists =
-      begin
-        AWS::S3::S3Object.find key, DBWEB_S3_BUCKET
-        true
-      rescue AWS::S3::NoSuchKey
-        false
-      rescue => ex
-        LOGGER.debug ex
-      end
-    
-    if exists
-      LOGGER.info "Data already exists in S3 at #{DBWEB_S3_BUCKET}/#{key}"
-      ## what if expiry is different? update it?
-    
-    else
-      LOGGER.info "Storing in S3 at #{DBWEB_S3_BUCKET}/#{key}"
-      LOGGER.debug "expiry=#{expiry.inspect}, data: " + data[0..50]
-
-      opts = {}
-      if expiry
-        opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
-        ### need daemon to expire things
-      end
-
-      AWS::S3::S3Object.store key, data, DBWEB_S3_BUCKET, opts
-    end
-    
-    url = AWS::S3::S3Object.url_for(key, DBWEB_S3_BUCKET)
-    LOGGER.info "url_for returned #{url}"
-
-    return url
-  end
-
-  def s3_fetch filename, bucket_name
-    return AWS::S3::S3Object.value filename, bucket_name
-  end
-  
   ### should have rekey option
   def import_xml xml_data
     ###
@@ -344,7 +297,6 @@ aget "/import/scenario/:filename" do |filename|
   protected!
 #  params[:access_token] or not_authorized!
 
-  s3
   LOGGER.info "Attempting to import #{params[:bucket]}/#{filename}"
 
   import_options = {}
@@ -356,7 +308,7 @@ aget "/import/scenario/:filename" do |filename|
   if can_access?({:type => 'Project',
     :id => params[:to_project]}, params[:access_token])
     defer_cautiously do
-      xml_plaintext = s3_fetch(filename, params[:bucket])
+      xml_plaintext = s3.fetch(filename, params[:bucket])
       LOGGER.info "loaded XML data from #{filename} for import"
       xml_data = Nokogiri.XML(xml_plaintext).xpath("/scenario")[0]
       Aurora::ImportUtil.rekey!(xml_data)
@@ -507,7 +459,7 @@ aget "/model/scenario/:id.url" do |id|
     content_type :text
     xml = export_scenario_xml(id)
     params["ext"] = "xml"
-    url = s3_store(xml, params)
+    url = s3.store(xml, params)
     body url
   end
 end
@@ -802,7 +754,6 @@ aget "/editor/event_set/:id.html" do |id|
 end
 
 aget "/reports/:report_id/report_xml" do |report_id|
-  s3
   access_token = params[:access_token]
   LOGGER.debug "report_id = #{report_id}"
 
@@ -831,16 +782,24 @@ end
 # number of seconds has elapsed.
 apost "/store" do
   protected!
-  s3
 
   defer_cautiously do
     LOGGER.info "started deferred store operation"
     
     data = request.body.read
-    url = s3_store(data, params)
+    url = s3.store(data, params)
 
     LOGGER.info "finished deferred store operation, url = #{url}"
     body url
+  end
+end
+
+aget "/file/:filename" do |filename|
+  protected!
+
+  defer_cautiously do
+    LOGGER.info "deferred fetch of #{filename}"
+    body s3.fetch(filename)
   end
 end
 

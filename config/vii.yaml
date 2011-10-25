@@ -13,7 +13,7 @@ dbweb:
 worker:
   config file: vii.yaml
   log level: debug
-#aws:
-#  s3 bucket: relteq-uploads-dev
+aws:
+  mock: true
 db:
   url: sqlite://var/data/dbweb.sqlite
