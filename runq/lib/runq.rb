@@ -54,9 +54,9 @@ module Runq
       end
     end
 
-    def dbweb_db
-      @dbweb_db ||= begin
-        db = Sequel.connect ENV['DBWEB_DB_URL']
+    def apiweb_db
+      @apiweb_db ||= begin
+        db = Sequel.connect ENV['APIWEB_DB_URL']
         log.info "Using aurora model database #{db.inspect}"
         
         require 'db/schema'
@@ -68,7 +68,7 @@ module Runq
         require 'db/export/scenario'
         db
       end
-      @dbweb_db
+      @apiweb_db
     end
 
     def ext_for_mime_type mime_type
@@ -119,7 +119,7 @@ module Runq
     end
     
     def run
-      log; dbweb_db; database; request_queue; socket_for_worker
+      log; apiweb_db; database; request_queue; socket_for_worker
         # prevent race cond before starting threads
       
       log.level = @log_level
@@ -315,8 +315,8 @@ module Runq
       params = req.runq_assist_params
       match = /@scenario\((\d+)\)/.match(params.first)
       scenario_id = match[1] 
-      log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
-      scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
+      log.debug "Exporting scenario #{scenario_id} for simulation db=#{apiweb_db}"
+      scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, apiweb_db)
       log.debug "scenario URL: #{scenario_url}"
 
       info_request = Request::RunqProvideInformation.new
@@ -630,7 +630,7 @@ module Runq
       batch_id = run[:batch_id]
       batch_index = run[:batch_index]
       batch = database[:batches].where(:id => batch_id).first
-      frontend_batches = dbweb_db[:simulation_batches]
+      frontend_batches = apiweb_db[:simulation_batches]
       worker_id = worker[:id]
       param = YAML.load(batch[:param]) ## cache this per batch
       

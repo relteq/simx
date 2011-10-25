@@ -68,7 +68,7 @@ module Aurora
     include ScenarioBuilder
 
     def self.export_and_store_on_s3(id, db = DB)
-      dbweb_s3_bucket = ENV["DBWEB_S3_BUCKET"] || "relteq-uploads-dev"
+      apiweb_s3_bucket = ENV["APIWEB_S3_BUCKET"] || "relteq-uploads-dev"
       unless AWS::S3::Base.connected? 
         AWS::S3::Base.establish_connection!(
             :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
@@ -80,17 +80,17 @@ module Aurora
       key = Digest::MD5.hexdigest(scenario_xml) + ".xml"
       exists =
         begin
-          AWS::S3::S3Object.find key, dbweb_s3_bucket
+          AWS::S3::S3Object.find key, apiweb_s3_bucket
           true
         rescue AWS::S3::NoSuchKey
           false
         end
 
       unless exists
-        AWS::S3::S3Object.store key, scenario_xml, dbweb_s3_bucket, {} 
+        AWS::S3::S3Object.store key, scenario_xml, apiweb_s3_bucket, {} 
       end
 
-      return AWS::S3::S3Object.url_for(key, dbweb_s3_bucket) 
+      return AWS::S3::S3Object.url_for(key, apiweb_s3_bucket) 
     end
   end
 end

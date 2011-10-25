@@ -516,7 +516,7 @@ aget "/file/:filename" do |filename|
   end
 end
 
-# Used by a NetworkEditor instance that was launched from dbweb to save
+# Used by a NetworkEditor instance that was launched from apiweb to save
 # back to the database.
 # params can include "expiry", "ext", "access_token".
 apost "/save" do

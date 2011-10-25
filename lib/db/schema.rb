@@ -89,7 +89,7 @@ module Aurora
     # Distinctly created (not copied) entities remain distinct in the database,
     # so that they can be copied and pasted alongside each other.
     #
-    # See dbweb/doc/subnetworks.txt for details.
+    # See apiweb/doc/subnetworks.txt for details.
 
     create_table? :nodes, db do
       # This network_id is the id of the network to which the node belongs.

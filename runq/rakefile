@@ -32,9 +32,9 @@ log_file    = File.join(log_dir, "#{proc_name}.log")
 err_file    = log_file.sub(/\.log/, ".err")
 data_dir    = File.expand_path(File.join(exec_dir, "var/data"))
 
-ENV["DBWEB_DB_URL"] ||=
+ENV["APIWEB_DB_URL"] ||=
   (db_config && db_config["url"]) ||
-    ("sqlite://" + File.join(data_dir, "dbweb.sqlite"))
+    ("sqlite://" + File.join(data_dir, "apiweb.sqlite"))
 
 FileUtils.mkdir_p log_dir
 FileUtils.mkdir_p sock_dir

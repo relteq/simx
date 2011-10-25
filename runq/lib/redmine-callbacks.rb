@@ -22,7 +22,7 @@ module Runq
 	    req = args[:req] or raise "req not present"
 
       simulation_batch_id = batch_param[:redmine_simulation_batch_id]
-      frontend_batch = dbweb_db[:simulation_batches].
+      frontend_batch = apiweb_db[:simulation_batches].
       					 where(:id => simulation_batch_id)
 
       if frontend_batch.count > 0
@@ -36,7 +36,7 @@ module Runq
           frontend_batch.update(:succeeded => true)
           if req.data['output_urls']
             req.data['output_urls'].each do |key|
-              dbweb_db[:output_files] << {
+              apiweb_db[:output_files] << {
                 :simulation_batch_id => simulation_batch_id,
                 :s3_bucket => req.data['bucket'],
                 :key => key,
@@ -56,7 +56,7 @@ module Runq
 	    batch_param = args[:batch_param] or raise "batch param not present"
       req = args[:req] or raise "req not present"
 
-      frontend_report = dbweb_db[:simulation_batch_reports].
+      frontend_report = apiweb_db[:simulation_batch_reports].
                         where(:id => batch_param[:redmine_batch_report_id])
       if frontend_report.count > 0
         frontend_report.update(:percent_complete => 1)
@@ -95,7 +95,7 @@ module Runq
                  avg(:frac_complete)
       
       simulation_batch_id = batch_param[:redmine_simulation_batch_id]
-      dbweb_db[:simulation_batches].where(:id => simulation_batch_id).
+      apiweb_db[:simulation_batches].where(:id => simulation_batch_id).
         update(:percent_complete => progress)
   	end
 
@@ -106,7 +106,7 @@ module Runq
   	  progress = database[:runs].where(:batch_id => run[:batch_id]).
                      avg(:frac_complete)
       simulation_batch_report_id = batch_param[:redmine_batch_report_id]
-      dbweb_db[:simulation_batch_reports].
+      apiweb_db[:simulation_batch_reports].
         where(:id => simulation_batch_report_id).
         update(:percent_complete => progress)
   	end

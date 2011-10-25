@@ -8,7 +8,7 @@ param:
   inputs:
 ###  - http://vii.path.berkeley.edu/~vjoel/test.xml
 # Use local files only when running worker locally:
-  - /home/vjoel/simx/dbweb/doc/test.xml
+  - /home/vjoel/simx/apiweb/doc/test.xml
   - <time_range begin_time="25200" duration="10800" />
   output_types:
   - text/plain

@@ -25,7 +25,7 @@ end
 if ENV["INPUTTEST"] ##?
   test_doc = ENV["INPUTTEST"]
 else
-  test_doc = File.join(topdir, "dbweb/doc/short.xml")
+  test_doc = File.join(topdir, "apiweb/doc/short.xml")
 end
 
 # create tables if they don't exist
