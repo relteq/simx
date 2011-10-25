@@ -4,11 +4,8 @@ deploy:
 runq:
   port: 8596
   log level: debug
-runweb:
+apiweb:
   port: 8597
-  log level: debug
-dbweb:
-  port: 8598
   log level: debug
 worker:
   config file: staging.yaml

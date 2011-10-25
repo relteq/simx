@@ -4,16 +4,13 @@ deploy:
 runq:
   port: 8096
   log level: info
-runweb:
+apiweb:
   port: 8097
-  log level: info
-dbweb:
-  port: 8098
   log level: info
 worker:
   config file: master.yaml
   log level: info
 aws:
   s3 bucket: relteq-uploads
-#db:
-#  url: sqlite://var/data/master.sqlite
+db:
+  url: postgres://redmine:topl5t6y7u8i@relteq-db.dyndns.org/relteq
