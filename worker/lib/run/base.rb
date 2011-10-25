@@ -72,9 +72,9 @@ module Run
     # run-specific parameters.
     attr_reader :batch_index
     
-    attr_reader :runweb_host
+    attr_reader :apiweb_host
     
-    attr_reader :runweb_port
+    attr_reader :apiweb_port
     
     # Engine requested for this run (worker may support several engines).
     attr_reader :engine
@@ -95,8 +95,8 @@ module Run
       @log                = h[:log]         || raise
       @param              = h[:param]       || raise
       @batch_index        = h[:batch_index] || raise
-      @runweb_host        = h[:runweb_host] || raise
-      @runweb_port        = h[:runweb_port] || raise
+      @apiweb_host        = h[:apiweb_host] || raise
+      @apiweb_port        = h[:apiweb_port] || raise
       @engine             = h[:engine]      || raise
       @engine_opts        = h[:engine_opts]
       

@@ -5,8 +5,8 @@ local:
   # dir:          .
   # runq_host:    localhost
   # runq_port:    env var or default
-  # runweb_host:  localhost
-  # runweb_port:  env var or default
+  # apiweb_host:  localhost
+  # apiweb_port:  env var or default
   workers:
     - run_class:    Run::Aurora
       count:        1
@@ -47,8 +47,8 @@ relteq-worker:
   dir:          simx-staging
   runq_host:    relteq-db.dyndns.org
   runq_port:    8596
-  runweb_host:  relteq-db.dyndns.org
-  runweb_port:  8597
+  apiweb_host:  relteq-db.dyndns.org
+  apiweb_port:  8597
   workers:
     - run_class:    Run::Aurora
       count:        1
@@ -66,8 +66,8 @@ vii-aurora:
   dir:          simx-staging
   runq_host:    relteq-db.dyndns.org
   runq_port:    8596
-  runweb_host:  relteq-db.dyndns.org
-  runweb_port:  8597
+  apiweb_host:  relteq-db.dyndns.org
+  apiweb_port:  8597
   workers:
     - run_class:    Run::Aurora
       count:        4

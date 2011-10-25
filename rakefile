@@ -39,8 +39,7 @@ remote_files = FileList[
 
 daemon_dirs = %w{
   runq
-  runweb
-  dbweb
+  apiweb
 }
 
 DATA_DIR = "var/data/"
@@ -157,7 +156,7 @@ namespace :workers do
 end
 
 task :update_examples do
-  sh "rsync -avz dbweb/doc/test.xml vii:public_html/"
+  sh "rsync -avz apiweb/doc/test.xml vii:public_html/"
   ## this is a very special case; later, we should have a library of examples
   ## somewhere
 end

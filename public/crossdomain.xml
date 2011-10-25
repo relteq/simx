@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE cross-domain-policy SYSTEM
+ "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
+<cross-domain-policy>
+  <allow-access-from domain="vii.path.berkeley.edu" />
+  <allow-access-from domain="path.berkeley.edu" />
+  <allow-access-from domain="berkeley.edu" />
+  <allow-access-from domain="relteqsystems.com" />
+  <allow-access-from domain="relteq-dev.heroku.com" />
+  <allow-access-from domain="relteq-devel.heroku.com" />
+  <allow-access-from domain="relteq-staging.heroku.com" />
+  <allow-access-from domain="relteq.heroku.com" />
+  <allow-access-from domain="relteq-db.dyndns.org" />
+</cross-domain-policy>

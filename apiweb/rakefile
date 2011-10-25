@@ -11,22 +11,26 @@ require 'simx/daemon'
 
 # Read the deployment-specific config file (see config/README).
 config = YAML.load(File.read("../config.yaml"))
-dbweb_config = config["dbweb"] || {}
+apiweb_config = config["apiweb"] || {}
+runq_config = config["runq"] || {}
 aws_config = config["aws"] || {}
 db_config = config["db"] || {}
 
-ENV["DBWEB_S3_BUCKET"] ||= aws_config["s3 bucket"]
-ENV["DBWEB_S3_MOCK"] ||= aws_config["mock"].to_s
+ENV["SIMX_S3_BUCKET"] ||= aws_config["s3 bucket"]
+ENV["SIMX_S3_MOCK"] ||= aws_config["mock"].to_s
 
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
-port = Integer(ENV["DBWEB_PORT"] || dbweb_config["port"])
+port = Integer(ENV["APIWEB_PORT"] || apiweb_config["port"])
+
+runq_port = Integer(ENV["RUNQ_PORT"] || runq_config["port"])
+runq_host = ENV["RUNQ_HOST"] || "localhost"
 
 # destination for the remote task
 dest_host = config["deploy"]["host"]
-dest_path = File.join(config["deploy"]["path"], "dbweb")
+dest_path = File.join(config["deploy"]["path"], "apiweb")
 
-proc_name   = "dbweb"
+proc_name   = "apiweb"
 svr_name    = "lib/#{proc_name}.rb"
 exec_dir    = ".."
 sock_dir    = File.expand_path(File.join(exec_dir, "var/run"))
@@ -36,17 +40,18 @@ log_file    = File.join(log_dir, "#{proc_name}.log")
 err_file    = log_file.sub(/\.log/, ".err")
 data_dir    = File.expand_path(File.join(exec_dir, "var/data"))
 
-db_url = ENV["DBWEB_DB_URL"] || (db_config && db_config["url"])
+db_url = ENV["SIMX_DB_URL"] || (db_config && db_config["url"])
 if not db_url
-  db_file = File.join(data_dir, "dbweb.sqlite")
+  db_file = File.join(data_dir, "simx.sqlite")
   db_url = "sqlite://" + db_file
 end
-ENV["DBWEB_DB_URL"] = db_url
+ENV["SIMX_DB_URL"] = db_url
 
-ENV["DBWEB_DATA_DIR"] ||= data_dir
+ENV["SIMX_DATA_DIR"] ||= data_dir
 
 FileUtils.mkdir_p log_dir
 FileUtils.mkdir_p sock_dir
+FileUtils.mkdir_p data_dir
 
 #== Tasks
 
@@ -136,8 +141,10 @@ task :start do
       "-p", port.to_s,
       "-e", "production",
       "--", # end sinatra options; options below are passed to svr_name
+      "--runq-port", runq_port.to_s,
+      "--runq-host", runq_host,
       "--log-file", log_file,
-      "--log-level", dbweb_config["log level"]
+      "--log-level", apiweb_config["log level"]
     ]
     
     daemonize opts do

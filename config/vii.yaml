@@ -4,11 +4,8 @@ deploy:
 runq:
   port: 9096
   log level: debug
-runweb:
+apiweb:
   port: 9097
-  log level: debug
-dbweb:
-  port: 9098
   log level: debug
 worker:
   config file: vii.yaml
@@ -16,4 +13,4 @@ worker:
 aws:
   mock: true
 db:
-  url: sqlite://var/data/dbweb.sqlite
+  url: sqlite://var/data/simx.sqlite

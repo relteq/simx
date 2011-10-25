@@ -17,7 +17,7 @@ require 'simx/daemon'
 class << self
   attr_reader :config, :proc_name, :svr_name, :exec_dir,
     :sock_dir, :sock_name, :log_dir, :log_file, :err_file,
-    :libdir, :config_file, :simx_worker_config, :runq_config, :runweb_config,
+    :libdir, :config_file, :simx_worker_config, :runq_config, :apiweb_config,
     :simx_worker_log_level
 end
 
@@ -30,7 +30,7 @@ else
   @simx_worker_config = simx_config["worker"]
   @simx_worker_log_level = simx_worker_config["log level"]
   @runq_config = simx_config["runq"]
-  @runweb_config = simx_config["runweb"]
+  @apiweb_config = simx_config["apiweb"]
 end
 
 @libdir = libdir
@@ -120,7 +120,7 @@ DEFAULT_INSTANCE_CONFIG = {
   "user"        => ENV["USERNAME"],
   "dir"         => TOPDIR,
   "runq_host"   => ENV["RUNQ_HOST"] || "localhost",
-  "runweb_host" => ENV["RUNWEB_HOST"] || "localhost"
+  "apiweb_host" => ENV["APIWEB_HOST"] || "localhost"
 }
 
 default_runq_port = ENV["RUNQ_PORT"] || (runq_config && runq_config["port"])
@@ -128,9 +128,9 @@ if default_runq_port
   DEFAULT_INSTANCE_CONFIG["runq_port"] = Integer(default_runq_port)
 end
 
-default_runweb_port = ENV["RUNWEB_PORT"] || (runweb_config && runweb_config["port"])
-if default_runweb_port
-  DEFAULT_INSTANCE_CONFIG["runweb_port"] = Integer(default_runweb_port)
+default_apiweb_port = ENV["APIWEB_PORT"] || (apiweb_config && apiweb_config["port"])
+if default_apiweb_port
+  DEFAULT_INSTANCE_CONFIG["apiweb_port"] = Integer(default_apiweb_port)
 end
 
 namespace :config do

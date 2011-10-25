@@ -5,8 +5,8 @@ local:
   # dir:          .
   # runq_host:    localhost
   # runq_port:    env var or default
-  # runweb_host:  localhost
-  # runweb_port:  env var or default
+  # apiweb_host:  localhost
+  # apiweb_port:  env var or default
   workers:
     - run_class:    Run::Aurora
       count:        2
@@ -34,8 +34,8 @@ vii:
   dir:          simx
   runq_host:    vii.path.berkeley.edu
   runq_port:    9096
-  runweb_host:  vii.path.berkeley.edu
-  runweb_port:  9097
+  apiweb_host:  vii.path.berkeley.edu
+  apiweb_port:  9097
   workers:
     - run_class:    Run::Aurora
       count:        8

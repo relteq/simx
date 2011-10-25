@@ -5,8 +5,8 @@ local:
   # dir:          .
   # runq_host:    localhost
   # runq_port:    env var or default
-  # runweb_host:  localhost
-  # runweb_port:  env var or default
+  # apiweb_host:  localhost
+  # apiweb_port:  env var or default
   workers:
     - run_class:    Run::Dummy
       count:        3
@@ -24,8 +24,8 @@ vii:
   dir:          simx
   runq_host:    relteq-db.dyndns.org
   runq_port:    8096
-  runweb_host:  relteq-db.dyndns.org
-  runweb_port:  8097
+  apiweb_host:  relteq-db.dyndns.org
+  apiweb_port:  8097
   workers:
     - run_class:    Run::Dummy
       count:        3
@@ -63,8 +63,8 @@ path:
   dir:          simx
   runq_host:    relteq-db.dyndns.org
   runq_port:    8096
-  runweb_host:  relteq-db.dyndns.org
-  runweb_port:  8097
+  apiweb_host:  relteq-db.dyndns.org
+  apiweb_port:  8097
   workers:
     - run_class:    Run::Dummy
       count:        3

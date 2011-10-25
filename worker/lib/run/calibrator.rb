@@ -113,22 +113,22 @@ module Run
       output_xml = File.read(File.join(@dir, output_xml_file))
       
       ### Worker should not know about this stuff.
-      runweb_user = ENV["RUNWEB_USER"] || "relteq"
-      runweb_password = ENV["RUNWEB_PASSWORD"] || "topl5678"
+      apiweb_user = ENV["APIWEB_USER"] || "relteq"
+      apiweb_password = ENV["APIWEB_PASSWORD"] || "topl5678"
 
       expiry = 60 # seconds
       ext = "xml"
 
       url = "http://" +
-        "#{runweb_host}:#{runweb_port}/store?" +
+        "#{apiweb_host}:#{apiweb_port}/store?" +
         "expiry=#{expiry}&ext=#{ext}"
 
       log.info "requesting storage from #{url}"
-      rsrc = RestClient::Resource.new(url, runweb_user, runweb_password)
+      rsrc = RestClient::Resource.new(url, apiweb_user, apiweb_password)
       response = rsrc.post output_xml, :content_type => :xml
       output_xml_url = "#{response.body}"
-      ## ok to go thru runweb?
-      ## maybe a separate service, so runweb is not blocked?
+      ## ok to go thru apiweb?
+      ## maybe a separate service, so apiweb is not blocked?
 
       log.info "results stored at #{output_xml_url}"
       output_xml_url

@@ -1,0 +1,1743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario name="680S_101115_HOV_Accident_S2_ALINEA+Q.xml" schemaVersion="1.0.4">
+  <settings>
+    <units>US</units>
+    <display dt="300" timeout="50" timeInitial="23400" timeMax="39600"/>
+    <VehicleTypes>
+      <vtype name="SOV" weight="1.0"/>
+      <vtype name="HOV" weight="1.0"/>
+    </VehicleTypes>
+  </settings>
+  <network id="new network 1" name="680S" ml_control="true" q_control="true" dt="10.00008">
+    <description>680S freeway, calibrated using TOPL Freeway Modeler.. Day 15-Nov-2010</description>
+    <position>
+      <point lat="0.0" lng="0.0" elevation="0.0"/>
+    </position>
+    <MonitorList/>
+    <NetworkList/>
+    <NodeList>
+      <node type="F" id="6804002" name="401097-401097">
+        <description>Node 6804002</description>
+        <outputs>
+          <output link_id="100206804"/>
+          <output link_id="400206804"/>
+        </outputs>
+        <inputs>
+          <input link_id="200216804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8341" lng="-122.0079" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804003" name="FR El Cerro Blvd">
+        <description>Node 6804003</description>
+        <outputs>
+          <output link_id="300216804"/>
+          <output link_id="100306804"/>
+          <output link_id="400306804"/>
+        </outputs>
+        <inputs>
+          <input link_id="100206804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="400206804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8324" lng="-122.0053" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804004" name="Node 6804004">
+        <description>Node 6804004</description>
+        <outputs>
+          <output link_id="100406804"/>
+          <output link_id="400406804"/>
+        </outputs>
+        <inputs>
+          <input link_id="100306804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="400306804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8307" lng="-122.0026" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804005" name="Node 6804005">
+        <description>Node 6804005</description>
+        <outputs>
+          <output link_id="100506804"/>
+          <output link_id="400506804"/>
+        </outputs>
+        <inputs>
+          <input link_id="100406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="400406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8289" lng="-122.0" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804006" name="FR Diablo Rd - OR El Cerro Blvd">
+        <description>Node 6804006</description>
+        <outputs>
+          <output link_id="300516804"/>
+          <output link_id="100606804"/>
+          <output link_id="400606804"/>
+        </outputs>
+        <inputs>
+          <input link_id="100506804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="400506804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="200616804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8272" lng="-121.9973" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804007" name="Node 6804007">
+        <description>Node 6804007</description>
+        <outputs>
+          <output link_id="100706804"/>
+          <output link_id="400706804"/>
+        </outputs>
+        <inputs>
+          <input link_id="100606804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="400606804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8252" lng="-121.9951" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804008" name="Node 6804008">
+        <description>Node 6804008</description>
+        <outputs>
+          <output link_id="100806804"/>
+          <output link_id="400806804"/>
+        </outputs>
+        <inputs>
+          <input link_id="100706804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="400706804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8228" lng="-121.9937" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804009" name="OR Diablo Rd">
+        <description>Node 6804009</description>
+        <outputs>
+          <output link_id="100906804"/>
+          <output link_id="400906804"/>
+        </outputs>
+        <inputs>
+          <input link_id="100806804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="400806804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="200916804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8196" lng="-121.9933" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804010" name="Node 6804010">
+        <description>Node 6804010</description>
+        <outputs>
+          <output link_id="101006804"/>
+          <output link_id="401006804"/>
+        </outputs>
+        <inputs>
+          <input link_id="100906804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="400906804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8174" lng="-121.9934" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804011" name="FR Sycamore Valley Rd">
+        <description>Node 6804011</description>
+        <outputs>
+          <output link_id="301016804"/>
+          <output link_id="101106804"/>
+          <output link_id="401106804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101006804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401006804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8157" lng="-121.9934" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804012" name="Node 6804012">
+        <description>Node 6804012</description>
+        <outputs>
+          <output link_id="101206804"/>
+          <output link_id="401206804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101106804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401106804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.812" lng="-121.9932" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804013" name="Node 6804013">
+        <description>Node 6804013</description>
+        <outputs>
+          <output link_id="101306804"/>
+          <output link_id="401306804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101206804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401206804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8094" lng="-121.9922" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804014" name="OR Sycamore Valley Rd">
+        <description>Node 6804014</description>
+        <outputs>
+          <output link_id="101406804"/>
+          <output link_id="401406804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101306804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401306804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="201416804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8069" lng="-121.9911" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804015" name="Node 6804015">
+        <description>Node 6804015</description>
+        <outputs>
+          <output link_id="101506804"/>
+          <output link_id="401506804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8043" lng="-121.99" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804016" name="Node 6804016">
+        <description>Node 6804016</description>
+        <outputs>
+          <output link_id="101606804"/>
+          <output link_id="401606804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101506804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401506804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8017" lng="-121.9889" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804017" name="Node 6804017">
+        <description>Node 6804017</description>
+        <outputs>
+          <output link_id="101706804"/>
+          <output link_id="401706804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101606804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401606804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7993" lng="-121.9876" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804018" name="Node 6804018">
+        <description>Node 6804018</description>
+        <outputs>
+          <output link_id="101806804"/>
+          <output link_id="401806804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101706804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401706804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7969" lng="-121.9858" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804019" name="Node 6804019">
+        <description>Node 6804019</description>
+        <outputs>
+          <output link_id="101906804"/>
+          <output link_id="401906804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101806804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401806804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7945" lng="-121.9842" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804020" name="Node 6804020">
+        <description>Node 6804020</description>
+        <outputs>
+          <output link_id="102006804"/>
+          <output link_id="402006804"/>
+        </outputs>
+        <inputs>
+          <input link_id="101906804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="401906804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.792" lng="-121.983" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804021" name="Node 6804021">
+        <description>Node 6804021</description>
+        <outputs>
+          <output link_id="102106804"/>
+          <output link_id="402106804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102006804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402006804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7895" lng="-121.9818" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804022" name="Node 6804022">
+        <description>Node 6804022</description>
+        <outputs>
+          <output link_id="102206804"/>
+          <output link_id="402206804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102106804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402106804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.787" lng="-121.9806" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804023" name="Node 6804023">
+        <description>Node 6804023</description>
+        <outputs>
+          <output link_id="102306804"/>
+          <output link_id="402306804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102206804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402206804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7845" lng="-121.9792" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804024" name="FR Crow Canyon Rd">
+        <description>Node 6804024</description>
+        <outputs>
+          <output link_id="302316804"/>
+          <output link_id="102406804"/>
+          <output link_id="402406804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102306804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402306804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.782" lng="-121.9778" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804025" name="Node 6804025">
+        <description>Node 6804025</description>
+        <outputs>
+          <output link_id="102506804"/>
+          <output link_id="402506804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7795" lng="-121.9766" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804026" name="Node 6804026">
+        <description>Node 6804026</description>
+        <outputs>
+          <output link_id="102606804"/>
+          <output link_id="402606804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102506804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402506804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.777" lng="-121.9753" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804027" name="OR Crow Canyon Rd W">
+        <description>Node 6804027</description>
+        <outputs>
+          <output link_id="102706804"/>
+          <output link_id="402706804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102606804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402606804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="202716804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7745" lng="-121.974" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804028" name="OR Crow Canyon Rd E">
+        <description>Node 6804028</description>
+        <outputs>
+          <output link_id="102806804"/>
+          <output link_id="402806804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102706804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402706804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="202816804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.772" lng="-121.9728" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804029" name="Node 6804029">
+        <description>Node 6804029</description>
+        <outputs>
+          <output link_id="102906804"/>
+          <output link_id="402906804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102806804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402806804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7695" lng="-121.9715" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804030" name="Node 6804030">
+        <description>Node 6804030</description>
+        <outputs>
+          <output link_id="103006804"/>
+          <output link_id="403006804"/>
+        </outputs>
+        <inputs>
+          <input link_id="102906804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="402906804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.767" lng="-121.9701" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804031" name="FR Bollinger Canyon Rd">
+        <description>Node 6804031</description>
+        <outputs>
+          <output link_id="303016804"/>
+          <output link_id="103106804"/>
+          <output link_id="403106804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103006804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403006804">
+            <weavingfactors>1.0, 0.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7646" lng="-121.9685" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804032" name="Node 6804032">
+        <description>Node 6804032</description>
+        <outputs>
+          <output link_id="103206804"/>
+          <output link_id="403206804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103106804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403106804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7622" lng="-121.967" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804033" name="OR Bollinger Canyon Rd W">
+        <description>Node 6804033</description>
+        <outputs>
+          <output link_id="103306804"/>
+          <output link_id="403306804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103206804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403206804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="203316804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7598" lng="-121.9654" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804034" name="OR Bollinger Canyon Rd E">
+        <description>Node 6804034</description>
+        <outputs>
+          <output link_id="103406804"/>
+          <output link_id="403406804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103306804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403306804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="203416804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7571" lng="-121.9636" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804035" name="Node 6804035">
+        <description>Node 6804035</description>
+        <outputs>
+          <output link_id="103506804"/>
+          <output link_id="403506804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.755" lng="-121.9623" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804036" name="Node 6804036">
+        <description>Node 6804036</description>
+        <outputs>
+          <output link_id="103606804"/>
+          <output link_id="403606804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103506804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403506804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7526" lng="-121.9607" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804037" name="Node 6804037">
+        <description>Node 6804037</description>
+        <outputs>
+          <output link_id="103706804"/>
+          <output link_id="403706804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103606804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403606804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7502" lng="-121.9592" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804038" name="Node 6804038">
+        <description>Node 6804038</description>
+        <outputs>
+          <output link_id="103806804"/>
+          <output link_id="403806804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103706804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403706804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7478" lng="-121.9577" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804039" name="Node 6804039">
+        <description>Node 6804039</description>
+        <outputs>
+          <output link_id="103906804"/>
+          <output link_id="403906804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103806804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403806804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7453" lng="-121.9563" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804040" name="Node 6804040">
+        <description>Node 6804040</description>
+        <outputs>
+          <output link_id="104006804"/>
+          <output link_id="404006804"/>
+        </outputs>
+        <inputs>
+          <input link_id="103906804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="403906804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7429" lng="-121.9547" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804041" name="Node 6804041">
+        <description>Node 6804041</description>
+        <outputs>
+          <output link_id="104106804"/>
+          <output link_id="404106804"/>
+        </outputs>
+        <inputs>
+          <input link_id="104006804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="404006804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7405" lng="-121.9531" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804042" name="Node 6804042">
+        <description>Node 6804042</description>
+        <outputs>
+          <output link_id="104206804"/>
+          <output link_id="404206804"/>
+        </outputs>
+        <inputs>
+          <input link_id="104106804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="404106804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7382" lng="-121.9514" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804043" name="Node 6804043">
+        <description>Node 6804043</description>
+        <outputs>
+          <output link_id="104306804"/>
+          <output link_id="404306804"/>
+        </outputs>
+        <inputs>
+          <input link_id="104206804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="404206804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7358" lng="-121.9498" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804044" name="Node 6804044">
+        <description>Node 6804044</description>
+        <outputs>
+          <output link_id="104406804"/>
+          <output link_id="404406804"/>
+        </outputs>
+        <inputs>
+          <input link_id="104306804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="404306804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7335" lng="-121.9481" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="F" id="6804045" name="Node 6804045">
+        <description>Node 6804045</description>
+        <outputs>
+          <output link_id="104506804"/>
+          <output link_id="404506804"/>
+        </outputs>
+        <inputs>
+          <input link_id="104406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+          <input link_id="404406804">
+            <weavingfactors>1.0, 0.0</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7312" lng="-121.9463" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="200216804" name="null">
+        <description/>
+        <outputs>
+          <output link_id="200216804"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.8359" lng="-122.0079" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="300216804" name="null">
+        <description/>
+        <outputs/>
+        <inputs>
+          <input link_id="300216804">
+            <weavingfactors/>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8295" lng="-122.0017" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="300516804" name="null">
+        <description/>
+        <outputs/>
+        <inputs>
+          <input link_id="300516804">
+            <weavingfactors/>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8234" lng="-121.9943" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="200616804" name="null">
+        <description/>
+        <outputs>
+          <output link_id="200616804"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.8292" lng="-122.0009" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="200916804" name="null">
+        <description/>
+        <outputs>
+          <output link_id="200916804"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.8227" lng="-121.994" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="301016804" name="null">
+        <description/>
+        <outputs/>
+        <inputs>
+          <input link_id="301016804">
+            <weavingfactors/>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.8136" lng="-121.9937" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="201416804" name="null">
+        <description/>
+        <outputs>
+          <output link_id="201416804"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.8104" lng="-121.9937" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="302316804" name="null">
+        <description/>
+        <outputs/>
+        <inputs>
+          <input link_id="302316804">
+            <weavingfactors/>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7782" lng="-121.9767" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="202716804" name="null">
+        <description/>
+        <outputs>
+          <output link_id="202716804"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.7777" lng="-121.9765" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="202816804" name="null">
+        <description/>
+        <outputs>
+          <output link_id="202816804"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.7762" lng="-121.9769" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="303016804" name="null">
+        <description/>
+        <outputs/>
+        <inputs>
+          <input link_id="303016804">
+            <weavingfactors/>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.76" lng="-121.9671" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="203316804" name="null">
+        <description/>
+        <outputs>
+          <output link_id="203316804"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.76" lng="-121.9667" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="203416804" name="null">
+        <description/>
+        <outputs>
+          <output link_id="203416804"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.7595" lng="-121.9656" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="104506804" name="null">
+        <description/>
+        <outputs/>
+        <inputs>
+          <input link_id="104506804">
+            <weavingfactors/>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7312" lng="-121.9463" elevation="0.0"/>
+        </position>
+      </node>
+      <node type="T" id="404506804" name="null">
+        <description/>
+        <outputs/>
+        <inputs>
+          <input link_id="404506804">
+            <weavingfactors/>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.7312" lng="-121.9463" elevation="0.0"/>
+        </position>
+      </node>
+    </NodeList>
+    <LinkList>
+      <link type="FW" id="100206804" name="401097-401097 &gt; FR El Cerro Blvd" length="989" lanes="3.0" record="false">
+        <begin node_id="6804002"/>
+        <end node_id="6804003"/>
+        <dynamics type="CTM"/>
+        <qmax>572.5315</qmax>
+        <fd densityCritical="93.1111" densityJam="572.5315" flowMax="6262.2937" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="400206804" name="401097-401097 &gt; FR El Cerro Blvd" length="989" lanes="1.0" record="false">
+        <begin node_id="6804002"/>
+        <end node_id="6804003"/>
+        <dynamics type="CTM"/>
+        <qmax>187.9406</qmax>
+        <fd densityCritical="34.6568" densityJam="187.9406" flowMax="1889.007" capacityDrop="0.0"/>
+      </link>
+      <link type="OR" id="200216804" name="&gt; 401097-401097" length="1000" lanes="5.0" record="false">
+        <begin node_id="200216804"/>
+        <end node_id="6804002"/>
+        <dynamics type="CTM"/>
+        <qmax>1000.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="12000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FR" id="300216804" name="FR El Cerro Blvd &gt;" length="1000" lanes="1.0" record="false">
+        <begin node_id="6804003"/>
+        <end node_id="300216804"/>
+        <dynamics type="CTM"/>
+        <qmax>1630.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="21000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="100306804" name="FR El Cerro Blvd &gt; Node 6804004" length="985" lanes="3.0" record="false">
+        <begin node_id="6804003"/>
+        <end node_id="6804004"/>
+        <dynamics type="CTM"/>
+        <qmax>408.014</qmax>
+        <fd densityCritical="91.4442" densityJam="408.014" flowMax="6014.8252" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="400306804" name="FR El Cerro Blvd &gt; Node 6804004" length="985" lanes="1.0" record="false">
+        <begin node_id="6804003"/>
+        <end node_id="6804004"/>
+        <dynamics type="CTM"/>
+        <qmax>175.0101</qmax>
+        <fd densityCritical="25.3793" densityJam="175.0101" flowMax="1496.3077" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="100406804" name="Node 6804004 &gt; Node 6804005" length="987" lanes="3.0" record="false">
+        <begin node_id="6804004"/>
+        <end node_id="6804005"/>
+        <dynamics type="CTM"/>
+        <qmax>408.014</qmax>
+        <fd densityCritical="91.4442" densityJam="408.014" flowMax="6014.8252" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="400406804" name="Node 6804004 &gt; Node 6804005" length="987" lanes="1.0" record="false">
+        <begin node_id="6804004"/>
+        <end node_id="6804005"/>
+        <dynamics type="CTM"/>
+        <qmax>175.0101</qmax>
+        <fd densityCritical="25.3793" densityJam="175.0101" flowMax="1496.3077" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="100506804" name="Node 6804005 &gt; FR Diablo Rd - OR El Cerro Blvd" length="989" lanes="3.0" record="false">
+        <begin node_id="6804005"/>
+        <end node_id="6804006"/>
+        <dynamics type="CTM"/>
+        <qmax>483.4745</qmax>
+        <fd densityCritical="89.999" densityJam="483.47450000000003" flowMax="5910.5734" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="400506804" name="Node 6804005 &gt; FR Diablo Rd - OR El Cerro Blvd" length="989" lanes="1.0" record="false">
+        <begin node_id="6804005"/>
+        <end node_id="6804006"/>
+        <dynamics type="CTM"/>
+        <qmax>117.5232</qmax>
+        <fd densityCritical="27.4345" densityJam="117.5232" flowMax="1629.3147" capacityDrop="0.0"/>
+      </link>
+      <link type="FR" id="300516804" name="FR Diablo Rd - OR El Cerro Blvd &gt;" length="1000" lanes="1.0" record="false">
+        <begin node_id="6804006"/>
+        <end node_id="300516804"/>
+        <dynamics type="CTM"/>
+        <qmax>1630.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="21000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="100606804" name="FR Diablo Rd - OR El Cerro Blvd &gt; Node 6804007" length="981" lanes="3.0" record="false">
+        <begin node_id="6804006"/>
+        <end node_id="6804007"/>
+        <dynamics type="CTM"/>
+        <qmax>483.4745</qmax>
+        <fd densityCritical="89.999" densityJam="483.47450000000003" flowMax="5910.5734" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="400606804" name="FR Diablo Rd - OR El Cerro Blvd &gt; Node 6804007" length="981" lanes="1.0" record="false">
+        <begin node_id="6804006"/>
+        <end node_id="6804007"/>
+        <dynamics type="CTM"/>
+        <qmax>117.5232</qmax>
+        <fd densityCritical="27.4345" densityJam="117.5232" flowMax="1629.3147" capacityDrop="0.0"/>
+      </link>
+      <link type="OR" id="200616804" name="&gt; FR Diablo Rd - OR El Cerro Blvd" length="1000" lanes="1.0" record="false">
+        <begin node_id="200616804"/>
+        <end node_id="6804006"/>
+        <dynamics type="CTM"/>
+        <qmax>50.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="12000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="100706804" name="Node 6804007 &gt; Node 6804008" length="987" lanes="3.0" record="false">
+        <begin node_id="6804007"/>
+        <end node_id="6804008"/>
+        <dynamics type="CTM"/>
+        <qmax>483.4745</qmax>
+        <fd densityCritical="89.999" densityJam="483.47450000000003" flowMax="5910.5734" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="400706804" name="Node 6804007 &gt; Node 6804008" length="987" lanes="1.0" record="false">
+        <begin node_id="6804007"/>
+        <end node_id="6804008"/>
+        <dynamics type="CTM"/>
+        <qmax>117.5232</qmax>
+        <fd densityCritical="27.4345" densityJam="117.5232" flowMax="1629.3147" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="100806804" name="Node 6804008 &gt; OR Diablo Rd" length="1160" lanes="3.0" record="false">
+        <begin node_id="6804008"/>
+        <end node_id="6804009"/>
+        <dynamics type="CTM"/>
+        <qmax>483.4745</qmax>
+        <fd densityCritical="89.999" densityJam="483.47450000000003" flowMax="5910.5734" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="400806804" name="Node 6804008 &gt; OR Diablo Rd" length="1160" lanes="1.0" record="false">
+        <begin node_id="6804008"/>
+        <end node_id="6804009"/>
+        <dynamics type="CTM"/>
+        <qmax>117.5232</qmax>
+        <fd densityCritical="27.4345" densityJam="117.5232" flowMax="1629.3147" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="100906804" name="OR Diablo Rd &gt; Node 6804010" length="807" lanes="4.0" record="false">
+        <begin node_id="6804009"/>
+        <end node_id="6804010"/>
+        <dynamics type="CTM"/>
+        <qmax>792.2847</qmax>
+        <fd densityCritical="103.1043" densityJam="792.2847" flowMax="6891.8042" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="400906804" name="OR Diablo Rd &gt; Node 6804010" length="807" lanes="1.0" record="false">
+        <begin node_id="6804009"/>
+        <end node_id="6804010"/>
+        <dynamics type="CTM"/>
+        <qmax>63.2032</qmax>
+        <fd densityCritical="12.1823" densityJam="63.2032" flowMax="765.3147" capacityDrop="0.0"/>
+      </link>
+      <link type="OR" id="200916804" name="&gt; OR Diablo Rd" length="1000" lanes="1.0" record="false">
+        <begin node_id="200916804"/>
+        <end node_id="6804009"/>
+        <dynamics type="CTM"/>
+        <qmax>50.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="12000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101006804" name="Node 6804010 &gt; FR Sycamore Valley Rd" length="628" lanes="4.0" record="false">
+        <begin node_id="6804010"/>
+        <end node_id="6804011"/>
+        <dynamics type="CTM"/>
+        <qmax>792.2847</qmax>
+        <fd densityCritical="103.1043" densityJam="792.2847" flowMax="6891.8042" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401006804" name="Node 6804010 &gt; FR Sycamore Valley Rd" length="628" lanes="1.0" record="false">
+        <begin node_id="6804010"/>
+        <end node_id="6804011"/>
+        <dynamics type="CTM"/>
+        <qmax>63.2032</qmax>
+        <fd densityCritical="12.1823" densityJam="63.2032" flowMax="765.3147" capacityDrop="0.0"/>
+      </link>
+      <link type="FR" id="301016804" name="FR Sycamore Valley Rd &gt;" length="1000" lanes="1.0" record="false">
+        <begin node_id="6804011"/>
+        <end node_id="301016804"/>
+        <dynamics type="CTM"/>
+        <qmax>1630.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="21000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101106804" name="FR Sycamore Valley Rd &gt; Node 6804012" length="1346" lanes="3.0" record="false">
+        <begin node_id="6804011"/>
+        <end node_id="6804012"/>
+        <dynamics type="CTM"/>
+        <qmax>397.7876</qmax>
+        <fd densityCritical="83.0344" densityJam="397.7876" flowMax="5807.5524" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401106804" name="FR Sycamore Valley Rd &gt; Node 6804012" length="1346" lanes="1.0" record="false">
+        <begin node_id="6804011"/>
+        <end node_id="6804012"/>
+        <dynamics type="CTM"/>
+        <qmax>169.6943</qmax>
+        <fd densityCritical="26.0355" densityJam="169.6943" flowMax="1436.5874" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101206804" name="Node 6804012 &gt; Node 6804013" length="987" lanes="3.0" record="false">
+        <begin node_id="6804012"/>
+        <end node_id="6804013"/>
+        <dynamics type="CTM"/>
+        <qmax>397.7876</qmax>
+        <fd densityCritical="83.0344" densityJam="397.7876" flowMax="5807.5524" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401206804" name="Node 6804012 &gt; Node 6804013" length="987" lanes="1.0" record="false">
+        <begin node_id="6804012"/>
+        <end node_id="6804013"/>
+        <dynamics type="CTM"/>
+        <qmax>169.6943</qmax>
+        <fd densityCritical="26.0355" densityJam="169.6943" flowMax="1436.5874" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101306804" name="Node 6804013 &gt; OR Sycamore Valley Rd" length="986" lanes="3.0" record="false">
+        <begin node_id="6804013"/>
+        <end node_id="6804014"/>
+        <dynamics type="CTM"/>
+        <qmax>397.7876</qmax>
+        <fd densityCritical="83.0344" densityJam="397.7876" flowMax="5807.5524" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401306804" name="Node 6804013 &gt; OR Sycamore Valley Rd" length="986" lanes="1.0" record="false">
+        <begin node_id="6804013"/>
+        <end node_id="6804014"/>
+        <dynamics type="CTM"/>
+        <qmax>169.6943</qmax>
+        <fd densityCritical="26.0355" densityJam="169.6943" flowMax="1436.5874" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101406804" name="OR Sycamore Valley Rd &gt; Node 6804015" length="986" lanes="3.0" record="false">
+        <begin node_id="6804014"/>
+        <end node_id="6804015"/>
+        <dynamics type="CTM"/>
+        <qmax>391.5792</qmax>
+        <fd densityCritical="90.2925" densityJam="391.5792" flowMax="5724.4476" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401406804" name="OR Sycamore Valley Rd &gt; Node 6804015" length="986" lanes="1.0" record="false">
+        <begin node_id="6804014"/>
+        <end node_id="6804015"/>
+        <dynamics type="CTM"/>
+        <qmax>191.5671</qmax>
+        <fd densityCritical="36.3153" densityJam="191.5671" flowMax="1935.5804" capacityDrop="0.0"/>
+      </link>
+      <link type="OR" id="201416804" name="&gt; OR Sycamore Valley Rd" length="1000" lanes="1.0" record="false">
+        <begin node_id="201416804"/>
+        <end node_id="6804014"/>
+        <dynamics type="CTM"/>
+        <qmax>50.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="12000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101506804" name="Node 6804015 &gt; Node 6804016" length="986" lanes="3.0" record="false">
+        <begin node_id="6804015"/>
+        <end node_id="6804016"/>
+        <dynamics type="CTM"/>
+        <qmax>391.5792</qmax>
+        <fd densityCritical="90.2925" densityJam="391.5792" flowMax="5724.4476" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401506804" name="Node 6804015 &gt; Node 6804016" length="986" lanes="1.0" record="false">
+        <begin node_id="6804015"/>
+        <end node_id="6804016"/>
+        <dynamics type="CTM"/>
+        <qmax>191.5671</qmax>
+        <fd densityCritical="36.3153" densityJam="191.5671" flowMax="1935.5804" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101606804" name="Node 6804016 &gt; Node 6804017" length="987" lanes="3.0" record="false">
+        <begin node_id="6804016"/>
+        <end node_id="6804017"/>
+        <dynamics type="CTM"/>
+        <qmax>391.5792</qmax>
+        <fd densityCritical="90.2925" densityJam="391.5792" flowMax="5724.4476" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401606804" name="Node 6804016 &gt; Node 6804017" length="987" lanes="1.0" record="false">
+        <begin node_id="6804016"/>
+        <end node_id="6804017"/>
+        <dynamics type="CTM"/>
+        <qmax>191.5671</qmax>
+        <fd densityCritical="36.3153" densityJam="191.5671" flowMax="1935.5804" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101706804" name="Node 6804017 &gt; Node 6804018" length="985" lanes="3.0" record="false">
+        <begin node_id="6804017"/>
+        <end node_id="6804018"/>
+        <dynamics type="CTM"/>
+        <qmax>480.6918</qmax>
+        <fd densityCritical="84.50349999999999" densityJam="480.6918" flowMax="5942.8252" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401706804" name="Node 6804017 &gt; Node 6804018" length="985" lanes="1.0" record="false">
+        <begin node_id="6804017"/>
+        <end node_id="6804018"/>
+        <dynamics type="CTM"/>
+        <qmax>158.3173</qmax>
+        <fd densityCritical="30.5206" densityJam="158.3173" flowMax="1916.951" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101806804" name="Node 6804018 &gt; Node 6804019" length="985" lanes="3.0" record="false">
+        <begin node_id="6804018"/>
+        <end node_id="6804019"/>
+        <dynamics type="CTM"/>
+        <qmax>480.6918</qmax>
+        <fd densityCritical="84.50349999999999" densityJam="480.6918" flowMax="5942.8252" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401806804" name="Node 6804018 &gt; Node 6804019" length="985" lanes="1.0" record="false">
+        <begin node_id="6804018"/>
+        <end node_id="6804019"/>
+        <dynamics type="CTM"/>
+        <qmax>158.3173</qmax>
+        <fd densityCritical="30.5206" densityJam="158.3173" flowMax="1916.951" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="101906804" name="Node 6804019 &gt; Node 6804020" length="988" lanes="3.0" record="false">
+        <begin node_id="6804019"/>
+        <end node_id="6804020"/>
+        <dynamics type="CTM"/>
+        <qmax>480.6918</qmax>
+        <fd densityCritical="84.50349999999999" densityJam="480.6918" flowMax="5942.8252" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="401906804" name="Node 6804019 &gt; Node 6804020" length="988" lanes="1.0" record="false">
+        <begin node_id="6804019"/>
+        <end node_id="6804020"/>
+        <dynamics type="CTM"/>
+        <qmax>158.3173</qmax>
+        <fd densityCritical="30.5206" densityJam="158.3173" flowMax="1916.951" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102006804" name="Node 6804020 &gt; Node 6804021" length="988" lanes="3.0" record="false">
+        <begin node_id="6804020"/>
+        <end node_id="6804021"/>
+        <dynamics type="CTM"/>
+        <qmax>480.6918</qmax>
+        <fd densityCritical="84.50349999999999" densityJam="480.6918" flowMax="5942.8252" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402006804" name="Node 6804020 &gt; Node 6804021" length="988" lanes="1.0" record="false">
+        <begin node_id="6804020"/>
+        <end node_id="6804021"/>
+        <dynamics type="CTM"/>
+        <qmax>158.3173</qmax>
+        <fd densityCritical="30.5206" densityJam="158.3173" flowMax="1916.951" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102106804" name="Node 6804021 &gt; Node 6804022" length="984" lanes="3.0" record="false">
+        <begin node_id="6804021"/>
+        <end node_id="6804022"/>
+        <dynamics type="CTM"/>
+        <qmax>480.6918</qmax>
+        <fd densityCritical="84.50349999999999" densityJam="480.6918" flowMax="5942.8252" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402106804" name="Node 6804021 &gt; Node 6804022" length="984" lanes="1.0" record="false">
+        <begin node_id="6804021"/>
+        <end node_id="6804022"/>
+        <dynamics type="CTM"/>
+        <qmax>158.3173</qmax>
+        <fd densityCritical="30.5206" densityJam="158.3173" flowMax="1916.951" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102206804" name="Node 6804022 &gt; Node 6804023" length="986" lanes="3.0" record="false">
+        <begin node_id="6804022"/>
+        <end node_id="6804023"/>
+        <dynamics type="CTM"/>
+        <qmax>480.6918</qmax>
+        <fd densityCritical="84.50349999999999" densityJam="480.6918" flowMax="5942.8252" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402206804" name="Node 6804022 &gt; Node 6804023" length="986" lanes="1.0" record="false">
+        <begin node_id="6804022"/>
+        <end node_id="6804023"/>
+        <dynamics type="CTM"/>
+        <qmax>158.3173</qmax>
+        <fd densityCritical="30.5206" densityJam="158.3173" flowMax="1916.951" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102306804" name="Node 6804023 &gt; FR Crow Canyon Rd" length="986" lanes="3.0" record="false">
+        <begin node_id="6804023"/>
+        <end node_id="6804024"/>
+        <dynamics type="CTM"/>
+        <qmax>351.6927</qmax>
+        <fd densityCritical="77.212" densityJam="351.6927" flowMax="5215.1329" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402306804" name="Node 6804023 &gt; FR Crow Canyon Rd" length="986" lanes="1.0" record="false">
+        <begin node_id="6804023"/>
+        <end node_id="6804024"/>
+        <dynamics type="CTM"/>
+        <qmax>124.3005</qmax>
+        <fd densityCritical="31.2567" densityJam="124.3005" flowMax="1767.8322" capacityDrop="0.0"/>
+      </link>
+      <link type="FR" id="302316804" name="FR Crow Canyon Rd &gt;" length="1000" lanes="1.0" record="false">
+        <begin node_id="6804024"/>
+        <end node_id="302316804"/>
+        <dynamics type="CTM"/>
+        <qmax>1630.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="21000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102406804" name="FR Crow Canyon Rd &gt; Node 6804025" length="987" lanes="3.0" record="false">
+        <begin node_id="6804024"/>
+        <end node_id="6804025"/>
+        <dynamics type="CTM"/>
+        <qmax>351.6927</qmax>
+        <fd densityCritical="77.212" densityJam="351.6927" flowMax="5215.1329" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402406804" name="FR Crow Canyon Rd &gt; Node 6804025" length="987" lanes="1.0" record="false">
+        <begin node_id="6804024"/>
+        <end node_id="6804025"/>
+        <dynamics type="CTM"/>
+        <qmax>124.3005</qmax>
+        <fd densityCritical="31.2567" densityJam="124.3005" flowMax="1767.8322" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102506804" name="Node 6804025 &gt; Node 6804026" length="988" lanes="3.0" record="false">
+        <begin node_id="6804025"/>
+        <end node_id="6804026"/>
+        <dynamics type="CTM"/>
+        <qmax>554.0955</qmax>
+        <fd densityCritical="70.8088" densityJam="554.0955" flowMax="4832.8671" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402506804" name="Node 6804025 &gt; Node 6804026" length="988" lanes="1.0" record="false">
+        <begin node_id="6804025"/>
+        <end node_id="6804026"/>
+        <dynamics type="CTM"/>
+        <qmax>68.2571</qmax>
+        <fd densityCritical="16.709" densityJam="68.2571" flowMax="979.4126" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102606804" name="Node 6804026 &gt; OR Crow Canyon Rd W" length="983" lanes="3.0" record="false">
+        <begin node_id="6804026"/>
+        <end node_id="6804027"/>
+        <dynamics type="CTM"/>
+        <qmax>542.2172</qmax>
+        <fd densityCritical="68.7375" densityJam="542.2171999999999" flowMax="4734.7972" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402606804" name="Node 6804026 &gt; OR Crow Canyon Rd W" length="983" lanes="1.0" record="false">
+        <begin node_id="6804026"/>
+        <end node_id="6804027"/>
+        <dynamics type="CTM"/>
+        <qmax>217.83</qmax>
+        <fd densityCritical="32.8034" densityJam="217.82999999999998" flowMax="1850.2657" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102706804" name="OR Crow Canyon Rd W &gt; OR Crow Canyon Rd E" length="988" lanes="3.0" record="false">
+        <begin node_id="6804027"/>
+        <end node_id="6804028"/>
+        <dynamics type="CTM"/>
+        <qmax>542.2172</qmax>
+        <fd densityCritical="68.7375" densityJam="542.2171999999999" flowMax="4734.7972" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402706804" name="OR Crow Canyon Rd W &gt; OR Crow Canyon Rd E" length="988" lanes="1.0" record="false">
+        <begin node_id="6804027"/>
+        <end node_id="6804028"/>
+        <dynamics type="CTM"/>
+        <qmax>217.83</qmax>
+        <fd densityCritical="32.8034" densityJam="217.82999999999998" flowMax="1850.2657" capacityDrop="0.0"/>
+      </link>
+      <link type="OR" id="202716804" name="&gt; OR Crow Canyon Rd W" length="1000" lanes="1.0" record="false">
+        <begin node_id="202716804"/>
+        <end node_id="6804027"/>
+        <dynamics type="CTM"/>
+        <qmax>100.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="12000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102806804" name="OR Crow Canyon Rd E &gt; Node 6804029" length="985" lanes="4.0" record="false">
+        <begin node_id="6804028"/>
+        <end node_id="6804029"/>
+        <dynamics type="CTM"/>
+        <qmax>711.9572</qmax>
+        <fd densityCritical="92.81310000000002" densityJam="711.9572000000001" flowMax="6191.4406" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402806804" name="OR Crow Canyon Rd E &gt; Node 6804029" length="985" lanes="1.0" record="false">
+        <begin node_id="6804028"/>
+        <end node_id="6804029"/>
+        <dynamics type="CTM"/>
+        <qmax>127.7201</qmax>
+        <fd densityCritical="17.6334" densityJam="127.7201" flowMax="1100.8671" capacityDrop="0.0"/>
+      </link>
+      <link type="OR" id="202816804" name="&gt; OR Crow Canyon Rd E" length="1000" lanes="1.0" record="false">
+        <begin node_id="202816804"/>
+        <end node_id="6804028"/>
+        <dynamics type="CTM"/>
+        <qmax>100.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="12000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="102906804" name="Node 6804029 &gt; Node 6804030" length="985" lanes="4.0" record="false">
+        <begin node_id="6804029"/>
+        <end node_id="6804030"/>
+        <dynamics type="CTM"/>
+        <qmax>704.818</qmax>
+        <fd densityCritical="90.3761" densityJam="704.818" flowMax="6144.4196" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="402906804" name="Node 6804029 &gt; Node 6804030" length="985" lanes="1.0" record="false">
+        <begin node_id="6804029"/>
+        <end node_id="6804030"/>
+        <dynamics type="CTM"/>
+        <qmax>285.2481</qmax>
+        <fd densityCritical="33.7572" densityJam="285.2481" flowMax="2514.9091" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103006804" name="Node 6804030 &gt; FR Bollinger Canyon Rd" length="991" lanes="4.0" record="false">
+        <begin node_id="6804030"/>
+        <end node_id="6804031"/>
+        <dynamics type="CTM"/>
+        <qmax>704.818</qmax>
+        <fd densityCritical="90.3761" densityJam="704.818" flowMax="6144.4196" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403006804" name="Node 6804030 &gt; FR Bollinger Canyon Rd" length="991" lanes="1.0" record="false">
+        <begin node_id="6804030"/>
+        <end node_id="6804031"/>
+        <dynamics type="CTM"/>
+        <qmax>285.2481</qmax>
+        <fd densityCritical="33.7572" densityJam="285.2481" flowMax="2514.9091" capacityDrop="0.0"/>
+      </link>
+      <link type="FR" id="303016804" name="FR Bollinger Canyon Rd &gt;" length="1000" lanes="1.0" record="false">
+        <begin node_id="6804031"/>
+        <end node_id="303016804"/>
+        <dynamics type="CTM"/>
+        <qmax>1630.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="21000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103106804" name="FR Bollinger Canyon Rd &gt; Node 6804032" length="984" lanes="4.0" record="false">
+        <begin node_id="6804031"/>
+        <end node_id="6804032"/>
+        <dynamics type="CTM"/>
+        <qmax>704.818</qmax>
+        <fd densityCritical="90.3761" densityJam="704.818" flowMax="6144.4196" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403106804" name="FR Bollinger Canyon Rd &gt; Node 6804032" length="984" lanes="1.0" record="false">
+        <begin node_id="6804031"/>
+        <end node_id="6804032"/>
+        <dynamics type="CTM"/>
+        <qmax>285.2481</qmax>
+        <fd densityCritical="33.7572" densityJam="285.2481" flowMax="2514.9091" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103206804" name="Node 6804032 &gt; OR Bollinger Canyon Rd W" length="986" lanes="3.0" record="false">
+        <begin node_id="6804032"/>
+        <end node_id="6804033"/>
+        <dynamics type="CTM"/>
+        <qmax>559.5083</qmax>
+        <fd densityCritical="73.03" densityJam="559.5083000000001" flowMax="4864.7832" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403206804" name="Node 6804032 &gt; OR Bollinger Canyon Rd W" length="986" lanes="1.0" record="false">
+        <begin node_id="6804032"/>
+        <end node_id="6804033"/>
+        <dynamics type="CTM"/>
+        <qmax>142.5437</qmax>
+        <fd densityCritical="22.25" densityJam="142.5437" flowMax="1202.9371" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103306804" name="OR Bollinger Canyon Rd W &gt; OR Bollinger Canyon Rd E" length="1124" lanes="3.0" record="false">
+        <begin node_id="6804033"/>
+        <end node_id="6804034"/>
+        <dynamics type="CTM"/>
+        <qmax>555.6191</qmax>
+        <fd densityCritical="88.1163" densityJam="555.6191" flowMax="5101.6224" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403306804" name="OR Bollinger Canyon Rd W &gt; OR Bollinger Canyon Rd E" length="1124" lanes="1.0" record="false">
+        <begin node_id="6804033"/>
+        <end node_id="6804034"/>
+        <dynamics type="CTM"/>
+        <qmax>238.0277</qmax>
+        <fd densityCritical="35.2808" densityJam="238.0277" flowMax="2027.4685" capacityDrop="0.0"/>
+      </link>
+      <link type="OR" id="203316804" name="&gt; OR Bollinger Canyon Rd W" length="1000" lanes="1.0" record="false">
+        <begin node_id="203316804"/>
+        <end node_id="6804033"/>
+        <dynamics type="CTM"/>
+        <qmax>100.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="12000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103406804" name="OR Bollinger Canyon Rd E &gt; Node 6804035" length="851" lanes="3.0" record="false">
+        <begin node_id="6804034"/>
+        <end node_id="6804035"/>
+        <dynamics type="CTM"/>
+        <qmax>555.6191</qmax>
+        <fd densityCritical="88.1163" densityJam="555.6191" flowMax="5101.6224" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403406804" name="OR Bollinger Canyon Rd E &gt; Node 6804035" length="851" lanes="1.0" record="false">
+        <begin node_id="6804034"/>
+        <end node_id="6804035"/>
+        <dynamics type="CTM"/>
+        <qmax>238.0277</qmax>
+        <fd densityCritical="35.2808" densityJam="238.0277" flowMax="2027.4685" capacityDrop="0.0"/>
+      </link>
+      <link type="OR" id="203416804" name="&gt; OR Bollinger Canyon Rd E" length="1000" lanes="1.0" record="false">
+        <begin node_id="203416804"/>
+        <end node_id="6804034"/>
+        <dynamics type="CTM"/>
+        <qmax>100.0</qmax>
+        <fd densityCritical="320.0" densityJam="1630.0" flowMax="12000.0" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103506804" name="Node 6804035 &gt; Node 6804036" length="987" lanes="3.0" record="false">
+        <begin node_id="6804035"/>
+        <end node_id="6804036"/>
+        <dynamics type="CTM"/>
+        <qmax>555.6191</qmax>
+        <fd densityCritical="88.1163" densityJam="555.6191" flowMax="5101.6224" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403506804" name="Node 6804035 &gt; Node 6804036" length="987" lanes="1.0" record="false">
+        <begin node_id="6804035"/>
+        <end node_id="6804036"/>
+        <dynamics type="CTM"/>
+        <qmax>238.0277</qmax>
+        <fd densityCritical="35.2808" densityJam="238.0277" flowMax="2027.4685" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103606804" name="Node 6804036 &gt; Node 6804037" length="986" lanes="3.0" record="false">
+        <begin node_id="6804036"/>
+        <end node_id="6804037"/>
+        <dynamics type="CTM"/>
+        <qmax>551.5595</qmax>
+        <fd densityCritical="84.9033" densityJam="551.5595" flowMax="5489.3986" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403606804" name="Node 6804036 &gt; Node 6804037" length="986" lanes="1.0" record="false">
+        <begin node_id="6804036"/>
+        <end node_id="6804037"/>
+        <dynamics type="CTM"/>
+        <qmax>142.9766</qmax>
+        <fd densityCritical="33.6391" densityJam="142.97660000000002" flowMax="1886.4615" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103706804" name="Node 6804037 &gt; Node 6804038" length="986" lanes="3.0" record="false">
+        <begin node_id="6804037"/>
+        <end node_id="6804038"/>
+        <dynamics type="CTM"/>
+        <qmax>418.0713</qmax>
+        <fd densityCritical="84.56530000000001" densityJam="418.07130000000006" flowMax="5505.035" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403706804" name="Node 6804037 &gt; Node 6804038" length="986" lanes="1.0" record="false">
+        <begin node_id="6804037"/>
+        <end node_id="6804038"/>
+        <dynamics type="CTM"/>
+        <qmax>193.6592</qmax>
+        <fd densityCritical="33.0486" densityJam="193.6592" flowMax="1856.1958" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103806804" name="Node 6804038 &gt; Node 6804039" length="987" lanes="3.0" record="false">
+        <begin node_id="6804038"/>
+        <end node_id="6804039"/>
+        <dynamics type="CTM"/>
+        <qmax>418.0713</qmax>
+        <fd densityCritical="84.56530000000001" densityJam="418.07130000000006" flowMax="5505.035" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403806804" name="Node 6804038 &gt; Node 6804039" length="987" lanes="1.0" record="false">
+        <begin node_id="6804038"/>
+        <end node_id="6804039"/>
+        <dynamics type="CTM"/>
+        <qmax>193.6592</qmax>
+        <fd densityCritical="33.0486" densityJam="193.6592" flowMax="1856.1958" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="103906804" name="Node 6804039 &gt; Node 6804040" length="985" lanes="3.0" record="false">
+        <begin node_id="6804039"/>
+        <end node_id="6804040"/>
+        <dynamics type="CTM"/>
+        <qmax>418.0713</qmax>
+        <fd densityCritical="84.56530000000001" densityJam="418.07130000000006" flowMax="5505.035" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="403906804" name="Node 6804039 &gt; Node 6804040" length="985" lanes="1.0" record="false">
+        <begin node_id="6804039"/>
+        <end node_id="6804040"/>
+        <dynamics type="CTM"/>
+        <qmax>193.6592</qmax>
+        <fd densityCritical="33.0486" densityJam="193.6592" flowMax="1856.1958" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="104006804" name="Node 6804040 &gt; Node 6804041" length="988" lanes="3.0" record="false">
+        <begin node_id="6804040"/>
+        <end node_id="6804041"/>
+        <dynamics type="CTM"/>
+        <qmax>418.0713</qmax>
+        <fd densityCritical="84.56530000000001" densityJam="418.07130000000006" flowMax="5505.035" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="404006804" name="Node 6804040 &gt; Node 6804041" length="988" lanes="1.0" record="false">
+        <begin node_id="6804040"/>
+        <end node_id="6804041"/>
+        <dynamics type="CTM"/>
+        <qmax>193.6592</qmax>
+        <fd densityCritical="33.0486" densityJam="193.6592" flowMax="1856.1958" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="104106804" name="Node 6804041 &gt; Node 6804042" length="984" lanes="3.0" record="false">
+        <begin node_id="6804041"/>
+        <end node_id="6804042"/>
+        <dynamics type="CTM"/>
+        <qmax>418.0713</qmax>
+        <fd densityCritical="84.56530000000001" densityJam="418.07130000000006" flowMax="5505.035" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="404106804" name="Node 6804041 &gt; Node 6804042" length="984" lanes="1.0" record="false">
+        <begin node_id="6804041"/>
+        <end node_id="6804042"/>
+        <dynamics type="CTM"/>
+        <qmax>193.6592</qmax>
+        <fd densityCritical="33.0486" densityJam="193.6592" flowMax="1856.1958" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="104206804" name="Node 6804042 &gt; Node 6804043" length="987" lanes="3.0" record="false">
+        <begin node_id="6804042"/>
+        <end node_id="6804043"/>
+        <dynamics type="CTM"/>
+        <qmax>583.6742</qmax>
+        <fd densityCritical="84.6195" densityJam="583.6742" flowMax="5460.9231" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="404206804" name="Node 6804042 &gt; Node 6804043" length="987" lanes="1.0" record="false">
+        <begin node_id="6804042"/>
+        <end node_id="6804043"/>
+        <dynamics type="CTM"/>
+        <qmax>156.4062</qmax>
+        <fd densityCritical="34.6495" densityJam="156.4062" flowMax="1979.3566" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="104306804" name="Node 6804043 &gt; Node 6804044" length="987" lanes="3.0" record="false">
+        <begin node_id="6804043"/>
+        <end node_id="6804044"/>
+        <dynamics type="CTM"/>
+        <qmax>583.6742</qmax>
+        <fd densityCritical="84.6195" densityJam="583.6742" flowMax="5460.9231" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="404306804" name="Node 6804043 &gt; Node 6804044" length="987" lanes="1.0" record="false">
+        <begin node_id="6804043"/>
+        <end node_id="6804044"/>
+        <dynamics type="CTM"/>
+        <qmax>156.4062</qmax>
+        <fd densityCritical="34.6495" densityJam="156.4062" flowMax="1979.3566" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="104406804" name="Node 6804044 &gt; Node 6804045" length="985" lanes="3.0" record="false">
+        <begin node_id="6804044"/>
+        <end node_id="6804045"/>
+        <dynamics type="CTM"/>
+        <qmax>583.6742</qmax>
+        <fd densityCritical="84.6195" densityJam="583.6742" flowMax="5460.9231" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="404406804" name="Node 6804044 &gt; Node 6804045" length="985" lanes="1.0" record="false">
+        <begin node_id="6804044"/>
+        <end node_id="6804045"/>
+        <dynamics type="CTM"/>
+        <qmax>156.4062</qmax>
+        <fd densityCritical="34.6495" densityJam="156.4062" flowMax="1979.3566" capacityDrop="0.0"/>
+      </link>
+      <link type="FW" id="104506804" name="Node 6804045 &gt;" length="989" lanes="3.0" record="false">
+        <begin node_id="6804045"/>
+        <end node_id="104506804"/>
+        <dynamics type="CTM"/>
+        <qmax>610.8932</qmax>
+        <fd densityCritical="79.9169" densityJam="610.8932" flowMax="5309.7622" capacityDrop="0.0"/>
+      </link>
+      <link type="HOV" id="404506804" name="Node 6804045 &gt;" length="989" lanes="1.0" record="false">
+        <begin node_id="6804045"/>
+        <end node_id="404506804"/>
+        <dynamics type="CTM"/>
+        <qmax>110.9984</qmax>
+        <fd densityCritical="27.8317" densityJam="110.9984" flowMax="1580.1678" capacityDrop="0.0"/>
+      </link>
+    </LinkList>
+    <ODList>
+      <od begin="6804003" end="6804045">
+        <PathList>
+          <path name="Freeway mainline route" id="1">100206804,100306804,100406804,100506804,100606804,100706804,100806804,100906804,101006804,101106804,101206804,101306804,101406804,101506804,101606804,101706804,101806804,101906804,102006804,102106804,102206804,102306804,102406804,102506804,102606804,102706804,102806804,102906804,103006804,103106804,103206804,103306804,103406804,103506804,103606804,103706804,103806804,103906804,104006804,104106804,104206804,104306804,104406804,104506804</path>
+          <path name="Freeway HOV route" id="2">400206804,400306804,400406804,400506804,400606804,400706804,400806804,400906804,401006804,401106804,401206804,401306804,401406804,401506804,401606804,401706804,401806804,401906804,402006804,402106804,402206804,402306804,402406804,402506804,402606804,402706804,402806804,402906804,403006804,403106804,403206804,403306804,403406804,403506804,403606804,403706804,403806804,403906804,404006804,404106804,404206804,404306804,404406804,404506804</path>
+        </PathList>
+      </od>
+    </ODList>
+
+<SensorList>
+<sensor type="loop" id="400852" link_type="ML">
+  <description>Stone Valley Rd</description>
+  <links>200216804</links>
+  <parameters>
+    <parameter name="data_id" value="400852" />
+    <parameter name="vds" value="400852" />
+    <parameter name="hwy_name" value="680" />
+    <parameter name="hwy_dir" value="S" />
+    <parameter name="postmile" value="40.202" />
+    <parameter name="offset_in_link" value="0.5" />
+    <parameter name="length" value="0.24" />
+    <parameter name="lanes" value="4" />
+    <parameter name="start_time" value="0" />
+  </parameters>
+  <data_sources>
+    <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_07.txt" dt="300" format="pems" />
+    <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_08.txt" dt="300" format="pems" />
+    <source url="http://vii.path.berkeley.edu/~gomes/fdcalibrate/d04_text_station_5min_2010_12_09.txt" dt="300" format="pems" />
+  </data_sources>
+  <display_position><point lat="37.83508897256243" lng="-122.00963674378204" /></display_position>
+  <position><point lat="37.835136" lng="-122.009773" elevation="0.0"/></position>
+</sensor>
+</SensorList>
+
+  </network>
+</scenario>

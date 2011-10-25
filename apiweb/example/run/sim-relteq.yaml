@@ -1,0 +1,15 @@
+# example of a batch request for testing warmup
+# curl relteq-db.dyndns.org:9097/batch/new --data-binary @sim-relteq.yaml
+
+name:           sim-batch-test
+engine:         simulator
+group:          relteq
+user:           relteq
+n_runs:         3
+param:
+  update_period: 1
+  inputs:
+  - http://vii.path.berkeley.edu/~vjoel/test.xml
+  - <time_range begin_time="25200" duration="10800" />
+  output_types:
+  - text/plain

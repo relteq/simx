@@ -21,7 +21,7 @@ class WorkerManager
   attr_reader :instance_name
   
   # Contains string keys: log_file, log_level, runq_host, runq_port,
-  # runweb_host, runweb_port, workers, nstance_name. The value at workers has
+  # apiweb_host, apiweb_port, workers, nstance_name. The value at workers has
   # ikeys run_class, count, group, etc.
   attr_reader :config
   
@@ -72,7 +72,7 @@ class WorkerManager
 
     sid = Process.setsid
     log.info "sid = #{sid}"
-    trap "TERM" do
+    trap "TERM" do ## This seems to prevent INT when started using rake run?
       trap "TERM" do
         Process.waitall
         exit
@@ -92,8 +92,8 @@ class WorkerManager
         w["runq_host"] = config["runq_host"]
         w["runq_port"] = config["runq_port"]
         
-        w["runweb_host"] = config["runweb_host"]
-        w["runweb_port"] = config["runweb_port"]
+        w["apiweb_host"] = config["apiweb_host"]
+        w["apiweb_port"] = config["apiweb_port"]
         
         w["logdev"] = config["log_file"]
         
@@ -123,7 +123,9 @@ class WorkerManager
         # no error, just responding to TERM
         break
       else
-        log.info "Restarting worker."
+        n = 1
+        log.info "Restarting worker after #{n} seconds..."
+        sleep n
       end
     end
   
@@ -194,8 +196,13 @@ class WorkerManager
   def run_worker_once_in_ruby worker_spec
     run_class = get_scoped_constant(worker_spec["run_class"])
     pid = fork do
-      $0 = "#{run_class} worker for #{instance_name}"
-      Worker.new(run_class, worker_spec).execute
+      begin
+        $0 = "#{run_class} worker for #{instance_name}"
+        Worker.new(run_class, worker_spec).execute
+      rescue => e
+        log.error e
+        raise
+      end
     end
     log.info "started #{run_class} worker pid=#{pid}"
     Process.waitpid pid

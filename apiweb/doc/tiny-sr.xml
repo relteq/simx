@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario schemaVersion="1.0.14" name="short">
+  <settings>
+    <units>US</units>
+    <display dt="300" timeout="50" timeInitial="23400" timeMax="39600" />
+    <VehicleTypes>
+      <vtype name="SOV" weight="1.0" />
+      <vtype name="HOV" weight="1.0" />
+    </VehicleTypes>
+  </settings>
+
+  <network name="My Network" ml_control="false" q_control="false" dt="1" id="1">
+    
+    <NodeList>
+      <node name="Node 1" type="S" id="1" lock="true">
+        <outputs>
+          <output link_id="5"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lng="-122.29111433029176" lat="37.85117239046442" />
+        </position>
+      </node>
+      <node name="Node 2" type="S" id="2" lock="false">
+        <outputs/>
+        <inputs>
+          <input link_id="5">
+            <weavingfactors></weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lng="-122.2998583316803" lat="37.867596929343975" />
+        </position>
+      </node>
+    </NodeList>
+    
+    <LinkList>
+      <link name="1 -> 2" lanes="1" length="0.189892305438032" type="ST" id="5">
+        <begin node_id="1"/>
+        <end node_id="2"/>
+        <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
+        <dynamics type="CTM"/>
+        <qmax>100</qmax>
+      </link>
+    </LinkList>
+    
+  </network>
+
+  <SplitRatioProfileSet>
+    <splitratios node_id="1" dt="0.1"/>
+  </SplitRatioProfileSet>
+
+  <EventSet id="1">
+    <event type="FD" link_id="5" tstamp="32400.0" enabled="true">
+      <description>accident</description>
+      <fd densityCritical="25.940298507462686"
+       densityJam="117.41398973400845" flowMax="1738.0" />
+    </event>
+  </EventSet>
+</scenario>
