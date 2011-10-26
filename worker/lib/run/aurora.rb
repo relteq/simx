@@ -2,7 +2,6 @@ require 'open-uri'
 require 'tmpdir'
 require 'mime/types'
 require 'nokogiri'
-require 'aws/s3'
 
 require 'worker/run/base'
 
@@ -69,8 +68,6 @@ module Run
     # Array of mime types that are expected from the engine.
     attr_reader :output_types
     
-    S3_BUCKET = ENV["WORKER_S3_BUCKET"] || "relteq-uploads-dev"
-
     INTERPRETER = "jruby"
 
     def initialize *args
@@ -202,7 +199,6 @@ module Run
 
       @results = {
         "ok"          => true,
-        "bucket"      => S3_BUCKET,
         "output_urls" => output_urls
       }
 
@@ -215,41 +211,27 @@ module Run
       @results
     end
 
-    def s3
-      unless @s3
-        require 'aws/s3'
-  
-        AWS::S3::Base.establish_connection!(
-          :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
-          :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
-        )
-      
-        @s3 = true
-      end
-    end
-    
+    # stores data using apiweb's storage service; returns url to the data
     def store data, mime_type = nil
-      s3 
-      ## need option to store locally for debugging, not s3
       ### Worker should not know about this stuff.
+      ### tmp creds could be supplied in the run request sent to the worker?
+      apiweb_user = ENV["APIWEB_USER"] || "relteq"
+      apiweb_password = ENV["APIWEB_PASSWORD"] || "topl5678"
 
-      opts = {}
-      expiry = :doomsday 
+      expiry = 24*60*60 ## ok?
       ext = ext_for_mime_type(mime_type) if mime_type
-      hash = Digest::MD5.hexdigest(data)
-      filename = "#{hash}.#{ext}"
-      
-      obj = (AWS::S3::S3Object.find filename, S3_BUCKET rescue nil)
-      if obj
-        log.info "reusing storage on S3 with type #{mime_type} at #{filename}"
-      else
-        log.info "requesting storage from S3 with type #{mime_type}" +
-          " at #{filename}"
-        AWS::S3::S3Object.store filename, data, S3_BUCKET, opts
-        obj = AWS::S3::S3Object.find filename, S3_BUCKET
-      end
-      
-      return filename
+
+      post_url = "http://" +
+        "#{apiweb_host}:#{apiweb_port}/store?" +
+        "expiry=#{expiry}&ext=#{ext}"
+
+      log.info "requesting storage from #{post_url}"
+      rsrc = RestClient::Resource.new(post_url, apiweb_user, apiweb_password)
+      response = rsrc.post data
+      data_url = "#{response.body}" ## to_s instead?
+
+      log.info "results stored at #{data_url}"
+      data_url
     end
 
     def cleanup

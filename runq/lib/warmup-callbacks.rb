@@ -26,7 +26,14 @@ module Runq
       
       filename = req.data['output_urls'][1] # state after warmup
       bucket = req.data['bucket']
-      url = "http://s3.amazonaws.com/#{bucket}/#{filename}" ## ok?
+      
+      case filename
+      when /^\w+:/ # looks like url already
+        url = filename
+      else
+        url = "http://s3.amazonaws.com/#{bucket}/#{filename}" ## ok?
+      end
+      ## this is really hideous
       log.debug "warmup run #{run[:id]} result: #{url}"
       
       orig_batch_id = batch_param["orig_batch_id"]
