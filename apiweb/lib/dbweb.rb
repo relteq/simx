@@ -488,19 +488,26 @@ aget "/reports/:report_id/report_xml" do |report_id|
   end
 end
 
-# Request s3 storage; returns the s3 key, which is
-# a md5 hash of the data, plus the specified file extension, if any, which
-# s3 uses to make a content-type header. Expiry is in seconds. Default is
-# none. Expiry is not guaranteed, but will not happen before the specified
-# number of seconds has elapsed.
+# Request s3 storage. +params+ can include "expiry", "ext".
+#
+# Returns the s3 key, which is a md5 hash of the data, plus the specified file
+# extension, if any, which s3 uses to make a content-type header. Expiry is in
+# seconds. Default is none. Expiry is not guaranteed, but will not happen before
+# the specified number of seconds has elapsed.
 apost "/store" do
   protected!
-
+  
+  host_with_port = request.host_with_port
+  
   defer_cautiously do
     LOGGER.info "started deferred store operation"
     
     data = request.body.read
     url = s3.store(data, params)
+    if url !~ /^\w+:/
+      # in case of local storage, url omits the proto, host, port
+      url = "http://#{host_with_port}#{url}"
+    end
 
     LOGGER.info "finished deferred store operation, url = #{url}"
     body url
