@@ -25,6 +25,7 @@ helpers do
         )
 
       else
+        ## use mock for short-term storage even if s3 available
         require 'simx/s3-aws'
         @s3 = S3_AWS.new(
           :creds => {

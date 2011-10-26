@@ -55,6 +55,7 @@ class S3_Mock
       log.debug "expiry=#{expiry.inspect}, data: " + data[0..50] if log
 
       if expiry
+## use fsdb metadata
 ##        opts["x-amz-meta-expiry"] = Time.at(Time.now + expiry)
 ##        ### need daemon to expire things
       end

@@ -21,8 +21,8 @@ class WorkerManager
   attr_reader :instance_name
   
   # Contains string keys: log_file, log_level, runq_host, runq_port,
-  # apiweb_host, apiweb_port, workers, nstance_name. The value at workers has
-  # ikeys run_class, count, group, etc.
+  # apiweb_host, apiweb_port, workers, instance_name. The value at workers has
+  # keys run_class, count, group, etc.
   attr_reader :config
   
   class << self
