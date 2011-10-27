@@ -44,14 +44,14 @@ module Runq
     
     def create_tables
       transaction do
-        create_workers_table unless table_exists?(:workers)
-        create_batches_table unless table_exists?(:batches)
-        create_runs_table unless table_exists?(:runs)
+        create_workers_table
+        create_batches_table
+        create_runs_table
       end
     end
 
     def create_workers_table
-      create_table :workers do
+      create_table? :workers do
         primary_key :id
         
         text        :host   # on which process is running
@@ -85,7 +85,7 @@ module Runq
     end
 
     def create_batches_table
-      create_table :batches do
+      create_table? :batches do
         primary_key :id
         
         text        :name
@@ -108,7 +108,7 @@ module Runq
     end
     
     def create_runs_table
-      create_table :runs do
+      create_table? :runs do
         primary_key :id
         
         foreign_key :batch_id, :batches, :key => :id, :null => false
@@ -125,8 +125,10 @@ module Runq
         float       :frac_complete
         constraint  nil, :frac_complete => 0..1
 
-        text        :update_callback # name of function to call when worker updates
-        text        :finish_callback # name of function to call when worker finishes
+        text        :update_callback
+                              # name of method to call when worker updates
+        text        :finish_callback
+                              # name of method to call when worker finishes
         
         index :worker_id
         index :batch_id

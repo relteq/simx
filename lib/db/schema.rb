@@ -5,7 +5,7 @@ require 'db/util'
 module Aurora
   def self.create_tables? db=DB
     # For testing, this is a stub.
-    create_table? :projects, db do
+    db.create_table? :projects do
       primary_key :id
     end
 
@@ -26,23 +26,23 @@ module Aurora
     # or duplication or have been explicitly given a commmon identity by the
     # user or application.
 
-    create_table? :node_families, db do
+    db.create_table? :node_families do
       primary_key :id
     end
 
-    create_table? :link_families, db do
+    db.create_table? :link_families do
       primary_key :id
     end
 
-    create_table? :route_families, db do
+    db.create_table? :route_families do
       primary_key :id
     end
 
-    create_table? :sensor_families, db do
+    db.create_table? :sensor_families do
       primary_key :id
     end
 
-    create_table? :networks, db do
+    db.create_table? :networks do
       primary_key :id
       foreign_key :project_id, :projects
 
@@ -65,7 +65,7 @@ module Aurora
       timestamp   :updated_at
     end
 
-    create_table? :network_lists, db do
+    db.create_table? :network_lists do
       foreign_key :network_id, :networks, :null => false
       foreign_key :child_id, :networks, :null => false
     end
@@ -91,7 +91,7 @@ module Aurora
     #
     # See apiweb/doc/subnetworks.txt for details.
 
-    create_table? :nodes, db do
+    db.create_table? :nodes do
       # This network_id is the id of the network to which the node belongs.
       # This is ID changes when pasting the node into a different network.
       # Serialized in xml implicitly using the hierarchy.
@@ -110,7 +110,7 @@ module Aurora
       boolean     :lock
     end
 
-    create_table? :links, db do
+    db.create_table? :links do
       foreign_key :network_id, :networks, :null => false
       foreign_key :id, :link_families, :null => false
       primary_key [:network_id, :id]
@@ -145,7 +145,7 @@ module Aurora
       integer     :end_order    # ordinal of this link among all with same end
     end
 
-    create_table? :routes, db do
+    db.create_table? :routes do
       foreign_key :network_id, :networks, :null => false
       foreign_key :id, :route_families, :null => false
       primary_key [:network_id, :id]
@@ -153,7 +153,7 @@ module Aurora
       text        :name
     end
 
-    create_table? :route_links, db do
+    db.create_table? :route_links do
       foreign_key :network_id, :networks, :null => false
       integer     :route_id, :null => false
       integer     :link_id, :null => false
@@ -168,7 +168,7 @@ module Aurora
       unique      [:network_id, :route_id, :ordinal]
     end
 
-    create_table? :sensors, db do
+    db.create_table? :sensors do
       foreign_key :network_id, :networks, :null => false
       foreign_key :id, :sensor_families, :null => false
       primary_key [:network_id, :id]
@@ -195,7 +195,7 @@ module Aurora
       float       :elevation, :default => 0
     end
 
-    create_table? :signals, db do
+    db.create_table? :signals do
       primary_key :id ## this doesn't need network_id, does it?
       
       foreign_key :network_id, :networks, :null => false
@@ -205,7 +205,7 @@ module Aurora
                   :key => [:network_id, :id]
     end
 
-    create_table? :phases, db do
+    db.create_table? :phases do
       primary_key :id ## this doesn't need network_id, does it?
     
       foreign_key :signal_id, :signals, :null => false
@@ -228,7 +228,7 @@ module Aurora
       boolean     :recall
     end
 
-    create_table? :phase_links, db do
+    db.create_table? :phase_links do
       foreign_key :phase_id, :phases, :null => false
 
       foreign_key :network_id, :networks, :null => false
@@ -249,7 +249,7 @@ module Aurora
     # constraint that the network of the scenario be identical to the network
     # of the scenario's split_ratio_profile_set.
 
-    create_table? :split_ratio_profile_sets, db do
+    db.create_table? :split_ratio_profile_sets do
       primary_key :id
       text        :name
       text        :description
@@ -259,7 +259,7 @@ module Aurora
       timestamp   :updated_at
     end
 
-    create_table? :capacity_profile_sets, db do
+    db.create_table? :capacity_profile_sets do
       primary_key :id
       text        :name
       text        :description
@@ -269,7 +269,7 @@ module Aurora
       timestamp   :updated_at
     end
 
-    create_table? :demand_profile_sets, db do
+    db.create_table? :demand_profile_sets do
       primary_key :id
       text        :name
       text        :description
@@ -279,14 +279,14 @@ module Aurora
       timestamp   :updated_at
     end
 
-    create_table? :initial_condition_sets, db do
+    db.create_table? :initial_condition_sets do
       primary_key :id
       text        :name
       text        :description
       foreign_key :network_id, :networks, :null => false
     end
 
-    create_table? :event_sets, db do
+    db.create_table? :event_sets do
       primary_key :id
       text        :name
       text        :description
@@ -296,7 +296,7 @@ module Aurora
       timestamp   :updated_at
     end
 
-    create_table? :controller_sets, db do
+    db.create_table? :controller_sets do
       primary_key :id
       text        :name
       text        :description
@@ -315,7 +315,7 @@ module Aurora
     # network_id, because that is only for editing purposes. The network ID
     # for node lookup must come from the scenario.
 
-    create_table? :split_ratio_profiles, db do
+    db.create_table? :split_ratio_profiles do
       primary_key :id
 
       float       :start_time, :default => 0
@@ -332,7 +332,7 @@ module Aurora
       foreign_key :node_id, :node_families, :null => false
     end
 
-    create_table? :capacity_profiles, db do
+    db.create_table? :capacity_profiles do
       primary_key :id
 
       float       :start_time, :default => 0
@@ -349,7 +349,7 @@ module Aurora
       foreign_key :link_id, :link_families, :null => false
     end
 
-    create_table? :demand_profiles, db do
+    db.create_table? :demand_profiles do
       primary_key :id
 
       float       :start_time, :default => 0
@@ -368,7 +368,7 @@ module Aurora
       foreign_key :link_id, :link_families, :null => false
     end
 
-    create_table? :initial_conditions, db do
+    db.create_table? :initial_conditions do
       primary_key :id
 
       text        :density
@@ -379,7 +379,7 @@ module Aurora
       foreign_key :link_id, :link_families, :null => false
     end
 
-    create_table? :events, db do
+    db.create_table? :events do
       primary_key :id
 
       text        :type, :null => false
@@ -405,7 +405,7 @@ module Aurora
       foreign_key :event_set_id, :event_sets, :null => false
     end
 
-    create_table? :controllers, db do
+    db.create_table? :controllers do
       primary_key :id
 
       text        :type, :null => false
@@ -434,7 +434,7 @@ module Aurora
     end
 
     # Not complete table, just keeping columns we need
-    create_table? :simulation_batch_reports, db do
+    db.create_table? :simulation_batch_reports do
       primary_key :id
       
       integer  :simulation_batch_list_id
@@ -446,7 +446,7 @@ module Aurora
       text     :s3_bucket
     end
 
-    create_table? :scenarios, db do
+    db.create_table? :scenarios do
       primary_key :id
       foreign_key :project_id, :projects
 
@@ -478,7 +478,7 @@ module Aurora
       timestamp   :updated_at
     end
 
-    create_table? :vehicle_types, db do
+    db.create_table? :vehicle_types do
       primary_key :id
 
       text        :name, :null => false
