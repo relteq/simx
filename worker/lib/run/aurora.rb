@@ -163,7 +163,7 @@ module Run
       
       log.info {
         "running aurora #{engine} with inputs:\n  " +
-        input_strings.map {|s|s[0..100].inspect}.join("\n  ")
+        input_strings.map {|s|s[0..100].inspect + "..."}.join("\n  ")
       }
 
       log.info {

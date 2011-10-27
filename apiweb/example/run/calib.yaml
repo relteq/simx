@@ -4,4 +4,8 @@ group:          topl
 user:           topl
 n_runs:         1
 param:
-  aurora_config: http://vii.path.berkeley.edu/~vjoel/ne680SNEW.xml
+  update_period: 1
+  inputs:
+  - http://localhost:9097/calib-test.xml
+  output_types:
+  - application/xml
