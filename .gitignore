@@ -4,3 +4,4 @@ config.yaml
 *.swp
 lib/simx/version.rb
 public/NetworkEditor.swf
+public/tmp

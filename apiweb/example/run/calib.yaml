@@ -6,6 +6,6 @@ n_runs:         1
 param:
   update_period: 1
   inputs:
-  - http://localhost:9097/calib-test.xml
+  - http://localhost:9097/tmp/calib-test.xml
   output_types:
   - application/xml
