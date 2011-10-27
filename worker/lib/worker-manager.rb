@@ -10,7 +10,6 @@ require 'worker/worker'
 require 'worker/run/aurora'
 require 'worker/run/dummy'
 require 'worker/run/generic'
-require 'worker/run/calibrator'
 
 # Daemon that starts sets of workers as child processes.
 # If a worker dies, restarts it. Each worker has a specified run_class, which
