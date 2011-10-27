@@ -47,16 +47,6 @@ vii:
       priority:     1
       retry_delay:  10
     
-    - run_class:    Run::Calibrator
-      count:        3
-      group:        topl
-      user:         topl
-      engine:       calibrator
-      cost:         0
-      speed:        1
-      priority:     1
-      retry_delay:  10
-
 path:
   host:         gateway.path.berkeley.edu
   user:         vjoel

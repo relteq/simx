@@ -28,19 +28,6 @@ local:
       priority:     1
       retry_delay:  10
 
-#    - run_class:    Run::Calibrator
-#      count:        1
-#      group:        topl
-#      user:         topl
-#      engine:       calibrator
-#      engine_opts:
-#        jar_file:   /home/vjoel/topl/calib/tmp/fdcalibrate.jar
-#        sensor_dir: /home/vjoel/topl/calib/tmp/
-#      cost:         0
-#      speed:        1
-#      priority:     1
-#      retry_delay:  10
-
 relteq-worker:
   host:         relteq-worker.dyndns.org
   user:         aurora
