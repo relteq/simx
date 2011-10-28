@@ -32,10 +32,8 @@ remote_files = FileList[
   "config.yaml",
   "lib",
   "bin",
-  "worker/lib" # need the lib, but not the daemon
+  "public"
 ]
-## refactor libs so that runq doesn't get sent to worker hosts, worker
-## doesn't get sent to runq hosts, etc.
 
 daemon_dirs = %w{
   runq
