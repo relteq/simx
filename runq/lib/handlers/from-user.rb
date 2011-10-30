@@ -147,6 +147,12 @@ module Runq
         "batch" => batch,
         "runs" => runs
     end
+    
+    # condition for early termination of the wait period
+    def wait_succeeded?
+      batch = runq.database[:batches].where(:id => batch_id).first
+      batch[:n_runs] == batch[:n_complete]
+    end
   end
 
   class Request::BatchList

@@ -120,7 +120,8 @@ module Runq
         
         integer     :batch_index    # in 0..n_runs-1
         
-        text        :data     # result data from run; short value or link
+        text        :data     # result data from run, in yaml, with keys such as
+                              # output_urls, ok, error
         
         float       :frac_complete
         constraint  nil, :frac_complete => 0..1

@@ -63,23 +63,29 @@ end
 
 ### RunStatus
 
-# checks if batch is all done
+# checks if batch is all done, optionally waiting some seconds
 # returns YAML string "--- true" or "--- false".
-get "/batch/:batch_id/done" do
+aget "/batch/:batch_id/done" do |batch_id|
   protected!
-  batch_id = Integer(params[:batch_id])
-  LOGGER.info "Batch done request, batch_id=#{batch_id}"
-  req = Runq::Request::BatchStatus.new :batch_id => batch_id
-  resp = send_request_and_recv_response req
-  batch = resp["batch"]
-  if batch
-    n_runs = batch[:n_runs]
-    n_complete = batch[:n_complete]
-    (n_runs == n_complete).to_yaml
-  else
-    status 404
-    return "no such batch"
-    ### these responses are not consistent with the "status"=>"ok" stuff
+  
+  batch_id = Integer(batch_id)
+  wait = params[:wait] && Integer(params[:wait])
+  LOGGER.info "Batch done request, batch_id=#{batch_id}, wait=#{wait}"
+  
+  req = Runq::Request::BatchStatus.new :batch_id => batch_id, :wait => wait
+  
+  defer_cautiously do
+    resp = send_request_and_recv_response req
+    batch = resp["batch"]
+    if batch
+      n_runs = batch[:n_runs]
+      n_complete = batch[:n_complete]
+      body (n_runs == n_complete).to_yaml
+    else
+      status 404
+      body "no such batch"
+      ### these responses are not consistent with the "status"=>"ok" stuff
+    end
   end
 end
 

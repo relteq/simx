@@ -4,6 +4,13 @@ module Runq
   # runq adds, for its own user, extra functionality to the classes in
   # request-handlers.rb.
   class Request
+    # If provided and a positive number, the client is willing to wait the
+    # specied number of seconds for a response to a request this is likely to
+    # take some time. The client should timeout and re-request if no response is
+    # received by this time. (The request is not stored persistently, so if
+    # runq restarts, it is forgotten.)
+    attr_accessor :wait
+    
     def initialize h={}
       h.each do |k,v|
         send "#{k}=", v

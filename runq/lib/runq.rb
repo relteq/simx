@@ -216,12 +216,49 @@ module Runq
     end
     
     def handle_request req
+      if not req.wait or req.wait == 0 or req.wait_succeeded?
+        handle_request_now req
+        check_deferred req
+      else
+        defer_request req
+      end
+    end
+    
+    def handle_request_now req
       Timeout.timeout REQUEST_TIMEOUT do
         req.handle
       end
+      
+    rescue *NETWORK_ERRORS => e
+      log.info "Client disconnected: (#{e.message}) " +
+        "before handling request #{req} from #{req.sock.peeraddr.inspect}"
+        
     rescue Timeout::Error
       log.warn "Timed out while handling request #{req} from " +
         req.sock.peeraddr.inspect
+    end
+    
+    def deferred_requests
+      @deferred_requests ||= []
+    end
+    
+    def defer_request req
+      deferred_requests.push [req, Time.now + [req.wait, 60].min]
+    end
+    
+    # If this req changes the state that some deferred request is waiting for,
+    # check if we can handle the deferred request.
+    def check_deferred completed_req
+      todo = deferred_requests
+      @deferred_requests = []
+      todo.each do |dreq, time|
+        if dreq.wait_succeeded?
+          ## probably could narrow this (check batch_id, check completed_req)
+          handle_request_now dreq
+        elsif Time.now < time
+          deferred_requests.push [dreq, time]
+        end
+      end
     end
     
     # +req+ is WorkerReady; returns worker id
