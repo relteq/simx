@@ -79,6 +79,11 @@ configure do
   ].flatten.join("\n")
 end
 
+helpers do
+  def log
+    LOGGER
+  end
+end
 
 ## this should be in config block?
 SIMX_S3_BUCKET = ENV["SIMX_S3_BUCKET"] || "relteq-uploads-dev"
@@ -141,6 +146,6 @@ end
 
 error do
   msg = request.env['sinatra.error']
-  LOGGER.error msg.inspect + "\n" + msg.backtrace.join("\n  ")
+  log.error msg.inspect + "\n" + msg.backtrace.join("\n  ")
   "Error: #{msg}\n"
 end

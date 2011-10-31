@@ -12,7 +12,7 @@
 post '/batch/new' do
   protected!
   s = request.body.read
-  LOGGER.info "StartBatch request:\n#{s}"
+  log.info "StartBatch request:\n#{s}"
   h = YAML.load(s)
   req = Runq::Request::StartBatch.new h
   resp = send_request_and_recv_response req
@@ -23,7 +23,7 @@ end
 get '/user/:id' do
   protected!
   id = Integer(params[:id])
-  LOGGER.info "UserStatus request, id=#{id}"
+  log.info "UserStatus request, id=#{id}"
   req = Runq::Request::UserStatus.new :user_id => id
   resp = send_request_and_recv_response req
   resp.to_yaml
@@ -33,7 +33,7 @@ end
 get '/batch/:id' do
   protected!
   id = Integer(params[:id])
-  LOGGER.info "BatchStatus request, id=#{id}"
+  log.info "BatchStatus request, id=#{id}"
   req = Runq::Request::BatchStatus.new :batch_id => id
   resp = send_request_and_recv_response req
   resp.to_yaml
@@ -42,7 +42,7 @@ end
 # BatchList
 get %r{^/batch(?:es)?$} do
   protected!
-  LOGGER.info "BatchList request"
+  log.info "BatchList request"
   req = Runq::Request::BatchList.new
   resp = send_request_and_recv_response req
   resp.to_yaml
@@ -53,7 +53,7 @@ end
 # WorkerList
 get %r{^/workers?$} do
   protected!
-  LOGGER.info "WorkerList request"
+  log.info "WorkerList request"
   req = Runq::Request::WorkerList.new
   resp = send_request_and_recv_response req
   resp.to_yaml
@@ -70,7 +70,7 @@ aget "/batch/:batch_id/done" do |batch_id|
   
   batch_id = Integer(batch_id)
   wait = params[:wait] && Integer(params[:wait])
-  LOGGER.info "Batch done request, batch_id=#{batch_id}, wait=#{wait}"
+  log.info "Batch done request, batch_id=#{batch_id}, wait=#{wait}"
   
   req = Runq::Request::BatchStatus.new :batch_id => batch_id, :wait => wait
   
@@ -95,7 +95,7 @@ get "/batch/:batch_id/run/:run_idx/done" do
   protected!
   batch_id = Integer(params[:batch_id])
   run_idx = Integer(params[:run_idx])
-  LOGGER.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
+  log.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
   run = resp["runs"][run_idx] ### handle nil
@@ -108,7 +108,7 @@ get "/batch/:batch_id/run/:run_idx/result" do
   protected!
   batch_id = Integer(params[:batch_id])
   run_idx = Integer(params[:run_idx])
-  LOGGER.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
+  log.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
   run = resp["runs"][run_idx]

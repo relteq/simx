@@ -21,7 +21,7 @@ helpers do
         @s3 = S3_Mock.new(
           :dir      => File.join(data_dir, "s3-mock", SIMX_S3_BUCKET),
           :url_base => "/file",
-          :log      => LOGGER
+          :log      => log
         )
 
       else
@@ -33,7 +33,7 @@ helpers do
             :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
           },
           :bucket => SIMX_S3_BUCKET,
-          :log    => LOGGER
+          :log    => log
         )
       end
     end
@@ -59,20 +59,20 @@ helpers do
   def export_scenario_xml scenario_id
     Aurora::Scenario[Integer(scenario_id)].to_xml
   rescue => e
-    LOGGER.error "export_scenario_xml(#{scenario_id}): #{e}"
+    log.error "export_scenario_xml(#{scenario_id}): #{e}"
     nil
   end
   
   def export_network_xml network_id
     Aurora::Network[Integer(network_id)].to_xml
   rescue => e
-    LOGGER.error "export_network_xml(#{network_id}): #{e}"
+    log.error "export_network_xml(#{network_id}): #{e}"
     nil
   end
   
   def export_wrapped_network_xml network_id
     nw_xml = export_network_xml(network_id)
-    LOGGER.debug "nw_xml = #{nw_xml[0..200]}..."
+    log.debug "nw_xml = #{nw_xml[0..200]}..."
     
     sc_xml = %{\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -88,7 +88,7 @@ helpers do
     sc_xml
     
   rescue => e
-    LOGGER.error "export_wrapped_network_xml(#{network_id}): #{e}"
+    log.error "export_wrapped_network_xml(#{network_id}): #{e}"
     nil
   end
 end

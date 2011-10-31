@@ -4,9 +4,9 @@ helpers do
       begin
         yield
       rescue Exception => e
-        LOGGER.error "error: #{request.url}, params=#{request.params.inspect}"
-        LOGGER.error "error text: #{e.message}"
-        LOGGER.error "error backtrace: #{e.backtrace.join("\n  ")}"
+        log.error "error: #{request.url}, params=#{request.params.inspect}"
+        log.error "error text: #{e.message}"
+        log.error "error backtrace: #{e.backtrace.join("\n  ")}"
         status 500
         body { "Internal Error" }
       end

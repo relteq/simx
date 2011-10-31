@@ -4,14 +4,14 @@ helpers do
     MTCP::Socket.open(RUNQ_HOST, RUNQ_PORT) do |sock|
       sock.send_message req.to_yaml
       reply_str = sock.recv_message
-#LOGGER.info "reply_str = #{reply_str.inspect}"
+#log.info "reply_str = #{reply_str.inspect}"
       reply = YAML.load(reply_str)
     end
 
     if reply["status"] == "ok"
-      LOGGER.info reply["message"]
+      log.info reply["message"]
     else
-      LOGGER.warn reply["message"]
+      log.warn reply["message"]
     end
 
     return reply

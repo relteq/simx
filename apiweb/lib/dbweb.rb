@@ -10,7 +10,7 @@ aget "/import/scenario/:filename" do |filename|
   protected!
 #  params[:access_token] or not_authorized!
 
-  LOGGER.info "Attempting to import #{params[:bucket]}/#{filename}"
+  log.info "Attempting to import #{params[:bucket]}/#{filename}"
 
   import_options = {}
 
@@ -22,15 +22,15 @@ aget "/import/scenario/:filename" do |filename|
     :id => params[:to_project]}, params[:access_token])
     defer_cautiously do
       xml_plaintext = s3.fetch(filename, params[:bucket])
-      LOGGER.info "loaded XML data from #{filename} for import"
+      log.info "loaded XML data from #{filename} for import"
       xml_data = Nokogiri.XML(xml_plaintext).xpath("/scenario")[0]
       Aurora::ImportUtil.rekey!(xml_data)
       scenario = import_scenario_xml(xml_data, params[:to_project], import_options)
-      LOGGER.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
+      log.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
   
       if params[:jsoncallback]
         script = jsonp({:success => scenario.id})
-        LOGGER.debug "returning #{script} as JSONP"
+        log.debug "returning #{script} as JSONP"
         body { script }
       else
         # For debugging, that callback is an annoying parameter to require
@@ -51,7 +51,7 @@ aget "/duplicate/:type/:id" do |type, id|
   overrides[:project_id] = project_dest if project_dest
 
   if !received_type
-    LOGGER.error "bad type #{type} for duplicate of #{type}:#{id}"
+    log.error "bad type #{type} for duplicate of #{type}:#{id}"
     raise "bad type for duplicate"
   end
 
@@ -69,7 +69,7 @@ aget "/duplicate/:type/:id" do |type, id|
  
         if params[:jsoncallback]
           script = jsonp({:success => copy.id})
-          LOGGER.debug "returning #{script} as JSONP"
+          log.debug "returning #{script} as JSONP"
           body { script }
         else
           # For debugging, that callback is an annoying parameter to require
@@ -94,9 +94,9 @@ apost "/import" do
 
   defer_cautiously do
     xml_data = request.body.read
-    LOGGER.info "importing #{xml_data.size} bytes of xml data"
+    log.info "importing #{xml_data.size} bytes of xml data"
     table, id = import_xml(xml_data)
-    LOGGER.info "finished importing"
+    log.info "finished importing"
     body [table, id].to_yaml
   end
 end
@@ -110,11 +110,11 @@ apost "/import_url" do
 
   defer_cautiously do
     xml_url = request.body.read
-    LOGGER.info "importing url: #{xml_url.inspect}"
+    log.info "importing url: #{xml_url.inspect}"
     xml_data = open(xml_url) {|f| f.read} ###
-    LOGGER.info "read #{xml_data.size} bytes of xml data"
+    log.info "read #{xml_data.size} bytes of xml data"
     table, id = import_xml(xml_data)
-    LOGGER.info "finished importing: #{xml_url.inspect}"
+    log.info "finished importing: #{xml_url.inspect}"
     body [table, id].to_yaml
   end
 end
@@ -134,11 +134,11 @@ aget "/model/scenario-by-key/:key.xml" do |key|
   id, time, project_id = KEY_TO_ID[key]
   if !id
     msg = "No scenario for key=#{key}"
-    LOGGER.warn msg
+    log.warn msg
     break msg
   end
 
-  LOGGER.info "requested scenario #{id} as xml"
+  log.info "requested scenario #{id} as xml"
   defer_cautiously do
     content_type :xml
     body export_scenario_xml(id)
@@ -148,7 +148,7 @@ end
 aget "/model/scenario/:id.xml" do |id|
   protected!
 
-  LOGGER.info "requested scenario #{id} as xml"
+  log.info "requested scenario #{id} as xml"
 
   if can_access?({:type => 'Scenario', 
                   :id => id}, params[:access_token])
@@ -166,7 +166,7 @@ end
 
 aget "/model/scenario/:id.url" do |id|
   protected!
-  LOGGER.info "requested scenario #{id} as url"
+  log.info "requested scenario #{id} as url"
   
   defer_cautiously do
     content_type :text
@@ -180,7 +180,7 @@ end
 aget "/model/network/:id.xml" do |id|
   protected!
   
-  LOGGER.info "requested wrapped network #{id} as xml"
+  log.info "requested wrapped network #{id} as xml"
   
   if can_access?({:type => 'Network', 
                   :id => id}, params[:access_token])
@@ -209,11 +209,11 @@ aget "/model/wrapped-network-by-key/:key.xml" do |key|
   id, time, project_id = KEY_TO_ID[key]
   if !id
     msg = "No network for key=#{key}"
-    LOGGER.warn msg
+    log.warn msg
     break msg
   end
 
-  LOGGER.info "requested wrapped network #{id} as xml"
+  log.info "requested wrapped network #{id} as xml"
   
   defer_cautiously do
     content_type :xml
@@ -235,7 +235,7 @@ aget "/editor/scenario/:id.html" do |id|
   protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
-  LOGGER.info "requested scenario #{id} in editor"
+  log.info "requested scenario #{id} in editor"
   
   if can_access?({:type => 'Scenario', 
                   :id => id}, params[:access_token])
@@ -265,7 +265,7 @@ aget "/editor/network/:id.html" do |id|
   protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
-  LOGGER.info "requested network #{id} in editor"
+  log.info "requested network #{id} in editor"
   
   if can_access?({:type => 'Network', 
                   :id => id}, access_token)
@@ -295,7 +295,7 @@ aget "/editor/controller_set/:id.html" do |id|
   protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
-  LOGGER.info "requested controller set #{id} in editor"
+  log.info "requested controller set #{id} in editor"
   
   if can_access?({:type => 'ControllerSet', 
                   :id => id}, access_token)
@@ -330,7 +330,7 @@ aget "/editor/demand_profile_set/:id.html" do |id|
   protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
-  LOGGER.info "requested demand profile set #{id} in editor"
+  log.info "requested demand profile set #{id} in editor"
   
   if can_access?({:type => 'DemandProfileSet', 
                   :id => id}, access_token)
@@ -365,7 +365,7 @@ aget "/editor/split_ratio_profile_set/:id.html" do |id|
   protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
-  LOGGER.info "requested split ratio profile set #{id} in editor"
+  log.info "requested split ratio profile set #{id} in editor"
   
   if can_access?({:type => 'SplitRatioProfileSet', 
                   :id => id}, access_token)
@@ -400,7 +400,7 @@ aget "/editor/capacity_profile_set/:id.html" do |id|
   protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
-  LOGGER.info "requested capacity profile set #{id} in editor"
+  log.info "requested capacity profile set #{id} in editor"
   
   if can_access?({:type => 'CapacityProfileSet', 
                   :id => id}, access_token)
@@ -435,7 +435,7 @@ aget "/editor/event_set/:id.html" do |id|
   protected!
   access_token = params[:access_token]
 #  access_token or not_authorized!
-  LOGGER.info "requested event set #{id} in editor"
+  log.info "requested event set #{id} in editor"
   
   if can_access?({:type => 'EventSet', 
                   :id => id}, access_token)
@@ -468,7 +468,7 @@ end
 
 aget "/reports/:report_id/report_xml" do |report_id|
   access_token = params[:access_token]
-  LOGGER.debug "report_id = #{report_id}"
+  log.debug "report_id = #{report_id}"
 
   if can_access?({:type => 'SimulationBatchReport', 
                   :id => report_id}, access_token)
@@ -500,7 +500,7 @@ apost "/store" do
   host_with_port = request.host_with_port
   
   defer_cautiously do
-    LOGGER.info "started deferred store operation"
+    log.info "started deferred store operation"
     
     data = request.body.read
     url = s3.store(data, params)
@@ -509,7 +509,7 @@ apost "/store" do
       url = "http://#{host_with_port}#{url}"
     end
 
-    LOGGER.info "finished deferred store operation, url = #{url}"
+    log.info "finished deferred store operation, url = #{url}"
     body url
   end
 end
@@ -518,7 +518,7 @@ aget "/file/:filename" do |filename|
   protected!
 
   defer_cautiously do
-    LOGGER.info "deferred fetch of #{filename}"
+    log.info "deferred fetch of #{filename}"
     body s3.fetch(filename)
   end
 end
@@ -532,17 +532,17 @@ apost "/save" do
   access_token = params[:access_token]
 #  params[:access_token] or not_authorized!
 
-  ###LOGGER.info "requested scenario #{id} in editor"
+  ###log.info "requested scenario #{id} in editor"
   
 #  if can_access?({:type => 'Scenario', 
 #                  :id => id}, params[:access_token])
 
   
   defer_cautiously do
-    LOGGER.info "saving"
+    log.info "saving"
     
     data = request.body.read
-    LOGGER.debug "saving xml = #{data[0..200]}..."
+    log.debug "saving xml = #{data[0..200]}..."
     
     body "done"
   end
@@ -552,21 +552,21 @@ apost "/save/:key.xml" do |key|
   id, time, project_id = KEY_TO_ID[key]
   if !id
     msg = "No scenario for key=#{key}"
-    LOGGER.warn msg
+    log.warn msg
     break msg
   end
 
-  LOGGER.info "saving by key #{key}"
+  log.info "saving by key #{key}"
 
   defer_cautiously do
     xml_string = request.body.read
-    LOGGER.debug "saving xml = #{xml_string[0..200]}..."
+    log.debug "saving xml = #{xml_string[0..200]}..."
     
     xml = Nokogiri.XML(xml_string).xpath("/scenario")[0]
     
     scenario = import_scenario_xml(xml, project_id, {})
       ###  need to store import_options and user_id in KEY_TO_ID
-    LOGGER.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
+    log.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
     
     body "done: scenario.id = #{scenario.id}"
   end
