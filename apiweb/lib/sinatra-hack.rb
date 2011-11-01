@@ -1,5 +1,13 @@
 class Sinatra::Base
   attr_reader :given
+
+  if Sinatra::VERSION != '1.3.1'
+    s = "sinatra version has changed; " +
+        "check monkey patch on process_route in sinatra_hack.rb"
+    
+    warn s
+    LOGGER.warn s if LOGGER
+  end
   
   def process_route(pattern, keys, conditions, block = nil, values = [])
     route = @request.path_info
