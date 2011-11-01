@@ -36,6 +36,9 @@ class Worker
   # Port on which apiweb server is listening.
   attr_reader :apiweb_port
   
+  # Path to socket where dpoold is listening (nil means don't use).
+  attr_reader :dpool_socket
+  
   # Worker accepts runs from this group (nil means any).
   attr_reader :group
   
@@ -95,6 +98,7 @@ class Worker
     @runq_port    = opts["runq_port"]    or raise argerr, "missing :runq_port"
     @apiweb_host  = opts["apiweb_host"]  or raise argerr, "missing :apiweb_host"
     @apiweb_port  = opts["apiweb_port"]  or raise argerr, "missing :apiweb_port"
+    @dpool_socket = opts["dpool_socket"]
     @group        = opts["group"]
     @user         = opts["user"]
     @engine       = opts["engine"]       or raise argerr, "missing :engine"
@@ -104,6 +108,8 @@ class Worker
     @priority     = opts["priority"]     || DEFAULT_PRIORITY
     @retry_delay  = opts["retry_delay"]  || DEFAULT_RETRY_DELAY
     @logdev       = opts["logdev"]       || $stderr
+    
+    @dpool_socket = File.expand_path(@dpool_socket) if @dpool_socket
     
     @log = Logger.new(logdev, "weekly")
     @event_queue = Queue.new
@@ -447,6 +453,7 @@ class Worker
       :batch_index    => batch_index,
       :apiweb_host    => apiweb_host,
       :apiweb_port    => apiweb_port,
+      :dpool_socket   => dpool_socket,
       :engine         => engine,
       :engine_opts    => engine_opts
     )

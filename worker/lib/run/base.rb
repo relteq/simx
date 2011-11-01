@@ -76,6 +76,8 @@ module Run
     
     attr_reader :apiweb_port
     
+    attr_reader :dpool_socket
+    
     # Engine requested for this run (worker may support several engines).
     attr_reader :engine
     
@@ -97,6 +99,7 @@ module Run
       @batch_index        = h[:batch_index] || raise
       @apiweb_host        = h[:apiweb_host] || raise
       @apiweb_port        = h[:apiweb_port] || raise
+      @dpool_socket       = h[:dpool_socket]
       @engine             = h[:engine]      || raise
       @engine_opts        = h[:engine_opts]
       

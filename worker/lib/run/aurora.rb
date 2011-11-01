@@ -86,7 +86,9 @@ module Run
       when 'simulator'
         aurora.service.SimulationManager.new
       when 'calibrator'
-        aurora.service.CalibrationManager.new
+        require 'worker/run/aurora/calibrator'
+        CalibrationManagerWrapper.new(
+          aurora.service.CalibrationManager.new, dpool_socket, log)
       when 'report generator'
         aurora.service.ReportManager.new
       when 'report exporter'

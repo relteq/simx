@@ -20,8 +20,8 @@ class WorkerManager
   attr_reader :instance_name
   
   # Contains string keys: log_file, log_level, runq_host, runq_port,
-  # apiweb_host, apiweb_port, workers, instance_name. The value at workers has
-  # keys run_class, count, group, etc.
+  # apiweb_host, apiweb_port, dpool_socket, workers, instance_name.
+  # The value at workers has keys run_class, count, group, etc.
   attr_reader :config
   
   class << self
@@ -94,6 +94,8 @@ class WorkerManager
         w["apiweb_host"] = config["apiweb_host"]
         w["apiweb_port"] = config["apiweb_port"]
         
+        w["dpool_socket"] = config["dpool_socket"]
+
         w["logdev"] = config["log_file"]
         
         w["instance_name"] = instance_name
