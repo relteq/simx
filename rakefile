@@ -32,8 +32,15 @@ remote_files = FileList[
   "config.yaml",
   "lib",
   "bin",
-  "public"
+  "public/crossdomain.xml",
+  "public/favicon.ico",
+  "public/NetworkEditor.html",
+    # not swf, since that needs to be symlinked on each host
+    ## swf location could be specified in the config
+  "public/examples"
 ]
+remote_files.exclude 'public/NetworkEditor.swf'
+remote_files.exclude 'public/tmp'
 
 daemon_dirs = %w{
   runq
