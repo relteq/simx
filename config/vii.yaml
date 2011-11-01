@@ -2,10 +2,10 @@ deploy:
   host: aurora@vii
   path: simx
 runq:
-  port: 9096
+  port: 8096
   log level: debug
 apiweb:
-  port: 9097
+  port: 8097
   log level: debug
 worker:
   config file: vii.yaml
