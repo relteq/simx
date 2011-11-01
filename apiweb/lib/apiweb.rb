@@ -119,6 +119,7 @@ RUNQ_HOST = ENV["RUNQ_HOST"] || 'localhost'
 
 Sinatra.register Sinatra::Async
 
+require 'apiweb/sinatra-hack'
 require 'apiweb/db-helpers'
 require 'apiweb/run-helpers'
 require 'apiweb/web-helpers'

@@ -22,7 +22,7 @@ end
 # UserStatus
 get '/user/:id' do
   protected!
-  id = Integer(params[:id])
+  id = Integer(given[:id])
   log.info "UserStatus request, id=#{id}"
   req = Runq::Request::UserStatus.new :user_id => id
   resp = send_request_and_recv_response req
@@ -32,7 +32,7 @@ end
 # BatchStatus
 get '/batch/:id' do
   protected!
-  id = Integer(params[:id])
+  id = Integer(given[:id])
   log.info "BatchStatus request, id=#{id}"
   req = Runq::Request::BatchStatus.new :batch_id => id
   resp = send_request_and_recv_response req
@@ -69,7 +69,7 @@ aget "/batch/:batch_id/done" do |batch_id|
   protected!
   
   batch_id = Integer(batch_id)
-  wait = params[:wait] && Integer(params[:wait])
+  wait = given[:wait] && Integer(given[:wait])
   log.info "Batch done request, batch_id=#{batch_id}, wait=#{wait}"
   
   req = Runq::Request::BatchStatus.new :batch_id => batch_id, :wait => wait
@@ -93,8 +93,8 @@ end
 # returns YAML string "--- true" or "--- false".
 get "/batch/:batch_id/run/:run_idx/done" do
   protected!
-  batch_id = Integer(params[:batch_id])
-  run_idx = Integer(params[:run_idx])
+  batch_id = Integer(given[:batch_id])
+  run_idx = Integer(given[:run_idx])
   log.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
@@ -106,8 +106,8 @@ end
 # when run done, read result
 get "/batch/:batch_id/run/:run_idx/result" do
   protected!
-  batch_id = Integer(params[:batch_id])
-  run_idx = Integer(params[:run_idx])
+  batch_id = Integer(given[:batch_id])
+  run_idx = Integer(given[:run_idx])
   log.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
