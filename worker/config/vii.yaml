@@ -37,7 +37,7 @@ vii:
   runq_port:    9096
   apiweb_host:  vii.path.berkeley.edu
   apiweb_port:  9097
-  dpool_socket:   ~/topl/dpoold/var/run/dpoold.sock
+  dpool_socket:   ~/dpoold/var/run/dpoold.sock
   workers:
     - run_class:    Run::Aurora
       count:        8
