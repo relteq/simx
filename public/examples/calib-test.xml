@@ -99,7 +99,7 @@
           <parameter name="hwy_name" value="80"/>
         </parameters>
         <data_sources>
-          <source url="http://localhost:9097/tmp/d04_text_station_5min_2011_01_01.txt" dt="300" format="PeMS Data Clearinghouse"/>
+          <source url="pems:d4, Jan 1, 2011" dt="300" format="PeMS Data Clearinghouse"/>
         </data_sources>
       </sensor>
     </SensorList>
