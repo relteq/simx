@@ -112,6 +112,7 @@ TRUSTED_ADDRS = Set[*%w{
 }] ## how to check if some addr resolve to same as localhost?
 USERS = [
   %w{ relteq topltopl },
+  %w{ topl topltopl },
   %w{ d4 topltopl }
 ]
 
