@@ -1,1 +1,163 @@
-../../apiweb/doc/calib-test.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario id="null" name="null" schemaVersion="1.0.17">
+  <network name="New Network" ml_control="false" q_control="false" dt="300" id="-1">
+    <description>Created by Network Editor version xsd-1.0.17-17-gbb55111</description>
+    <position>
+      <point lat="37.85794730789898" lng="-122.29954719543457"/>
+    </position>
+    <MonitorList/>
+    <NetworkList/>
+    <NodeList>
+      <node name="Node -1" type="F" id="-1">
+        <outputs>
+          <output link_id="-1"/>
+        </outputs>
+        <inputs>
+          <input link_id="-2">
+            <weavingfactors>1</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.85298358928589" lng="-122.29984760284424"/>
+        </position>
+      </node>
+      <node name="Node -2" type="F" id="-2">
+        <outputs>
+          <output link_id="-3"/>
+        </outputs>
+        <inputs>
+          <input link_id="-1">
+            <weavingfactors>1</weavingfactors>
+          </input>
+        </inputs>
+        <position>
+          <point lat="37.86213208939834" lng="-122.30229377746582"/>
+        </position>
+      </node>
+      <node name="Node -3" type="T" id="-3">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.84960343952525" lng="-122.29463338851927"/>
+        </position>
+      </node>
+      <node name="Node -4" type="T" id="-4">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.86707011338645" lng="-122.30141401290894"/>
+        </position>
+      </node>
+    </NodeList>
+    <LinkList>
+      <link name="-1 -> -2" road_name="I-80 E" lanes="4" length="0.6467014200850675" type="FW" id="-1">
+        <description></description>
+        <begin node_id="-1"/>
+        <end node_id="-2"/>
+        <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
+        <dynamics type="CTM"/>
+        <qmax>100</qmax>
+      </link>
+      <link name="orig -> -1" road_name="null" lanes="4" length="0.497429321374626" type="FW" id="-2">
+        <description></description>
+        <begin node_id="-3"/>
+        <end node_id="-1"/>
+        <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
+        <dynamics type="CTM"/>
+        <qmax>100</qmax>
+      </link>
+      <link name="-2 -> dest" road_name="I-80 E" lanes="4" length="0.407584763608256" type="FW" id="-3">
+        <description></description>
+        <begin node_id="-2"/>
+        <end node_id="-4"/>
+        <fd densityCritical="30.0" flowMax="1800.0" densityJam="150.0"/>
+        <dynamics type="CTM"/>
+        <qmax>100</qmax>
+      </link>
+    </LinkList>
+    <SignalList/>
+    <ODList/>
+    <SensorList>
+      <sensor id="-2" type="loop" link_type="ML">
+        <description>University Ave</description>
+        <position>
+          <point lat="37.856225" lng="-122.300735"/>
+        </position>
+        <display_position>
+          <point lat="37.85624448326665" lng="-122.30057621322634"/>
+        </display_position>
+        <links>-1</links>
+        <parameters>
+          <parameter name="data_id" value="400679"/>
+          <parameter name="lanes" value="5"/>
+          <parameter name="offset_in_link" value="0"/>
+          <parameter name="start_time" value="0"/>
+          <parameter name="vds" value="400679"/>
+          <parameter name="length" value="0.38"/>
+          <parameter name="postmile" value="10.4"/>
+          <parameter name="hwy_dir" value="E"/>
+          <parameter name="hwy_name" value="80"/>
+        </parameters>
+        <data_sources>
+          <source url="http://localhost:9097/tmp/d04_text_station_5min_2011_01_01.txt" dt="300" format="PeMS Data Clearinghouse"/>
+        </data_sources>
+      </sensor>
+    </SensorList>
+    <DirectionsCache>
+      <DirectionsCacheEntry avoidHighways="false" road_name="I-80 E">
+        <From>
+          <ALatLng lat="37.85298358928589" lng="-122.29984760284424"/>
+        </From>
+        <To>
+          <ALatLng lat="37.86213208939834" lng="-122.30229377746582"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>gd`fFntmiVax@|N</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="null">
+        <From>
+          <ALatLng lat="37.84960343952525" lng="-122.29463338851927"/>
+        </From>
+        <To>
+          <ALatLng lat="37.85298358928589" lng="-122.29984760284424"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>{n_fFntliVfClIZxBOdBc@jBq@pAuAlAgEp@{DhAoGhA</Points>
+          <Levels>PADABFCAAP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="I-80 E">
+        <From>
+          <ALatLng lat="37.86213208939834" lng="-122.30229377746582"/>
+        </From>
+        <To>
+          <ALatLng lat="37.86707011338645" lng="-122.30141401290894"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>i}afFldniVeLtBUIcADeD\iD?w@Si@u@w@qF</Points>
+          <Levels>PCAABFBCP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+    </DirectionsCache>
+  </network>
+  <settings>
+    <units>US</units>
+  </settings>
+  <InitialDensityProfile/>
+  <SplitRatioProfileSet>
+    <splitratios node_id="-1" dt="300"/>
+    <splitratios node_id="-2" dt="300"/>
+    <splitratios node_id="-3" dt="300"/>
+    <splitratios node_id="-4" dt="300"/>
+  </SplitRatioProfileSet>
+  <CapacityProfileSet>
+    <capacity link_id="-1" dt="1"></capacity>
+  </CapacityProfileSet>
+  <EventSet/>
+  <DemandProfileSet>
+    <demand knob="1" dt="1" link_id="-1"></demand>
+  </DemandProfileSet>
+  <ControllerSet/>
+</scenario>
