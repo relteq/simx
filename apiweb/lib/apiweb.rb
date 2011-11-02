@@ -111,7 +111,8 @@ TRUSTED_ADDRS = Set[*%w{
   128.32.129.91
 }] ## how to check if some addr resolve to same as localhost?
 USERS = [
-  %w{ relteq topl5678 }
+  %w{ relteq topltopl },
+  %w{ d4 topltopl }
 ]
 
 RUNQ_PORT = Integer(ENV["RUNQ_PORT"]) || 9096
