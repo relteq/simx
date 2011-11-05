@@ -639,20 +639,24 @@ module Runq
         return false
       end
       
-      if worker[:group] and batch[:group] != worker[:group]
-        log.debug {
-          "group mismatch: worker accepts #{worker[:group].inspect} but " +
-          "batch requests #{batch[:group].inspect}"
-        }
-        return false
+      if worker[:group]
+        unless /^(?:#{worker[:group]})$/ === batch[:group]
+          log.debug {
+            "group mismatch: worker accepts #{worker[:group].inspect} but " +
+            "batch requests #{batch[:group].inspect}"
+          }
+          return false
+        end
       end
 
-      if worker[:user] and batch[:user] != worker[:user]
-        log.debug {
-          "user mismatch: worker accepts #{worker[:user].inspect} but " +
-          "batch requests #{batch[:user].inspect}"
-        }
-        return false
+      if worker[:user]
+        unless /^(?:#{worker[:user]})$/ === batch[:user]
+          log.debug {
+            "user mismatch: worker accepts #{worker[:user].inspect} but " +
+            "batch requests #{batch[:user].inspect}"
+          }
+          return false
+        end
       end
       
       log.debug {
