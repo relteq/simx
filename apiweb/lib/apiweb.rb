@@ -10,6 +10,7 @@ require 'cgi'
 require 'haml'
 require 'nokogiri'
 require 'json'
+require 'digest/md5'
 
 require 'simx/mtcp'
 require 'runq/request'

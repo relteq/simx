@@ -244,7 +244,7 @@ aget "/editor/scenario/:id.html" do |id|
 
       @network_editor = "/NetworkEditor.swf"
 
-      key = Digest::MD5.hexdigest((access_token||"") + "scenario" + id + Time.now.to_s)
+      key = make_key_for(access_token, "scenario", id, Time.now)
       @export_url = "/model/scenario-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
       
@@ -273,7 +273,7 @@ aget "/editor/network/:id.html" do |id|
 
       @network_editor = "/NetworkEditor.swf"
 
-      key = Digest::MD5.hexdigest((access_token||"") + "network" + id + Time.now.to_s)
+      key = make_key_for(access_token, "network", id, Time.now)
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -305,11 +305,7 @@ aget "/editor/controller_set/:id.html" do |id|
       @focus = 'controller_set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = Digest::MD5.hexdigest((access_token||"") + 
-        "network" + 
-        network_id.to_s + 
-        Time.now.to_s
-      )
+      key = make_key_for(access_token, "network", network_id, Time.now)
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -339,11 +335,7 @@ aget "/editor/demand_profile_set/:id.html" do |id|
       @focus = 'demand-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = Digest::MD5.hexdigest((access_token||"") + 
-        "network" + 
-        network_id.to_s + 
-        Time.now.to_s
-      )
+      key = make_key_for(access_token, "network", network_id, Time.now)
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -373,11 +365,7 @@ aget "/editor/split_ratio_profile_set/:id.html" do |id|
       @focus = 'split-ratio-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = Digest::MD5.hexdigest((access_token||"") + 
-        "network" + 
-        network_id.to_s + 
-        Time.now.to_s
-      )
+      key = make_key_for(access_token, "network", network_id, Time.now)
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -407,11 +395,7 @@ aget "/editor/capacity_profile_set/:id.html" do |id|
       @focus = 'capacity-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = Digest::MD5.hexdigest((access_token||"") + 
-        "network" + 
-        network_id.to_s + 
-        Time.now.to_s
-      )
+      key = make_key_for(access_token, "network", network_id, Time.now)
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -441,11 +425,7 @@ aget "/editor/event_set/:id.html" do |id|
       @focus = 'event-set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = Digest::MD5.hexdigest((access_token||"") + 
-        "network" + 
-        network_id.to_s + 
-        Time.now.to_s
-      )
+      key = make_key_for(access_token, "network", network_id, Time.now)
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
