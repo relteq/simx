@@ -245,8 +245,7 @@ aget "/editor/scenario/:id.html" do |id|
       @network_editor = "/NetworkEditor.swf"
 
       key = Digest::MD5.hexdigest((access_token||"") + "scenario" + id + Time.now.to_s)
-      @s3_url = ### change name!
-        "/model/scenario-by-key/#{key}.xml"
+      @export_url = "/model/scenario-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
       
       @dbweb_key = key
@@ -275,8 +274,7 @@ aget "/editor/network/:id.html" do |id|
       @network_editor = "/NetworkEditor.swf"
 
       key = Digest::MD5.hexdigest((access_token||"") + "network" + id + Time.now.to_s)
-      @s3_url = ### change name!
-        "/model/wrapped-network-by-key/#{key}.xml"
+      @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
       @dbweb_key = key
@@ -312,8 +310,7 @@ aget "/editor/controller_set/:id.html" do |id|
         network_id.to_s + 
         Time.now.to_s
       )
-      @s3_url = ### change name!
-        "/model/wrapped-network-by-key/#{key}.xml"
+      @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
@@ -347,8 +344,7 @@ aget "/editor/demand_profile_set/:id.html" do |id|
         network_id.to_s + 
         Time.now.to_s
       )
-      @s3_url = ### change name!
-        "/model/wrapped-network-by-key/#{key}.xml"
+      @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
@@ -382,8 +378,7 @@ aget "/editor/split_ratio_profile_set/:id.html" do |id|
         network_id.to_s + 
         Time.now.to_s
       )
-      @s3_url = ### change name!
-        "/model/wrapped-network-by-key/#{key}.xml"
+      @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
@@ -417,8 +412,7 @@ aget "/editor/capacity_profile_set/:id.html" do |id|
         network_id.to_s + 
         Time.now.to_s
       )
-      @s3_url = ### change name!
-        "/model/wrapped-network-by-key/#{key}.xml"
+      @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
@@ -452,8 +446,7 @@ aget "/editor/event_set/:id.html" do |id|
         network_id.to_s + 
         Time.now.to_s
       )
-      @s3_url = ### change name!
-        "/model/wrapped-network-by-key/#{key}.xml"
+      @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
