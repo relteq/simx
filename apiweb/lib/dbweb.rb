@@ -131,7 +131,7 @@ aget "/model/scenario-by-key/:key.xml" do |key|
 #  access_token = given[:access_token]
 #  access_token or not_authorized!
 
-  id, time, project_id = KEY_TO_ID[key]
+  id, project_id = lookup_key(key, "scenario")
   if !id
     msg = "No scenario for key=#{key}"
     log.warn msg
@@ -206,7 +206,7 @@ aget "/model/wrapped-network-by-key/:key.xml" do |key|
 #  access_token = given[:access_token]
 #  access_token or not_authorized!
   
-  id, time, project_id = KEY_TO_ID[key]
+  id, project_id = lookup_key(key, "network")
   if !id
     msg = "No network for key=#{key}"
     log.warn msg
@@ -251,7 +251,6 @@ aget "/editor/scenario/:id.html" do |id|
       @dbweb_key = key
 
       KEY_TO_ID[key] = [id, Time.now, given[:to_project]]
-      ### clear old ones
 
       body { haml :flash_edit }
     end
@@ -280,7 +279,6 @@ aget "/editor/network/:id.html" do |id|
       @dbweb_key = key
 
       KEY_TO_ID[key] = [id, Time.now, given[:to_project]]
-      ### clear old ones
 
       body { haml :flash_edit }
     end
@@ -310,7 +308,6 @@ aget "/editor/controller_set/:id.html" do |id|
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
-      ### clear old ones
 
       body { haml :flash_edit }
     end
@@ -340,7 +337,6 @@ aget "/editor/demand_profile_set/:id.html" do |id|
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
-      ### clear old ones
 
       body { haml :flash_edit }
     end
@@ -370,7 +366,6 @@ aget "/editor/split_ratio_profile_set/:id.html" do |id|
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
-      ### clear old ones
 
       body { haml :flash_edit }
     end
@@ -400,7 +395,6 @@ aget "/editor/capacity_profile_set/:id.html" do |id|
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
-      ### clear old ones
 
       body { haml :flash_edit }
     end
@@ -430,7 +424,6 @@ aget "/editor/event_set/:id.html" do |id|
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
-      ### clear old ones
 
       body { haml :flash_edit }
     end
@@ -522,7 +515,7 @@ apost "/save" do
 end
 
 apost "/save/:key.xml" do |key|
-  id, time, project_id = KEY_TO_ID[key]
+  id, project_id = lookup_key(key, "scenario")
   if !id
     msg = "No scenario for key=#{key}"
     log.warn msg

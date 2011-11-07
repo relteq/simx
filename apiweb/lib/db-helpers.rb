@@ -49,6 +49,14 @@ helpers do
   def import_scenario_xml xml_data, project_id, options = {}
     scenario = Aurora::Scenario.create_from_xml(xml_data, options)
     network = scenario.network
+
+    if !project_id
+      sc = DB[:scenarios][:id => scenario.id]
+      if sc
+        project_id = sc[:project_id]
+      end
+    end
+
     scenario.project_id = project_id
     network.project_id = project_id
     network.save
@@ -90,5 +98,54 @@ helpers do
   rescue => e
     log.error "export_wrapped_network_xml(#{network_id}): #{e}"
     nil
+  end
+  
+  def apiweb_key_table_exists!
+    DB.create_table? :apiweb_key do
+      text          :key,         :primary_key => true, :null => false
+      text          :model_class, :null => false
+      integer       :model_id,    :null => false
+      integer       :project_id,
+      integer       :user_id,
+      timestamp     :expiration,  :null => false
+    end
+  end
+  
+  # +entry+ should have :model_class and :model_id; may have
+  # :project_id, :user_id, :expiration. Returns the key.
+  def request_apiweb_key entry = {}
+    apiweb_key_table_exists!
+    
+    entry[:expiration] ||= 24*60*60 ## ?
+    
+    i = 0
+    loop do
+      i += 1
+      key = digest(Time.now.to_f + i, *entry.values)
+        # not very secure; this is mostly to avoid collisions and dumb errors
+      
+      if not DB[:apiweb_key][:key => key]
+        entry[:key] = key
+        DB[:apiweb_key].insert entry
+        return key
+      end
+    end
+  end
+  
+  # Returns the entry that was stored with the +key+, but only
+  # if the given +model_class+ matches the original and the key has not expired.
+  def lookup_apiweb_key key, model_class
+    apiweb_key_table_exists!
+    
+    entry = DB[:apiweb_key][:key => key]
+    return nil if entry[:model_class] != model_class
+    ## also check project_id and user_id
+    
+    if Time.now > entry[:expiration]
+      ## remove the entry?
+      return nil ## what effect does this have on the client side?
+    end
+    
+    entry
   end
 end

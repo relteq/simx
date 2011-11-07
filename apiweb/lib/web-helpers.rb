@@ -46,10 +46,8 @@ helpers do
     applicable_to_object.all.count == 1 
   end
 
-  def make_key_for(*args)
-    Digest::MD5.hexdigest(
-      args.inject {|s,arg| s + (arg ? arg.to_s : "") }
-    )
+  def digest(*args)
+    Digest::MD5.hexdigest(args.join)
   end
 
   def index_page
