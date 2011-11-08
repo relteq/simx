@@ -198,8 +198,12 @@ module Runq
         request_queue << req
       end
       log.info "Receiver thread terminating: YAML stream closed"
+    rescue MTCP::Error => e
+      log.warn "Bad header from peer (#{e.message}), closing connection."
+      sock.close
     rescue => e
       log.error "Receiver thread: " + [e.inspect, *e.backtrace].join("\n  ")
+      sock.close
     end
 
     # This thread is the only one allowed to access the database.
