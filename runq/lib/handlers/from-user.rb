@@ -42,7 +42,7 @@ module Runq
     include Request::FromUser
 
     def handle
-      batch_id = runq.database[:batches] << {
+      batch_id = runq.database[:batches].insert({
         :name           => name,
         :group          => group,
         :user           => user,
@@ -53,7 +53,7 @@ module Runq
         :start_time     => Time.now,
         :execution_time => nil,
         :n_complete     => 0
-      }
+      })
       respond_ok("batch started",
         "batch_id" => batch_id
       )
@@ -87,7 +87,7 @@ module Runq
 
       warmup_param["output_types"][1] = "application/xml"
 
-      dummy_batch_id = runq.database[:batches] << {
+      dummy_batch_id = runq.database[:batches].insert({
         :name           => name + " dummy",
         :group          => group,
         :user           => user,
@@ -98,28 +98,28 @@ module Runq
         :start_time     => Time.now,
         :execution_time => nil,
         :n_complete     => 0
-      }
+      })
 
-      run_id = runq.database[:runs] << {
+      run_id = runq.database[:runs].insert({
         :batch_id         => dummy_batch_id,
         :worker_id        => nil,
         :batch_index      => 0,
         :frac_complete    => 0,
         :update_callback  => 'update_warmup_callback',
         :finish_callback  => 'finish_warmup_callback'
-      }
+      })
       
       runq.dispatch_run run_id
     end
     
     def start_batch_without_warmup batch_id
       run_ids = n_runs.times.map do |i|
-        runq.database[:runs] << {
+        runq.database[:runs].insert({
           :batch_id     => batch_id,
           :worker_id    => nil,
           :batch_index  => i,
           :frac_complete => 0
-        }
+        })
       end
 
       run_ids.each do |run_id|

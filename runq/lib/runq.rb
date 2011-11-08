@@ -265,7 +265,7 @@ module Runq
     def add_worker req
       ## need some basic security here
       
-      worker_id = database[:workers] << {
+      worker_id = database[:workers].insert({
         :host         => req.host,
         :ipaddr       => req.sock.peeraddr[3],
         :pid          => req.pid,
@@ -277,7 +277,7 @@ module Runq
         :priority     => req.priority,
         :run_id       => nil,  # none yet, hence worker is ready
         :last_contact => Time.now
-      }
+      })
       ## check if uniq host/pid
       ## check if valid group/user
       

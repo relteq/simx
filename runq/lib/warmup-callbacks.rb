@@ -57,12 +57,12 @@ module Runq
       ## refactor the following with start_batch_without_warmup
       n_runs = orig_batches.first[:n_runs]
       run_ids = n_runs.times.map do |i|
-        runq.database[:runs] << {
+        runq.database[:runs].insert({
           :batch_id     => orig_batch_id,
           :worker_id    => nil,
           :batch_index  => i,
           :frac_complete => 0
-        }
+        })
       end
 
       run_ids.each do |run_id|
