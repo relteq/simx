@@ -131,17 +131,17 @@ aget "/model/scenario-by-key/:key.xml" do |key|
 #  access_token = given[:access_token]
 #  access_token or not_authorized!
 
-  id, project_id = lookup_key(key, "scenario")
-  if !id
+  entry = lookup_apiweb_key(key)
+  if !entry
     msg = "No scenario for key=#{key}"
     log.warn msg
     break msg
   end
 
-  log.info "requested scenario #{id} as xml"
+  log.info "requested scenario #{entry[:model_id]} as xml"
   defer_cautiously do
     content_type :xml
-    body export_scenario_xml(id)
+    body export_scenario_xml(entry[:model_id])
   end
 end
 
@@ -206,19 +206,19 @@ aget "/model/wrapped-network-by-key/:key.xml" do |key|
 #  access_token = given[:access_token]
 #  access_token or not_authorized!
   
-  id, project_id = lookup_key(key, "network")
-  if !id
+  entry = lookup_apiweb_key(key)
+  if !entry
     msg = "No network for key=#{key}"
     log.warn msg
     break msg
   end
 
-  log.info "requested wrapped network #{id} as xml"
+  log.info "requested wrapped network #{entry[:model_id]} as xml"
   
   defer_cautiously do
     content_type :xml
 
-    xml = export_wrapped_network_xml(id)
+    xml = export_wrapped_network_xml(entry[:model_id])
     if xml
       body xml
     else
@@ -244,7 +244,12 @@ aget "/editor/scenario/:id.html" do |id|
 
       @network_editor = "/NetworkEditor.swf"
 
-      key = make_key_for(access_token, "scenario", id, Time.now)
+      key = request_apiweb_key(
+        :model_class => "scenario",
+        :model_id => id,
+        :access_token => access_token
+      )
+      
       @export_url = "/model/scenario-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
       
@@ -272,7 +277,12 @@ aget "/editor/network/:id.html" do |id|
 
       @network_editor = "/NetworkEditor.swf"
 
-      key = make_key_for(access_token, "network", id, Time.now)
+      key = request_apiweb_key(
+        :model_class => "network",
+        :model_id => id,
+        :access_token => access_token
+      )
+      
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -303,7 +313,12 @@ aget "/editor/controller_set/:id.html" do |id|
       @focus = 'controller_set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = make_key_for(access_token, "network", network_id, Time.now)
+      key = request_apiweb_key(
+        :model_class => "network",
+        :model_id => network_id,
+        :access_token => access_token
+      )
+      
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -332,7 +347,12 @@ aget "/editor/demand_profile_set/:id.html" do |id|
       @focus = 'demand-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = make_key_for(access_token, "network", network_id, Time.now)
+      key = request_apiweb_key(
+        :model_class => "network",
+        :model_id => network_id,
+        :access_token => access_token
+      )
+      
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -361,7 +381,12 @@ aget "/editor/split_ratio_profile_set/:id.html" do |id|
       @focus = 'split-ratio-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = make_key_for(access_token, "network", network_id, Time.now)
+      key = request_apiweb_key(
+        :model_class => "network",
+        :model_id => network_id,
+        :access_token => access_token
+      )
+      
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -390,7 +415,12 @@ aget "/editor/capacity_profile_set/:id.html" do |id|
       @focus = 'capacity-profile-set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = make_key_for(access_token, "network", network_id, Time.now)
+      key = request_apiweb_key(
+        :model_class => "network",
+        :model_id => network_id,
+        :access_token => access_token
+      )
+      
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -419,7 +449,12 @@ aget "/editor/event_set/:id.html" do |id|
       @focus = 'event-set'
       @network_editor = "/NetworkEditor.swf"
 
-      key = make_key_for(access_token, "network", network_id, Time.now)
+      key = request_apiweb_key(
+        :model_class => "network",
+        :model_id => network_id,
+        :access_token => access_token
+      )
+      
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
@@ -515,8 +550,8 @@ apost "/save" do
 end
 
 apost "/save/:key.xml" do |key|
-  id, project_id = lookup_key(key, "scenario")
-  if !id
+  entry = lookup_apiweb_key(key)
+  if !entry
     msg = "No scenario for key=#{key}"
     log.warn msg
     break msg
@@ -530,7 +565,7 @@ apost "/save/:key.xml" do |key|
     
     xml = Nokogiri.XML(xml_string).xpath("/scenario")[0]
     
-    scenario = import_scenario_xml(xml, project_id, {})
+    scenario = import_scenario_xml(xml, entry[:project_id], {})
       ###  need to store import_options and user_id in KEY_TO_ID
     log.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
     

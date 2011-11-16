@@ -75,7 +75,7 @@ helpers do
     Aurora::Network[Integer(network_id)].to_xml
   rescue => e
     log.error "export_network_xml(#{network_id}): #{e}"
-    nil
+    nil ### fix this error handling
   end
   
   def export_wrapped_network_xml network_id
@@ -97,7 +97,7 @@ helpers do
     
   rescue => e
     log.error "export_wrapped_network_xml(#{network_id}): #{e}"
-    nil
+    nil ### fix this error handling
   end
   
   def apiweb_key_table_exists!
@@ -105,41 +105,49 @@ helpers do
       text          :key,         :primary_key => true, :null => false
       text          :model_class, :null => false
       integer       :model_id,    :null => false
-      integer       :project_id,
-      integer       :user_id,
+      integer       :project_id
+      integer       :user_id
       timestamp     :expiration,  :null => false
     end
   end
   
   # +entry+ should have :model_class and :model_id; may have
   # :project_id, :user_id, :expiration. Returns the key.
+  # All values in the hash are used in constructing the key,
+  # so for example: entry[:token] = access_token.
   def request_apiweb_key entry = {}
     apiweb_key_table_exists!
     
-    entry[:expiration] ||= 24*60*60 ## ?
+    entry[:expiration] ||= Time.now + 24*60*60 ## ?
+    
+    fields = DB.schema(:apiweb_key).map {|a|a.first}
     
     i = 0
     loop do
       i += 1
       key = digest(Time.now.to_f + i, *entry.values)
-        # not very secure; this is mostly to avoid collisions and dumb errors
       
       if not DB[:apiweb_key][:key => key]
         entry[:key] = key
-        DB[:apiweb_key].insert entry
+        
+        e = {}
+        fields.each do |field|
+          e[field] = entry[field]
+        end
+        
+        DB[:apiweb_key].insert e
         return key
       end
     end
   end
   
   # Returns the entry that was stored with the +key+, but only
-  # if the given +model_class+ matches the original and the key has not expired.
-  def lookup_apiweb_key key, model_class
+  # if the key has not expired.
+  def lookup_apiweb_key key
     apiweb_key_table_exists!
     
     entry = DB[:apiweb_key][:key => key]
-    return nil if entry[:model_class] != model_class
-    ## also check project_id and user_id
+    ## check project_id and user_id
     
     if Time.now > entry[:expiration]
       ## remove the entry?
