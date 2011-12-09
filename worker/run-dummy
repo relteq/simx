@@ -14,7 +14,7 @@ Socket.do_not_reverse_lookup = true
 
 worker = Worker.new(Run::Dummy,
   "runq_host"    => ENV["RUNQ_HOST"] || 'localhost',
-  "runq_port"    => Integer(ENV["RUNQ_PORT"]) || 9096,
+  "runq_port"    => Integer(ENV["RUNQ_PORT"] || 9096),
   "group"        => "topl",
   "user"         => "topl",
   "engine"       => "dummy",

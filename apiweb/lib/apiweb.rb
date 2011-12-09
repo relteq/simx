@@ -117,7 +117,7 @@ USERS = [
   %w{ d4 topltopl }
 ]
 
-RUNQ_PORT = Integer(ENV["RUNQ_PORT"]) || 9096
+RUNQ_PORT = Integer(ENV["RUNQ_PORT"] || 9096)
 RUNQ_HOST = ENV["RUNQ_HOST"] || 'localhost'
 
 Sinatra.register Sinatra::Async
