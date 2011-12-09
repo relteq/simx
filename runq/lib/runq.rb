@@ -98,7 +98,7 @@ module Runq
     def parse_argv argv
       @production = argv.delete("--production")
       
-      @port = Integer(ENV["RUNQ_PORT"])
+      @port = Integer(ENV["RUNQ_PORT"]) rescue nil
       if (i = argv.index("--port"))
         _, @port = argv.slice!(i, 2)
         @port = Integer(@port)
