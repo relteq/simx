@@ -65,7 +65,7 @@ end
 
 # checks if batch is all done, optionally waiting some seconds
 # returns YAML string "--- true" or "--- false".
-aget "/batch/:batch_id/done" do |batch_id|
+get "/batch/:batch_id/done" do |batch_id|
   protected!
   
   batch_id = Integer(batch_id)
@@ -74,16 +74,16 @@ aget "/batch/:batch_id/done" do |batch_id|
   
   req = Runq::Request::BatchStatus.new :batch_id => batch_id, :wait => wait
   
-  defer_cautiously do
+  stream_cautiously do |out|
     resp = send_request_and_recv_response req
     batch = resp["batch"]
     if batch
       n_runs = batch[:n_runs]
       n_complete = batch[:n_complete]
-      body (n_runs == n_complete).to_yaml
+      out << (n_runs == n_complete).to_yaml
     else
       status 404
-      body "no such batch"
+      out << "no such batch"
       ### these responses are not consistent with the "status"=>"ok" stuff
     end
   end

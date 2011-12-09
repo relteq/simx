@@ -26,7 +26,7 @@ class Sinatra::Base
       block ? block[self, values] : yield(self, values)
     end
   ensure
-    # params is reverted before the async block can be executed, so use
+    # params is reverted before the stream block can be executed, so use
     # given instead in your route handlers.
     @params = original if original
   end

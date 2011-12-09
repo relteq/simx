@@ -79,7 +79,7 @@ Most important:
 rake nokogiri json
 
 Also potentially useful:
-pg rack thin eventmachine sinatra async_sinatra sqlite3 sequel sequel_pg rest-client taps
+pg rack thin eventmachine sinatra sqlite3 sequel sequel_pg rest-client taps
 
 
 == Where to get ruby 1.8.7

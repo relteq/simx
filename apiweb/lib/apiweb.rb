@@ -1,7 +1,6 @@
 require 'thin'
 require 'sinatra'
 require 'eventmachine'
-require 'sinatra/async'
 require 'sinatra/jsonp'
 require 'yaml'
 require 'logger'
@@ -119,8 +118,6 @@ USERS = [
 
 RUNQ_PORT = Integer(ENV["RUNQ_PORT"] || 9096)
 RUNQ_HOST = ENV["RUNQ_HOST"] || 'localhost'
-
-Sinatra.register Sinatra::Async
 
 require 'apiweb/sinatra-hack'
 require 'apiweb/db-helpers'

@@ -1,8 +1,10 @@
 helpers do
-  def defer_cautiously
-    EM.defer do
+  def stream_cautiously
+    # This will not be necessary after the following is fixed:
+    # https://github.com/sinatra/sinatra/issues/426
+    stream do |out|
       begin
-        yield
+        yield out if block_given?
       rescue Exception => e
         log.error "error: #{request.url}, params=#{request.params.inspect}"
         log.error "error text: #{e.message}"
