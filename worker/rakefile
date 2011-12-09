@@ -329,7 +329,7 @@ def do_start instance, instance_config
     end
     
     cfg = DEFAULT_INSTANCE_CONFIG.merge(h).merge(instance_config)
-    cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
+    cfg_yml = cfg.to_yaml.sub(/^---\s*/, "") # yaml prefix looks like switch
 
     simx_lib = ENV["simx_lib"] = File.expand_path(libdir)
 
