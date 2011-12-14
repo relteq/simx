@@ -195,17 +195,16 @@ module Run
       sleep 1
       retry
     rescue Exception => e
-      log.error [e.inspect, *e.backtrace].join("\n  ")
-      log.info "exiting worker due to error in run"
-      exit -2
+      log.error "error in run: " + [e.inspect, *e.backtrace].join("\n  ")
+      @progress = :failed
+      event = Event::Failed.new e.message
+      worker_event_queue << event
     ensure
       begin
         cleanup
       rescue Interrupt
         log.warn "Interrupt during cleanup -- " +
           "may have left some temp files or running processes."
-        log.info "exiting worker"
-        exit -3
       end
     end
 

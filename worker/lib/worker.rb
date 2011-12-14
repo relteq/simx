@@ -355,6 +355,7 @@ class Worker
   end
   
   def handle_event event
+    log.info "handling event #{event.inspect}"
     case event
     when Runq::Request
       handle_runq_request event
@@ -363,6 +364,8 @@ class Worker
     else
       log.error "Unrecognized event: #{event.inspect}"
     end
+  rescue => ex
+    log.error "error in event loop: #{ex}"
   end
   
   def handle_runq_request req
@@ -372,7 +375,13 @@ class Worker
         log.error "Requested to start a new run before current run done."
         return
       else
-        start_run req.param, req.engine, req.batch_index
+        begin
+          handle_error do
+            start_run req.param, req.engine, req.batch_index
+          end
+        rescue => ex
+          runq_send_update "run failed: #{ex}"
+        end
       end
       
     when Runq::Request::RunqGetStatus
@@ -478,7 +487,9 @@ class Worker
       @thread_wait.join_nowait start_runq_listener, start_event_loop
       @thread_wait.all_waits do |thread|
         thread.join
+        log.info "finished a thread"
       end
+      log.info "finished all threads"
     end
   end
 end

@@ -106,7 +106,7 @@ module Run
           log.info "assuming inline data: #{input[0..50].inspect}"
           input
         else # assume url
-          log.info "reading url: #{input}"
+          log.info "reading url: #{input.inspect}"
           open(input) {|f| f.read} ## prohibit or restrict local file?
         end
       end
