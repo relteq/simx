@@ -14,7 +14,7 @@ class S3_Mock
     
     @db = FSDB::Database.new(dir)
     db.formats = [
-      FSDB::TEXT_FORMAT.when //
+      FSDB::TEXT_FORMAT.when(//)
     ]
   end
   
