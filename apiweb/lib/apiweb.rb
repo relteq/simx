@@ -128,6 +128,10 @@ get '/' do
   index_page
 end
 
+get '/NetworkEditor' do
+  redirect 'NetworkEditor.html'
+end
+
 # See http://kb2.adobe.com/cps/142/tn_14213.html
 #get '/crossdomain.xml' do
 # this is now a static page
