@@ -473,13 +473,8 @@ class Worker
   end
 
   def execute
-    trap "TERM" do
-      if current_run
-        current_run.stop
-        # exit -- handled by queue handler
-      else
-        exit
-      end
+    at_exit do
+      current_run.stop if current_run
     end
     
     handle_error do
