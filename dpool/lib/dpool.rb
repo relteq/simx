@@ -5,7 +5,7 @@ require 'thread'
 require 'thwait'
 require 'socket'
 require 'time'
-require 'argos'
+require 'simx/argos'
 
 require 'dpool/periodic-downloader'
 require 'dpool/local-server'
