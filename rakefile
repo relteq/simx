@@ -213,10 +213,11 @@ END
       sh "chmod +x .git/hooks/post-checkout"
     end
     
-    desc "write version file"
-    task :version => "lib/simx/version.rb"
+    ver_file = "lib/simx/version.rb"
+    file ver_file => :version
     
-    file "lib/simx/version.rb" do |t|
+    desc "write version file"
+    task :version do
       tag = `git describe --tags 2>/dev/null`.chomp
       if tag.empty?
         tag = nil
@@ -224,7 +225,7 @@ END
       end
       ## should also check if working tree is different from HEAD
       ver = tag || commit
-      File.open(t.name, "w") do |f|
+      File.open(ver_file, "w") do |f|
         f.puts "SIMX_VERSION = '#{ver}'"
       end
     end
