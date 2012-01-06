@@ -18,7 +18,10 @@ module Runq
       
       if not req.data['ok']
         log.warn "warmup run failed: #{run.inspect}"
-        ## ?
+        
+        ### send back message to apiweb
+        ### req.data["error"]
+        
         return
       end
 

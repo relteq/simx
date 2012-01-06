@@ -323,11 +323,13 @@ module Runq
         :last_contact => Time.now
       )
 
-      database[:runs].where(:id => worker[:run_id]).update(
+      run_id = worker[:run_id] ### handle worker == nil
+      
+      database[:runs].where(:id => run_id).update(
         :frac_complete  => req.frac_complete
         ## store progress as well?
       )
-      run = database[:runs].where(:id => worker[:run_id]).first
+      run = database[:runs].where(:id => run_id).first
 
       batch = database[:batches].where(:id => run[:batch_id]).first
 
@@ -675,7 +677,14 @@ module Runq
       batch_id = run[:batch_id]
       batch_index = run[:batch_index]
       batch = database[:batches].where(:id => batch_id).first
-      frontend_batches = apiweb_db[:simulation_batches]
+      
+      if apiweb_db.table_exists?(:simulation_batches)
+        frontend_batches = apiweb_db[:simulation_batches]
+      else
+        # in case simx is running in standalone mode
+        frontend_batches = nil
+      end
+      
       worker_id = worker[:id]
       param = YAML.load(batch[:param]) ## cache this per batch
       
@@ -707,8 +716,10 @@ module Runq
       if batch[:engine] == 'simulator'
         batch_param = YAML.load(batch[:param])
         simulation_batch_id = batch_param[:redmine_simulation_batch_id]
-        frontend_batches.where(:id => simulation_batch_id).
-          update(:number_of_runs => batch[:n_runs], :start_time => Time.now)
+        if frontend_batches
+          frontend_batches.where(:id => simulation_batch_id).
+            update(:number_of_runs => batch[:n_runs], :start_time => Time.now)
+        end
       end
 
       add_redmine_callbacks run_id, batch[:engine], param

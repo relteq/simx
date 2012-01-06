@@ -98,7 +98,7 @@ get "/batch/:batch_id/run/:run_idx/done" do
   log.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
-  run = resp["runs"][run_idx] ### handle nil
+  run = resp["runs"][run_idx] ### handle resp["runs"] == nil
   (run[:frac_complete] == 1.0).to_yaml
   ### these responses are not consistent with the "status"=>"ok" stuff
 end
@@ -111,7 +111,7 @@ get "/batch/:batch_id/run/:run_idx/result" do
   log.info "Run done request, batch_id=#{batch_id}, run_idx=#{run_idx}"
   req = Runq::Request::BatchStatus.new :batch_id => batch_id
   resp = send_request_and_recv_response req
-  run = resp["runs"][run_idx]
+  run = resp["runs"][run_idx] ### handle resp["runs"] == nil
   if run
     if run[:frac_complete] == 1.0
       run[:data]
