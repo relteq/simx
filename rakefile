@@ -119,6 +119,8 @@ task :clean => [:stop, "workers:stop"] do
   rm_rf "var/run"
   rm_rf "var/log"
   rm_rf "var/tmp"
+  rm_rf "var/data/runq.sqlite"
+  rm_rf "var/data/simx.sqlite"
 end
 
 task :clean_data do
