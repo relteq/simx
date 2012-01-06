@@ -134,7 +134,7 @@ namespace :remote do
     end
   end
   
-  task :update_me => "git:version" do
+  task :update_me do
     sh "rsync -Cavz --delete --relative --exclude='*.bck'" +
        " #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
   end
@@ -205,12 +205,22 @@ cd ./$(git rev-parse --show-cdup)
 RUBYOPT="" bin/switch-branch
 END
 
+    post_commit = <<END
+#!/bin/sh
+rake git:version
+END
+
     desc "set up git hooks after cloning"
     task :init do
       File.open(".git/hooks/post-checkout", "w") do |f|
         f.puts post_checkout
       end
       sh "chmod +x .git/hooks/post-checkout"
+
+      File.open(".git/hooks/post-commit", "w") do |f|
+        f.puts post_commit
+      end
+      sh "chmod +x .git/hooks/post-commit"
     end
     
     ver_file = "lib/simx/version.rb"
