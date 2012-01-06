@@ -8,27 +8,27 @@
 ### add user, group id params
 get "/import/scenario/:filename" do |filename|
   protected!
-#  given[:access_token] or not_authorized!
+#  params[:access_token] or not_authorized!
 
-  log.info "Attempting to import #{given[:bucket]}/#{filename}"
+  log.info "Attempting to import #{params[:bucket]}/#{filename}"
 
   import_options = {}
 
-  if given[:from_user]
-    import_options[:redmine_user_id] = given[:from_user]
+  if params[:from_user]
+    import_options[:redmine_user_id] = params[:from_user]
   end
 
   if can_access?({:type => 'Project',
-    :id => given[:to_project]}, given[:access_token])
+    :id => params[:to_project]}, params[:access_token])
     stream_cautiously do |out|
-      xml_plaintext = s3.fetch(filename, given[:bucket])
+      xml_plaintext = s3.fetch(filename, params[:bucket])
       log.info "loaded XML data from #{filename} for import"
       xml_data = Nokogiri.XML(xml_plaintext).xpath("/scenario")[0]
       Aurora::ImportUtil.rekey!(xml_data)
-      scenario = import_scenario_xml(xml_data, given[:to_project], import_options)
+      scenario = import_scenario_xml(xml_data, params[:to_project], import_options)
       log.info "scenario imported to project #{scenario.project_id}: #{scenario.id}" if scenario 
   
-      if given[:jsoncallback]
+      if params[:jsoncallback]
         script = jsonp({:success => scenario.id})
         log.debug "returning #{script} as JSONP"
         out << script
@@ -47,7 +47,7 @@ get "/duplicate/:type/:id" do |type, id|
   received_type = type_translator[type]
   numeric_id = id.to_i
   overrides = {}
-  project_dest = given[:to_project]
+  project_dest = params[:to_project]
   overrides[:project_id] = project_dest if project_dest
 
   if !received_type
@@ -57,17 +57,17 @@ get "/duplicate/:type/:id" do |type, id|
 
   if can_access?({ :type => received_type.to_s.split('::').last, 
                    :id => numeric_id },
-                 given[:access_token])
+                 params[:access_token])
     stream_cautiously do |out|
       object = received_type[numeric_id]
       if object 
-        if given[:deep] && object.respond_to?(:deep_copy)
+        if params[:deep] && object.respond_to?(:deep_copy)
           copy = object.deep_copy(DB, overrides)
         else
           copy = object.shallow_copy(DB, overrides)
         end
  
-        if given[:jsoncallback]
+        if params[:jsoncallback]
           script = jsonp({:success => copy.id})
           log.debug "returning #{script} as JSONP"
           out << script
@@ -128,7 +128,7 @@ end
 get "/model/scenario-by-key/:key.xml" do |key|
   protected!
 # This route is accessed by key, not id, so no need to check this:
-#  access_token = given[:access_token]
+#  access_token = params[:access_token]
 #  access_token or not_authorized!
 
   entry = lookup_apiweb_key(key)
@@ -151,7 +151,7 @@ get "/model/scenario/:id.xml" do |id|
   log.info "requested scenario #{id} as xml"
 
   if can_access?({:type => 'Scenario', 
-                  :id => id}, given[:access_token])
+                  :id => id}, params[:access_token])
     stream_cautiously do |out|
       content_type :xml
       out << export_scenario_xml(id)
@@ -171,8 +171,8 @@ get "/model/scenario/:id.url" do |id|
   stream_cautiously do |out|
     content_type :text
     xml = export_scenario_xml(id)
-    given["ext"] = "xml"
-    url = s3.store(xml, given)
+    params["ext"] = "xml"
+    url = s3.store(xml, params)
     out << url
   end
 end
@@ -183,7 +183,7 @@ get "/model/network/:id.xml" do |id|
   log.info "requested wrapped network #{id} as xml"
   
   if can_access?({:type => 'Network', 
-                  :id => id}, given[:access_token])
+                  :id => id}, params[:access_token])
     stream_cautiously do |out|
       content_type :xml
 
@@ -203,7 +203,7 @@ end
 get "/model/wrapped-network-by-key/:key.xml" do |key|
   protected!
 # This route is accessed by key, not id, so no need to check this:
-#  access_token = given[:access_token]
+#  access_token = params[:access_token]
 #  access_token or not_authorized!
   
   entry = lookup_apiweb_key(key)
@@ -233,12 +233,12 @@ end
 
 get "/editor/scenario/:id.html" do |id|
   protected!
-  access_token = given[:access_token]
+  access_token = params[:access_token]
 #  access_token or not_authorized!
   log.info "requested scenario #{id} in editor"
   
   if can_access?({:type => 'Scenario', 
-                  :id => id}, given[:access_token])
+                  :id => id}, params[:access_token])
     stream_cautiously do |out|
       content_type :html
 
@@ -255,7 +255,7 @@ get "/editor/scenario/:id.html" do |id|
       
       @dbweb_key = key
 
-      KEY_TO_ID[key] = [id, Time.now, given[:to_project]]
+      KEY_TO_ID[key] = [id, Time.now, params[:to_project]]
 
       out << haml(:flash_edit)
     end
@@ -266,7 +266,7 @@ end
 
 get "/editor/network/:id.html" do |id|
   protected!
-  access_token = given[:access_token]
+  access_token = params[:access_token]
 #  access_token or not_authorized!
   log.info "requested network #{id} in editor"
   
@@ -288,7 +288,7 @@ get "/editor/network/:id.html" do |id|
 
       @dbweb_key = key
 
-      KEY_TO_ID[key] = [id, Time.now, given[:to_project]]
+      KEY_TO_ID[key] = [id, Time.now, params[:to_project]]
 
       out << haml(:flash_edit)
     end
@@ -299,7 +299,7 @@ end
 
 get "/editor/controller_set/:id.html" do |id|
   protected!
-  access_token = given[:access_token]
+  access_token = params[:access_token]
 #  access_token or not_authorized!
   log.info "requested controller set #{id} in editor"
   
@@ -322,7 +322,7 @@ get "/editor/controller_set/:id.html" do |id|
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
 
       out << haml(:flash_edit)
     end
@@ -333,7 +333,7 @@ end
 
 get "/editor/demand_profile_set/:id.html" do |id|
   protected!
-  access_token = given[:access_token]
+  access_token = params[:access_token]
 #  access_token or not_authorized!
   log.info "requested demand profile set #{id} in editor"
   
@@ -356,7 +356,7 @@ get "/editor/demand_profile_set/:id.html" do |id|
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
 
       out << haml(:flash_edit)
     end
@@ -367,7 +367,7 @@ end
 
 get "/editor/split_ratio_profile_set/:id.html" do |id|
   protected!
-  access_token = given[:access_token]
+  access_token = params[:access_token]
 #  access_token or not_authorized!
   log.info "requested split ratio profile set #{id} in editor"
   
@@ -390,7 +390,7 @@ get "/editor/split_ratio_profile_set/:id.html" do |id|
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
 
       out << haml(:flash_edit)
     end
@@ -401,7 +401,7 @@ end
 
 get "/editor/capacity_profile_set/:id.html" do |id|
   protected!
-  access_token = given[:access_token]
+  access_token = params[:access_token]
 #  access_token or not_authorized!
   log.info "requested capacity profile set #{id} in editor"
   
@@ -424,7 +424,7 @@ get "/editor/capacity_profile_set/:id.html" do |id|
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
 
       out << haml(:flash_edit)
     end
@@ -435,7 +435,7 @@ end
 
 get "/editor/event_set/:id.html" do |id|
   protected!
-  access_token = given[:access_token]
+  access_token = params[:access_token]
 #  access_token or not_authorized!
   log.info "requested event set #{id} in editor"
   
@@ -458,7 +458,7 @@ get "/editor/event_set/:id.html" do |id|
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
       @gmap_key = ENV["GMAP_KEY"]
 
-      KEY_TO_ID[key] = [network_id, Time.now, given[:to_project]]
+      KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
 
       out << haml(:flash_edit)
     end
@@ -468,14 +468,14 @@ get "/editor/event_set/:id.html" do |id|
 end
 
 get "/reports/:report_id/report_xml" do |report_id|
-  access_token = given[:access_token]
+  access_token = params[:access_token]
   log.debug "report_id = #{report_id}"
 
   if can_access?({:type => 'SimulationBatchReport', 
                   :id => report_id}, access_token)
     stream_cautiously do |out|
       @report = Aurora::SimulationBatchReport[report_id]
-      if given[:jsoncallback]
+      if params[:jsoncallback]
         script = jsonp({:xml => @report.s3_xml})
         out << script
       else
@@ -504,7 +504,7 @@ post "/store" do
     log.info "started deferred store operation"
     
     data = request.body.read
-    url = s3.store(data, given)
+    url = s3.store(data, params)
     if url !~ /^\w+:/
       # in case of local storage, url omits the proto, host, port
       url = "http://#{host_with_port}#{url}"
@@ -526,17 +526,17 @@ end
 
 # Used by a NetworkEditor instance that was launched from apiweb to save
 # back to the database.
-# given can include "expiry", "ext", "access_token".
+# params can include "expiry", "ext", "access_token".
 post "/save" do
   protected!
 
-  access_token = given[:access_token]
-#  given[:access_token] or not_authorized!
+  access_token = params[:access_token]
+#  params[:access_token] or not_authorized!
 
   ###log.info "requested scenario #{id} in editor"
   
 #  if can_access?({:type => 'Scenario', 
-#                  :id => id}, given[:access_token])
+#                  :id => id}, params[:access_token])
 
   
   stream_cautiously do |out|

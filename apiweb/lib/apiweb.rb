@@ -119,7 +119,6 @@ USERS = [
 RUNQ_PORT = Integer(ENV["RUNQ_PORT"] || 9096)
 RUNQ_HOST = ENV["RUNQ_HOST"] || 'localhost'
 
-require 'apiweb/sinatra-hack'
 require 'apiweb/db-helpers'
 require 'apiweb/run-helpers'
 require 'apiweb/web-helpers'
