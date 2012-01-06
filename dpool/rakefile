@@ -5,47 +5,44 @@ $LOAD_PATH.unshift libdir
 require 'yaml'
 
 require 'simx/daemon'
-##require 'simx/gems'
 
 #== Config
 
 # Read the deployment-specific config file (see config/README).
 config = YAML.load(File.read("../config.yaml"))
-runq_config = config["runq"]
-db_config = config["db"]
+dpool_config = config["dpool"]
 
-# port served by the daemon process (rake start)
-# (with rake run, process port is printed on terminal)
-port = Integer(ENV["RUNQ_PORT"] || runq_config["port"])
+# UNIX socket served by the daemon process
+pub_sock = dpool_config["socket"] || "dpool.sock"
 
-log_level = runq_config["log level"] || "debug"
+log_level = dpool_config["log level"] || "debug"
 
 # destination for the remote task
 dest_host = config["deploy"]["host"]
-dest_path = File.join(config["deploy"]["path"], "runq")
+dest_path = File.join(config["deploy"]["path"], "dpool")
 
-proc_name   = "runq"
-svr_name    = File.join(libdir, "runq", "#{proc_name}.rb")
+proc_name   = "dpool"
+svr_name    = File.join(libdir, "dpool", "#{proc_name}.rb")
 exec_dir    = topdir
 sock_dir    = File.join(exec_dir, "var/run")
-sock_name   = File.join(sock_dir, "#{proc_name}.sock")
+sock_name   = File.join(sock_dir, "#{proc_name}_ctrl.sock")
+pub_name    = File.expand_path(pub_sock, sock_dir)
 log_dir     = File.join(exec_dir, "var/log")
 log_file    = File.join(log_dir, "#{proc_name}.log")
 err_file    = log_file.sub(/\.log/, ".err")
 data_dir    = File.join(exec_dir, "var/data")
-
-ENV["APIWEB_DB_URL"] ||=
-  (db_config && db_config["url"]) ||
-    ("sqlite://" + File.join(data_dir, "apiweb.sqlite"))
+tmp_dir     = File.join(exec_dir, "var/tmp")
 
 FileUtils.mkdir_p log_dir
 FileUtils.mkdir_p sock_dir
+FileUtils.mkdir_p data_dir
+FileUtils.mkdir_p tmp_dir
 
 #== Tasks
 
 ops = %w{ start stop restart stat watch log }
 
-desc "update and restart remote daemon, #{dest_host}:#{port}"
+desc "update and restart remote daemon, #{dest_host}"
 task :remote
 
 namespace :remote do
@@ -94,7 +91,6 @@ namespace :remote do
   task :update do
     sh "rsync -Cavz --delete --exclude='*.bck'" +
        " #{remote_files.to_a.join(" ")} #{dest_host}:#{dest_path}/"
-    ## sudbir updates need to update ../lib
   end
   
   ops.each do |name|
@@ -105,14 +101,17 @@ namespace :remote do
 end
 
 task :run do
-  sh "ruby", "-C", exec_dir, "-I", libdir, svr_name
+  sh "ruby", "-C", exec_dir, "-I", libdir, svr_name,
+    "--data-dir", data_dir,
+    "--tmp-dir", tmp_dir,
+    "--pub-name", pub_name
 end
 
 task :start do
   result = command("stat", sock_name)
   case result
   when /not running/i
-    puts "starting on port #{port}"
+    puts "starting"
     
     opts = {
       "err_file"    => err_file,
@@ -126,8 +125,9 @@ task :start do
     args = [
       "-I", libdir,
       svr_name,
-      "--port", port.to_s,
-      "--production",
+      "--data-dir", data_dir,
+      "--tmp-dir", tmp_dir,
+      "--pub-name", pub_name,
       "--log-file", log_file,
       "--log-level", log_level
     ]

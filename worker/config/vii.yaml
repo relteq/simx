@@ -7,7 +7,6 @@ local:
   # runq_port:    env var or default
   # apiweb_host:  localhost
   # apiweb_port:  env var or default
-  dpool_socket:   ~/topl/dpoold/var/run/dpoold.sock
   workers:
     - run_class:    Run::Aurora
       count:        1
@@ -37,7 +36,6 @@ vii:
   runq_port:    8096
   apiweb_host:  vii.path.berkeley.edu
   apiweb_port:  8097
-  dpool_socket:   ~/dpoold/var/run/dpoold.sock
   workers:
     - run_class:    Run::Aurora
       count:        8

@@ -17,7 +17,8 @@ require 'simx/daemon'
 class << self
   attr_reader :config, :proc_name, :svr_name, :exec_dir,
     :sock_dir, :sock_name, :log_dir, :log_file, :err_file,
-    :libdir, :config_file, :simx_worker_config, :runq_config, :apiweb_config,
+    :libdir, :config_file, :simx_worker_config,
+    :runq_config, :apiweb_config, :dpool_config,
     :simx_worker_log_level
 end
 
@@ -31,6 +32,7 @@ else
   @simx_worker_log_level = simx_worker_config["log level"]
   @runq_config = simx_config["runq"]
   @apiweb_config = simx_config["apiweb"]
+  @dpool_config = simx_config["dpool"]
 end
 
 @libdir = libdir
@@ -46,11 +48,11 @@ end
 @config = YAML.load(File.read(config_file))
 
 @proc_name   = "worker-manager"
-@svr_name    = "lib/#{proc_name}.rb"
-@exec_dir    = ".."
-@sock_dir    = File.expand_path(File.join(exec_dir, "var/run"))
+@svr_name    = File.join(libdir, "worker", "#{proc_name}.rb")
+@exec_dir    = topdir
+@sock_dir    = File.join(exec_dir, "var/run")
 @sock_name   = File.join(sock_dir, "#{proc_name}.sock")
-@log_dir     = File.expand_path(File.join(exec_dir, "var/log"))
+@log_dir     = File.join(exec_dir, "var/log")
 @log_file    = File.join(log_dir, "#{proc_name}.log")
 @err_file    = log_file.sub(/\.log/, ".err")
 
@@ -116,11 +118,12 @@ end
 #== Implementation
 
 DEFAULT_INSTANCE_CONFIG = {
-  "host"        => "localhost",
-  "user"        => ENV["USERNAME"],
-  "dir"         => TOPDIR,
-  "runq_host"   => ENV["RUNQ_HOST"] || "localhost",
-  "apiweb_host" => ENV["APIWEB_HOST"] || "localhost"
+  "host"          => "localhost",
+  "user"          => ENV["USERNAME"],
+  "dir"           => TOPDIR,
+  "runq_host"     => ENV["RUNQ_HOST"] || "localhost",
+  "apiweb_host"   => ENV["APIWEB_HOST"] || "localhost",
+  "dpool_socket"  => "dpool.sock"
 }
 
 default_runq_port = ENV["RUNQ_PORT"] || (runq_config && runq_config["port"])
@@ -131,6 +134,12 @@ end
 default_apiweb_port = ENV["APIWEB_PORT"] || (apiweb_config && apiweb_config["port"])
 if default_apiweb_port
   DEFAULT_INSTANCE_CONFIG["apiweb_port"] = Integer(default_apiweb_port)
+end
+
+default_dpool_socket = ENV["DPOOL_SOCKET"] || (dpool_config && dpool_config["socket"])
+if default_dpool_socket
+  DEFAULT_INSTANCE_CONFIG["dpool_socket"] =
+    File.expand_path(default_dpool_socket, sock_dir)
 end
 
 namespace :config do
@@ -295,13 +304,13 @@ def do_run instance, instance_config
   cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
   cfg_yml = cfg.to_yaml.sub(/^---\s*/, "") # yaml prefix looks like switch
   
-  simx_lib = ENV["simx_lib"] = File.expand_path(libdir)
+  simx_lib = ENV["simx_lib"] = libdir
   
   sh "ruby",
       "-C", exec_dir,
       "-I", simx_lib,
       ## don't use -r; damn rubygems
-      "-e", "require '#{File.expand_path(svr_name)}'; WorkerManager.run",
+      "-e", "require '#{svr_name}'; WorkerManager.run",
       cfg_yml
 end
 
@@ -331,11 +340,11 @@ def do_start instance, instance_config
     cfg = DEFAULT_INSTANCE_CONFIG.merge(h).merge(instance_config)
     cfg_yml = cfg.to_yaml.sub(/^---\s*/, "") # yaml prefix looks like switch
 
-    simx_lib = ENV["simx_lib"] = File.expand_path(libdir)
+    simx_lib = ENV["simx_lib"] = libdir
 
     args = [
       "-I", simx_lib,
-      "-e", "require '#{File.expand_path(svr_name)}'; WorkerManager.run",
+      "-e", "require '#{svr_name}'; WorkerManager.run",
       cfg_yml
     ]
     
@@ -367,7 +376,7 @@ def do_stat instance, instance_config
 end
 
 def do_crontab instance, instance_config
-  path = File.expand_path("..") # n.b.
+  path = TOPDIR # n.b.
   cron_cmd = "*/5 * * * * cd #{path} && bin/worker-manager.cron || true"
     ## remove rubygems
   

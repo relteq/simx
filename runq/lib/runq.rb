@@ -99,7 +99,7 @@ module Runq
       @production = argv.delete("--production")
       
       @port = Integer(ENV["RUNQ_PORT"]) rescue nil
-      if (i = argv.index("--port"))
+      if (i = argv.index("--port")) ## use argos for this
         _, @port = argv.slice!(i, 2)
         @port = Integer(@port)
       end

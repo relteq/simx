@@ -26,19 +26,21 @@ port = Integer(ENV["APIWEB_PORT"] || apiweb_config["port"])
 runq_port = Integer(ENV["RUNQ_PORT"] || runq_config["port"])
 runq_host = ENV["RUNQ_HOST"] || "localhost"
 
+log_level = apiweb_config["log level"] || "debug"
+
 # destination for the remote task
 dest_host = config["deploy"]["host"]
 dest_path = File.join(config["deploy"]["path"], "apiweb")
 
 proc_name   = "apiweb"
-svr_name    = "lib/#{proc_name}.rb"
-exec_dir    = ".."
-sock_dir    = File.expand_path(File.join(exec_dir, "var/run"))
+svr_name    = File.join(libdir, "apiweb", "#{proc_name}.rb")
+exec_dir    = topdir
+sock_dir    = File.join(exec_dir, "var/run")
 sock_name   = File.join(sock_dir, "#{proc_name}.sock")
-log_dir     = File.expand_path(File.join(exec_dir, "var/log"))
+log_dir     = File.join(exec_dir, "var/log")
 log_file    = File.join(log_dir, "#{proc_name}.log")
 err_file    = log_file.sub(/\.log/, ".err")
-data_dir    = File.expand_path(File.join(exec_dir, "var/data"))
+data_dir    = File.join(exec_dir, "var/data")
 
 db_url = ENV["SIMX_DB_URL"] || (db_config && db_config["url"])
 if not db_url
@@ -116,8 +118,7 @@ namespace :remote do
 end
 
 task :run do
-  sh "ruby", "-C", exec_dir, "-I", File.expand_path(libdir),
-    File.expand_path(svr_name)
+  sh "ruby", "-C", exec_dir, "-I", libdir, svr_name
 end
 
 task :start do
@@ -136,15 +137,15 @@ task :start do
     }
     
     args = [
-      "-I", File.expand_path(libdir),
-      File.expand_path(svr_name),
+      "-I", libdir,
+      svr_name,
       "-p", port.to_s,
       "-e", "production",
       "--", # end sinatra options; options below are passed to svr_name
       "--runq-port", runq_port.to_s,
       "--runq-host", runq_host,
       "--log-file", log_file,
-      "--log-level", apiweb_config["log level"]
+      "--log-level", log_level
     ]
     
     daemonize opts do
@@ -204,7 +205,7 @@ namespace :test do
   task :run => [:setup, "^run"]
 
   task :setup do
-    ia = File.expand_path(File.join(exec_dir, "bin", "import-aurora-xml"))
+    ia = File.join(exec_dir, "bin", "import-aurora-xml")
     if db_file
       if not File.exist?(db_file)
         FileUtils.mkdir_p data_dir

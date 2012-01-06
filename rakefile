@@ -45,6 +45,7 @@ remote_files.exclude 'public/tmp'
 daemon_dirs = %w{
   runq
   apiweb
+  dpool
 }
 
 DATA_DIR = "var/data/"
@@ -100,8 +101,11 @@ task :update_examples
 desc "install local cronjob to start daemons after reboot"
 task :crontab
 
-desc "stop daemons and remove var"
+desc "stop daemons, remove var/{run,log,tmp}, keep var/data"
 task :clean
+
+desc "remove var/data"
+task :clean_data
 
 ##desc "puts needed gems in #{GEMDIR} dir"
 ##task GEMDIR
@@ -112,7 +116,13 @@ task :clean
 #== Implementation
 
 task :clean => [:stop, "workers:stop"] do
-  rm_rf "var"
+  rm_rf "var/run"
+  rm_rf "var/log"
+  rm_rf "var/tmp"
+end
+
+task :clean_data do
+  rm_rf "var/data"
 end
 
 namespace :remote do
@@ -132,6 +142,7 @@ namespace :remote do
   delegated_tasks.each do |name|
     task name do
       sh "ssh #{dest_host} 'cd #{dest_path} && rake #{name}'"
+        ## pass on rake args to this rake
     end
   end
   
@@ -146,6 +157,7 @@ delegated_tasks.each do |name|
       print "%20s: " % dir
       $stdout.flush
       result = `cd #{dir} && rake #{name}`
+        ## pass on rake args to this rake
       puts result if result
     end
   end
