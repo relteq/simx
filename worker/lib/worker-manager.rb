@@ -84,25 +84,53 @@ class WorkerManager
     threads = []
     
     workers.each do |worker_set|
-      worker_set["count"].times do
+      run_class = get_scoped_constant(worker_set["run_class"])
+      
+      case run_class::INTERPRETER
+      when "ruby"
+        worker_set["count"].times do
+          w = worker_set.dup # note shallow copy
+          w.delete "count"
+
+          w["runq_host"] = config["runq_host"]
+          w["runq_port"] = config["runq_port"]
+
+          w["apiweb_host"] = config["apiweb_host"]
+          w["apiweb_port"] = config["apiweb_port"]
+
+          w["dpool_socket"] = config["dpool_socket"]
+
+          w["logdev"] = config["log_file"]
+
+          w["instance_name"] = instance_name
+
+          threads << Thread.new(w) do |worker_spec|
+            run_worker worker_spec
+          end
+        end
+      
+      when "jruby"
         w = worker_set.dup # note shallow copy
-        w.delete "count"
-        
+        # let worker see "count" 
+
         w["runq_host"] = config["runq_host"]
         w["runq_port"] = config["runq_port"]
-        
+
         w["apiweb_host"] = config["apiweb_host"]
         w["apiweb_port"] = config["apiweb_port"]
-        
+
         w["dpool_socket"] = config["dpool_socket"]
 
         w["logdev"] = config["log_file"]
-        
+
         w["instance_name"] = instance_name
-        
+
         threads << Thread.new(w) do |worker_spec|
           run_worker worker_spec
         end
+      
+      else
+        log.warn "unrecognized interpreter: #{run_class::INTERPRETER}"
       end
     end
     

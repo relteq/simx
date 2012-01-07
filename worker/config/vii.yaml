@@ -9,7 +9,7 @@ local:
   # apiweb_port:  env var or default
   workers:
     - run_class:    Run::Aurora
-      count:        1
+      count:        2
       group:        topl
       user:         topl
       engine:       simulator|calibrator|report generator|report exporter

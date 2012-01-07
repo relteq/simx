@@ -26,10 +26,20 @@ class JRubyWorker
   
     run_class = get_scoped_constant(worker_spec["run_class"])
     instance_name = worker_spec["instance_name"]
+    count = worker_spec["count"]
     
-    $0 = "#{run_class} jruby worker for #{instance_name}"
+    $0 = "#{run_class} count=#{count} jruby workers for #{instance_name}"
     
-    Worker.new(run_class, worker_spec).execute
+    threads = []
+    count.times do
+      threads << Thread.new do
+        Worker.new(run_class, worker_spec).execute
+      end
+    end
+    
+    threads.each do |thread|
+      thread.join
+    end
     
     done
   
