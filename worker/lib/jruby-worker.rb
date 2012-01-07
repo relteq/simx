@@ -22,7 +22,7 @@ class JRubyWorker
   def run
     worker_spec = YAML.load($stdin.read)
 
-    ## handle term signal by exiting result code 0
+    ## handle term/int signal by exiting result code 0
   
     run_class = get_scoped_constant(worker_spec["run_class"])
     instance_name = worker_spec["instance_name"]

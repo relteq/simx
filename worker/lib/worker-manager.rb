@@ -69,16 +69,18 @@ class WorkerManager
       # or else mktmpdir falls back to system tmp dir, which may be /tmp
       # which jruby fails to write to.
 
-    sid = Process.setsid
-    log.info "sid = #{sid}"
-    trap "TERM" do ## This seems to prevent INT when started using rake run?
+    if config["mode"] == "start" ## hack
+      sid = Process.setsid
+      log.info "sid = #{sid}"
       trap "TERM" do
+        trap "TERM" do
+          Process.waitall
+          exit
+        end
+        Process.kill "TERM", -sid
         Process.waitall
         exit
       end
-      Process.kill "TERM", -sid
-      Process.waitall
-      exit
     end
 
     threads = []
@@ -149,7 +151,7 @@ class WorkerManager
     loop do
       ok = run_worker_once worker_spec
       if ok
-        # no error, just responding to TERM
+        # no error, just responding to TERM or INT
         break
       else
         n = 1
@@ -228,6 +230,8 @@ class WorkerManager
       begin
         $0 = "#{run_class} worker for #{instance_name}"
         Worker.new(run_class, worker_spec).execute
+      rescue Interrupt
+        exit
       rescue => e
         log.error e
         raise
