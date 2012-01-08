@@ -589,8 +589,6 @@ module Runq
     def dispatch_run run_id
       run = database[:runs].where(:id => run_id).first
       
-      purge_workers
-      
       # no race cond here because there is only one thread in db
       ready_workers = database[:workers].where(:run_id => nil).
         order_by(:cost, :speed.desc, :priority.desc)
@@ -607,6 +605,8 @@ module Runq
         log.info "No matching workers for run #{run_id}."
         return false
       end
+      
+      purge_workers
       
     rescue WorkerDisconnected => e
       log.warn "Worker #{e.worker_id} disconnected: #{e}"
@@ -741,13 +741,13 @@ module Runq
             where(:run_id => nil).
             where {last_contact < t}.
             all.select do |w|
-              s = socket_for_worker[w]
+              s = socket_for_worker[w[:id]]
               !s or s.closed?
             end
       
       ws.each do |w|
         log.info "purging worker #{w.inspect}"
-        ### TODO
+        socket_for_worker.delete w[:id]
       end
     end
 
