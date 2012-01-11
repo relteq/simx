@@ -78,7 +78,7 @@
     <SignalList/>
     <ODList/>
     <SensorList>
-      <sensor id="-2" type="loop" link_type="ML">
+      <sensor id="-2" type="loop" link_type="FW">
         <description>University Ave</description>
         <position>
           <point lat="37.856225" lng="-122.300735"/>
