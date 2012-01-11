@@ -49,14 +49,41 @@ class Run::Aurora
         url = source["url"] ## validate?
         case url
         when /^(pems|dbx|bhl)/i ## or maybe just ask dpool and handle failure?
-          dpsock.puts url
-          path = dpsock.gets ## handle errors
-          if path
-            path = path.chomp
-            file_url = "file://#{path}"
-            source["url"] = file_url
-            revert[file_url] = url
-            log.debug {"substituted data source %p => %p" % [url, file_url] }
+          
+          if md = /(\d+)\s*-\s*(\d+)/.match(url) # Jan 1-5, 2011
+            date_begin = md[1].to_i
+            date_end = md[2].to_i
+            if date_end < date_begin
+              raise ArgumentError, "Bad date range: #{url}"
+            end
+            
+            file_urls = (date_begin..date_end).map do |date|
+              date_url = url.sub(md[0], date.to_s)
+              dpsock.puts date_url
+              path = dpsock.gets ## handle errors
+              file_url = path && "file://#{path.chomp}"
+            end
+            file_urls = file_urls.compact
+            
+            if not file_urls.empty?
+              file_urls_csv = file_urls.join(",") # understood by calibrator
+              source["url"] = file_urls_csv
+              revert[file_urls_csv] = url
+              log.debug {"substituted data source %p => %p" %
+                [url, file_urls_csv] }
+            end
+            
+          else
+            dpsock.puts url
+            path = dpsock.gets ## handle errors
+
+            if path
+              path = path.chomp
+              file_url = "file://#{path}"
+              source["url"] = file_url
+              revert[file_url] = url
+              log.debug {"substituted data source %p => %p" % [url, file_url] }
+            end
           end
         end
       end
