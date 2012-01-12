@@ -8,16 +8,20 @@ require 'db/export/capacity-profile-set'
 require 'db/export/demand-profile-set'
 
 module Aurora
+  XMLNS_PREFIX = "aurora"
+  XMLNS_URL = "http://path.berkeley.edu/aurora"
+  
   class Scenario
     module ScenarioBuilder
       def schema_version
-        "1.0.14" ### should read this from xsd
+        "1.0.20" ### should read this from xsd
       end
-
+      
       def build_xml(xml, db = DB)
         attrs = {
           :id => id,
-          :schemaVersion => schema_version
+          :schemaVersion => schema_version,
+          "xmlns:#{XMLNS_PREFIX}" => XMLNS_URL
         }
 
         attrs[:name] = name unless !name or name.empty?
@@ -57,7 +61,7 @@ module Aurora
     class Dummy
       include ScenarioBuilder
       
-      def to_xml(db = DB)
+      def to_xml(db = DB) ## isn't this the same as Aurora::Model#to_xml ?
         builder = Nokogiri::XML::Builder.new do |xml|
           build_xml(xml, db)
         end
