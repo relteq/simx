@@ -3,7 +3,7 @@ source :rubygems
 #------------------------------
 # for server and worker installations
 #
-mri_18_gems = %w{
+mri_19_gems = %w{
   eventmachine
   sinatra
   sequel
@@ -17,10 +17,11 @@ mri_18_gems = %w{
   rest-client
   haml
   fsdb
+  aws-s3
 }
 
-mri_18_gems.each do |g|
-  gem g, :platforms => :mri_18
+mri_19_gems.each do |g|
+  gem g, :platforms => :mri_19
 end
 gem 'sinatra-jsonp', :require => 'sinatra/jsonp', :platforms => :mri_18
 
