@@ -23,6 +23,7 @@ class S3_Mock
   end
 
   # +params+ can include "expiry", "ext"; returns url where +data+ is stored;
+  # if +data+ is a File, then read it instead;
   # the url is based on the md5 hash of the data
   def store data, params
     expiry_str = params["expiry"]
@@ -37,7 +38,16 @@ class S3_Mock
     ext = params["ext"]
 
     require 'digest/md5'
-    key = Digest::MD5.hexdigest(data)
+    
+    if defined? data.path
+      key = Digest::MD5.file(data.path).hexdigest
+      data = data.read
+      ## would be better not to read the file, but rather copy it to fsdb
+    else
+      key = Digest::MD5.hexdigest(data)
+    end
+    
+    
     if ext
       if /\./ =~ ext
         ext = ext[/[^.]*$/]

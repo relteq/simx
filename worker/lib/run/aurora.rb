@@ -188,7 +188,7 @@ module Run
 
       output_urls = output_files.zip(output_types).map do |file, mime_type|
         data = begin
-          File.read(file)
+          File.read(file) ## maybe we don't need to read it
         rescue => e
           log.warn "output file #{file} could not be read: #{e}"
           ""
@@ -196,7 +196,9 @@ module Run
         
         log.debug "output #{file}:\n#{data[0..200].inspect}"
         log.debug "output file size=#{File.size(file)}"
-        store(data, mime_type)
+        File.open(file) do |f|
+          store(f, mime_type)
+        end
       end
 
       @results = {
@@ -229,10 +231,13 @@ module Run
 
       log.info "requesting storage from #{post_url}"
       rsrc = RestClient::Resource.new(post_url, apiweb_user, apiweb_password)
-      response = rsrc.post data
+      
+      log.debug "storing #{data.inspect[0..200]}"
+      response = rsrc.post(:file => data, :multipart => true)
+
       data_url = "#{response.body}" ## to_s instead?
 
-      log.info "results stored at #{data_url}"
+      log.info "results stored at #{data_url.inspect}"
       data_url
     end
 

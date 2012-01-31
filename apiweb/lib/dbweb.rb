@@ -491,6 +491,10 @@ end
 
 # Request s3 storage. +params+ can include "expiry", "ext".
 #
+# Data is in the "file" field. For example:
+#
+#  curl localhost:4567/store -F file=@some_file
+#
 # Returns the s3 key, which is a md5 hash of the data, plus the specified file
 # extension, if any, which s3 uses to make a content-type header. Expiry is in
 # seconds. Default is none. Expiry is not guaranteed, but will not happen before
@@ -502,9 +506,29 @@ post "/store" do
   
   stream_cautiously do |out|
     log.info "started deferred store operation"
+    log.debug "params = #{params.inspect}"
     
-    data = request.body.read
-    url = s3.store(data, params)
+    file_field = params["file"]
+    # file_field["filename"] is ignored, since we use md5 hash
+    
+    if file_field
+      log.debug "file_field = #{file_field.inspect}"
+
+      begin
+        f = file_field[:tempfile]
+        log.debug "upload tempfile = #{f.inspect}"
+        url = s3.store(f, params)
+      ensure
+        f.close
+        f.unlink
+      end
+
+    else ## temporary allow this legacy case for old NE
+      log.warn "missing 'file' param; assuming data is in body"
+      data = request.body.read
+      url = s3.store(data, params)
+    end
+
     if url !~ /^\w+:/
       # in case of local storage, url omits the proto, host, port
       url = "http://#{host_with_port}#{url}"
