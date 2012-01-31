@@ -313,7 +313,7 @@ module Runq
 
     def scenario_export req
       params = req.runq_assist_params
-      match = /@scenario\((\d+)\)/.match(params.first)
+      match = /@scenario\((\d+)\)/.match(params)
       scenario_id = match[1] 
       log.debug "Exporting scenario #{scenario_id} for simulation db=#{dbweb_db}"
       scenario_url = Aurora::Scenario.export_and_store_on_s3(scenario_id, dbweb_db)
