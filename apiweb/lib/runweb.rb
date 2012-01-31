@@ -80,8 +80,41 @@ get "/batch/:batch_id/done" do |batch_id|
     if batch
       n_runs = batch[:n_runs]
       n_complete = batch[:n_complete]
-      out << (n_runs == n_complete).to_yaml
+      done = n_runs == n_complete
+      log.info "Batch done response, batch_id=#{batch_id}, wait=#{wait}: " +
+        "#{done.inspect}"
+      out << done.to_yaml
     else
+      log.info "no such batch: #{batch_id}"
+      status 404
+      out << "no such batch"
+      ### these responses are not consistent with the "status"=>"ok" stuff
+    end
+  end
+end
+
+# checks batch status, optionally waiting some seconds for the batch to finish
+# returns YAML object {}.
+get "/batch/:batch_id/status" do |batch_id|
+  protected!
+  
+  batch_id = Integer(batch_id)
+  wait = params[:wait] && Integer(params[:wait])
+  log.info "Batch status request, batch_id=#{batch_id}, wait=#{wait}"
+  
+  req = Runq::Request::BatchStatus.new :batch_id => batch_id, :wait => wait
+  
+  stream_cautiously do |out|
+    resp = send_request_and_recv_response req
+    log.debug "batch status response: #{resp.inspect}"
+    batch = resp["batch"]
+    if batch
+      batch[:done] = (batch[:n_runs] == batch[:n_complete])
+      log.info "Batch status response, batch_id=#{batch_id}, wait=#{wait}: " +
+        "#{batch.inspect}"
+      out << batch.to_yaml
+    else
+      log.info "no such batch: #{batch_id}"
       status 404
       out << "no such batch"
       ### these responses are not consistent with the "status"=>"ok" stuff
