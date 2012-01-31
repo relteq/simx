@@ -101,6 +101,9 @@ module Runq
         float       :execution_time # in wall clock time
         integer     :n_complete # number of runs completed
 
+        float       :frac_complete # estimate of overall status of all runs
+        constraint  nil, :frac_complete => 0..1
+
         index :group
         index :user
         index :engine

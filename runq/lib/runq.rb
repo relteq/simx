@@ -247,20 +247,27 @@ module Runq
     end
     
     def defer_request req
-      deferred_requests.push [req, Time.now + [req.wait, 60].min]
+      t = Time.now + [req.wait, 60].min
+      log.debug "defer_request until #{t}: #{req}"
+      deferred_requests.push [req, t]
     end
     
     # If this req changes the state that some deferred request is waiting for,
     # check if we can handle the deferred request.
     def check_deferred completed_req
+      log.debug "check_deferred"
       todo = deferred_requests
       @deferred_requests = []
       todo.each do |dreq, time|
         if dreq.wait_succeeded?
           ## probably could narrow this (check batch_id, check completed_req)
+          log.info "check_deferred: wait_succeeded, handling #{dreq}"
           handle_request_now dreq
         elsif Time.now < time
           deferred_requests.push [dreq, time]
+        else
+          log.info "check_deferred: time is up, handling #{dreq}"
+          handle_request_now dreq
         end
       end
     end
@@ -332,6 +339,14 @@ module Runq
       run = database[:runs].where(:id => run_id).first
 
       batch = database[:batches].where(:id => run[:batch_id]).first
+
+	    batch_frac_complete =
+        database[:runs].where(:batch_id => run[:batch_id]).
+        avg(:frac_complete)
+      log.debug "batch_frac_complete = #{batch_frac_complete}"
+      
+      database[:batches].where(:id => run[:batch_id]).update(
+        :frac_complete => batch_frac_complete)
 
       log.debug "Run update callback = #{run[:update_callback]}"
       if run[:update_callback]

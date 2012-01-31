@@ -151,7 +151,9 @@ module Runq
     # condition for early termination of the wait period
     def wait_succeeded?
       batch = runq.database[:batches].where(:id => batch_id).first
-      batch[:n_runs] == batch[:n_complete]
+      succeeded = (batch[:n_runs] == batch[:n_complete])
+      log.debug "wait_succeeded: #{succeeded}, batch = #{batch.inspect}"
+      succeeded
     end
   end
 
