@@ -290,7 +290,7 @@ include Daemon
 
 def do_run instance, instance_config
   cfg = DEFAULT_INSTANCE_CONFIG.merge(instance_config)
-  cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
+  cfg_yml = cfg.to_yaml.sub(/^---/, "") # yaml prefix looks like switch
   
   simx_lib = ENV["simx_lib"] = File.expand_path(libdir)
   
@@ -326,7 +326,7 @@ def do_start instance, instance_config
     end
     
     cfg = DEFAULT_INSTANCE_CONFIG.merge(h).merge(instance_config)
-    cfg_yml = cfg.to_yaml.sub(/^--- /, "") # yaml prefix looks like switch
+    cfg_yml = cfg.to_yaml.gsub(/^---/, "") # yaml prefix looks like switch
 
     simx_lib = ENV["simx_lib"] = File.expand_path(libdir)
 
@@ -335,7 +335,7 @@ def do_start instance, instance_config
       "-e", "require '#{File.expand_path(svr_name)}'; WorkerManager.run",
       cfg_yml
     ]
-    
+
     daemonize opts do
       exec "ruby", *args
     end
