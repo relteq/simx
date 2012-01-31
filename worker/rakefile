@@ -349,7 +349,7 @@ def do_start instance, instance_config
       "-e", "require '#{svr_name}'; WorkerManager.run",
       cfg_yml
     ]
-    
+
     daemonize opts do
       exec "ruby", *args
     end
