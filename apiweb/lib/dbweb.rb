@@ -93,10 +93,10 @@ post "/import" do
   protected!
 
   stream_cautiously do |out|
-    xml_data = request.body.read
-    log.info "importing #{xml_data.size} bytes of xml data"
-    table, id = import_xml(xml_data)
-    log.info "finished importing"
+    table, id = get_upload do |f|
+      import_xml(f)
+    end
+    log.info "finished importing: #{table} ##{id}"
     out << [table, id].to_yaml
   end
 end
@@ -508,26 +508,10 @@ post "/store" do
     log.info "started deferred store operation"
     log.debug "params = #{params.inspect}"
     
-    file_field = params["file"]
-    # file_field["filename"] is ignored, since we use md5 hash
-    
-    if file_field
-      log.debug "file_field = #{file_field.inspect}"
-
-      begin
-        f = file_field[:tempfile]
-        log.debug "upload tempfile = #{f.inspect}"
-        url = s3.store(f, params)
-      ensure
-        f.close
-        f.unlink
+    url =
+      get_upload do |f|
+        s3.store(f, params)
       end
-
-    else ## temporary allow this legacy case for old NE
-      log.warn "missing 'file' param; assuming data is in body"
-      data = request.body.read
-      url = s3.store(data, params)
-    end
 
     if url !~ /^\w+:/
       # in case of local storage, url omits the proto, host, port
@@ -552,6 +536,7 @@ end
 # back to the database.
 # params can include "expiry", "ext", "access_token".
 post "/save" do
+  ### obsolete?
   protected!
 
   access_token = params[:access_token]
@@ -566,7 +551,7 @@ post "/save" do
   stream_cautiously do |out|
     log.info "saving"
     
-    data = request.body.read
+    data = request.body.read ###
     log.debug "saving xml = #{data[0..200]}..."
     
     out << "done"
@@ -584,10 +569,10 @@ post "/save/:key.xml" do |key|
   log.info "saving by key #{key}"
 
   stream_cautiously do |out|
-    xml_string = request.body.read
-    log.debug "saving xml = #{xml_string[0..200]}..."
-    
-    xml = Nokogiri.XML(xml_string).xpath("/scenario")[0]
+    xml = get_upload do |f|
+      Nokogiri.XML(f).xpath("/scenario")[0]
+    end
+    log.debug "saving #{xml.name}"
     
     scenario = import_scenario_xml(xml, entry[:project_id], {})
       ###  need to store import_options and user_id in KEY_TO_ID

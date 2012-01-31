@@ -55,4 +55,27 @@ helpers do
   def index_page
     MY_ENV[:index_page]
   end
+
+  # Yields open File (if uploaded with multipart) or, deprecated,
+  # String (from body, otherwise).
+  def get_upload
+    file_field = params["file"]
+    
+    if file_field
+      log.debug "file_field = #{file_field.inspect}"
+
+      begin
+        f = file_field[:tempfile]
+        log.debug "upload tempfile = #{f.inspect}"
+        yield f
+      ensure
+        f.close
+        f.unlink
+      end
+
+    else ## temporarily allow this legacy case for old NE
+      log.warn "missing 'file' param; assuming data is in body"
+      yield request.body.read
+    end
+  end
 end
