@@ -7,6 +7,9 @@ runq:
 apiweb:
   port: 8597
   log level: debug
+dpool:
+  socket: dpool.sock
+  log level: debug
 worker:
   config file: staging.yaml
   log level: debug
