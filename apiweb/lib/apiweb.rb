@@ -128,7 +128,12 @@ get '/' do
 end
 
 get '/NetworkEditor' do
-  redirect 'NetworkEditor.html'
+  @network_editor = "/NetworkEditor.swf"
+
+  @export_url = "/examples/calib-test.xml"
+  @gmap_key = ENV["GMAP_KEY"]
+
+  haml(:flash_edit)
 end
 
 # See http://kb2.adobe.com/cps/142/tn_14213.html

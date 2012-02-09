@@ -34,9 +34,13 @@ remote_files = FileList[
   "bin",
   "public/crossdomain.xml",
   "public/favicon.ico",
-  "public/NetworkEditor.html",
-    # not swf, since that needs to be symlinked on each host
+  
+  # not NetworkEditor.html, since that needs to be dynamically generated
+  # with proper gmap key
+  
+  # not NetworkEditor.swf, since that needs to be symlinked on each host
     ## swf location could be specified in the config
+  
   "public/examples"
 ]
 remote_files.exclude 'public/NetworkEditor.swf'
