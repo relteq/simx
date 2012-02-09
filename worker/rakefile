@@ -384,7 +384,14 @@ def do_crontab instance, instance_config
   
   ct = `crontab -l`
   rx = Regexp.quote(cron_cmd)
-  if ct.grep(/^#{rx}/).empty?
+
+  if defined? ct.grep # 1.8
+    ct_for_grep = ct
+  else # 1.9
+    ct_for_grep = ct.each_line
+  end
+
+  if ct_for_grep.grep(/^#{rx}/).empty?
     IO.popen("crontab -", "w") do |pipe|
       pipe.puts ct, cron_cmd
     end
