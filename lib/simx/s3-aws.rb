@@ -10,7 +10,7 @@ class S3_AWS
     AWS::S3::Base.establish_connection!(opts[:creds])
   end
   
-  def fetch filename
+  def fetch filename, bucket
     AWS::S3::S3Object.value filename, bucket
   end
 
