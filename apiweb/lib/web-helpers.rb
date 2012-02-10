@@ -16,6 +16,8 @@ helpers do
   end
 
   def protected!
+    return unless /berkeley.edu$/i === ENV['HOSTNAME']
+    
     response['WWW-Authenticate'] = %(Basic realm="the TOPL Project") and \
     throw(:halt,
           [401, "Not authorized at #{request.env["REMOTE_ADDR"]}\n"]) and \
