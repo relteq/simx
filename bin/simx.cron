@@ -3,5 +3,5 @@ test -f "$HOME/.amazon_keys" && . "$HOME/.amazon_keys"
 env \
   PATH=/usr/local/bin:$PATH \
   RUBYOPT=rubygems \
-  JRUBY_OPTS=-rubygems \
+  JRUBY_OPTS='--1.9' \
   bin/onboot var/simx.started rake stop start 1>var/simx.onboot.out 2>var/simx.onboot.err

@@ -7,6 +7,9 @@ runq:
 apiweb:
   port: 9097
   log level: debug
+dpool:
+  socket: dpool.sock
+  log level: debug
 worker:
   config file: dev.yaml
   log level: debug

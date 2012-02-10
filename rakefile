@@ -34,9 +34,13 @@ remote_files = FileList[
   "bin",
   "public/crossdomain.xml",
   "public/favicon.ico",
-  "public/NetworkEditor.html",
-    # not swf, since that needs to be symlinked on each host
+  
+  # not NetworkEditor.html, since that needs to be dynamically generated
+  # with proper gmap key
+  
+  # not NetworkEditor.swf, since that needs to be symlinked on each host
     ## swf location could be specified in the config
+  
   "public/examples"
 ]
 remote_files.exclude 'public/NetworkEditor.swf'
@@ -189,7 +193,14 @@ task :crontab => "var" do
   
   ct = `crontab -l`
   rx = Regexp.quote(cron_cmd)
-  if ct.grep(/^#{rx}/).empty?
+
+  if defined? ct.grep # 1.8
+    ct_for_grep = ct
+  else # 1.9
+    ct_for_grep = ct.each_line
+  end
+
+  if ct_for_grep.grep(/^#{rx}/).empty?
     IO.popen("crontab -", "w") do |pipe|
       pipe.puts ct, cron_cmd
     end

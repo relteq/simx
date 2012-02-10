@@ -7,6 +7,9 @@ runq:
 apiweb:
   port: 8097
   log level: info
+dpool:
+  socket: dpool.sock
+  log level: debug
 worker:
   config file: master.yaml
   log level: info
