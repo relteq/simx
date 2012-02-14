@@ -9,55 +9,28 @@ local:
   # apiweb_port:  env var or default
   workers:
     - run_class:    Run::Aurora
-      count:        1
-      group:        topl
-      user:         topl
-      engine:       simulator
-      cost:         0
-      speed:        1
-      priority:     1
-      retry_delay:  10
-
-    - run_class:    Run::Dummy
-      count:        3
-      group:        topl
-      user:         topl
-      engine:       dummy
-      cost:         0
-      speed:        1
-      priority:     1
-      retry_delay:  10
-
-relteq-worker:
-  host:         relteq-worker.dyndns.org
-  user:         aurora
-  dir:          simx-staging
-  runq_host:    relteq-db.dyndns.org
-  runq_port:    8596
-  apiweb_host:  relteq-db.dyndns.org
-  apiweb_port:  8597
-  workers:
-    - run_class:    Run::Aurora
-      count:        1
+      count:        2
       group:        relteq
       user:         relteq
       engine:       simulator|calibrator|report generator|report exporter
       cost:         0
       speed:        1
-      priority:     2
+      priority:     1
       retry_delay:  10
 
-vii-aurora:
+# TOPL users who are using the relteq front-end can use workers on
+# the vii server.
+vii:
   host:         vii.path.berkeley.edu
   user:         aurora
-  dir:          simx-staging
+  dir:          simx-rt-topl-staging
   runq_host:    relteq-db.dyndns.org
   runq_port:    8596
   apiweb_host:  relteq-db.dyndns.org
   apiweb_port:  8597
   workers:
     - run_class:    Run::Aurora
-      count:        4
+      count:        8
       group:        topl
       user:         topl
       engine:       simulator|calibrator|report generator|report exporter
@@ -66,3 +39,21 @@ vii-aurora:
       priority:     1
       retry_delay:  10
 
+relteq-db:
+  host:         localhost
+  user:         worker
+  dir:          simx-staging
+  runq_host:    localhost
+  runq_port:    8596
+  apiweb_host:  localhost
+  apiweb_port:  8597
+  workers:
+    - run_class:    Run::Aurora
+      count:        2
+      group:        relteq
+      user:         relteq
+      engine:       simulator|calibrator|report generator|report exporter
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10

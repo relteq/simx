@@ -9,55 +9,38 @@ local:
   # apiweb_port:  env var or default
   workers:
     - run_class:    Run::Aurora
-      count:        1
-      group:        topl
-      user:         topl
-      engine:       simulator|report generator
-      cost:         0
-      speed:        1
-      priority:     1
-      retry_delay:  10
-
-    - run_class:    Run::Dummy
-      count:        3
-      group:        topl
-      user:         topl
-      engine:       dummy
-      cost:         0
-      speed:        1
-      priority:     1
-      retry_delay:  10
-
-relteq-worker:
-  host:         relteq-worker.dyndns.org
-  user:         aurora
-  dir:          simx-dev
-  runq_host:    relteq-db.dyndns.org
-  runq_port:    9096
-  apiweb_host:  relteq-db.dyndns.org
-  apiweb_port:  9097
-  workers:
-    - run_class:    Run::Aurora
-      count:        1
+      count:        2
       group:        relteq
       user:         relteq
       engine:       simulator|calibrator|report generator|report exporter
       cost:         0
       speed:        1
-      priority:     2
+      priority:     1
       retry_delay:  10
 
-vii-aurora:
+    - run_class:    Run::Dummy
+      count:        3
+      group:        relteq
+      user:         relteq
+      engine:       dummy
+      cost:         0
+      speed:        1
+      priority:     1
+      retry_delay:  10
+
+# TOPL users who are using the relteq front-end can use workers on
+# the vii server.
+vii:
   host:         vii.path.berkeley.edu
   user:         aurora
-  dir:          simx-dev
+  dir:          simx-rt-topl-dev
   runq_host:    relteq-db.dyndns.org
   runq_port:    9096
   apiweb_host:  relteq-db.dyndns.org
   apiweb_port:  9097
   workers:
     - run_class:    Run::Aurora
-      count:        4
+      count:        8
       group:        topl
       user:         topl
       engine:       simulator|calibrator|report generator|report exporter
@@ -66,30 +49,20 @@ vii-aurora:
       priority:     1
       retry_delay:  10
 
-vii-vjoel:
-  host:         vii.path.berkeley.edu
-  user:         vjoel
+relteq-db:
+  host:         localhost
+  user:         worker
   dir:          simx-dev
-  runq_host:    relteq-db.dyndns.org
+  runq_host:    localhost
   runq_port:    9096
-  apiweb_host:  relteq-db.dyndns.org
+  apiweb_host:  localhost
   apiweb_port:  9097
   workers:
     - run_class:    Run::Aurora
-      count:        4
-      group:        vjoel
-      user:         vjoel
+      count:        2
+      group:        relteq
+      user:         relteq
       engine:       simulator|calibrator|report generator|report exporter
-      cost:         0
-      speed:        1
-      priority:     1
-      retry_delay:  10
-
-    - run_class:    Run::Dummy
-      count:        3
-      group:        vjoel
-      user:         vjoel
-      engine:       dummy
       cost:         0
       speed:        1
       priority:     1
