@@ -14,9 +14,13 @@ helpers do
       end
     end
   end
+  
+  def university_of_california_at_berkeley?
+    /berkeley\.edu$/i === ENV['HOSTNAME']
+  end
 
   def protected!
-    return unless /berkeley.edu$/i === ENV['HOSTNAME']
+    return unless university_of_california_at_berkeley?
     
     response['WWW-Authenticate'] = %(Basic realm="the TOPL Project") and \
     throw(:halt,
