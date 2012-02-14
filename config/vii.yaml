@@ -7,6 +7,8 @@ runq:
 apiweb:
   port: 8097
   log level: debug
+  simx_group: topl
+  simx_user: topl
 dpool:
   socket: dpool.sock
   log level: debug

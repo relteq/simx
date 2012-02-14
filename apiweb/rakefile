@@ -19,6 +19,9 @@ db_config = config["db"] || {}
 ENV["SIMX_S3_BUCKET"] ||= aws_config["s3 bucket"]
 ENV["SIMX_S3_MOCK"] ||= aws_config["mock"].to_s
 
+ENV["SIMX_GROUP"] = apiweb_config["simx_group"]
+ENV["SIMX_USER"]  = apiweb_config["simx_user"]
+
 # port served by the daemon process (rake start)
 # (with rake run, process port is printed on terminal)
 port = Integer(ENV["APIWEB_PORT"] || apiweb_config["port"])

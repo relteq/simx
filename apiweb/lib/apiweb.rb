@@ -131,6 +131,10 @@ get '/NetworkEditor' do
   @network_editor = "/NetworkEditor.swf"
 
   @export_url = "/examples/calib-test.xml"
+
+  @simx_group = ENV["SIMX_GROUP"]
+  @simx_user  = ENV["SIMX_USER"]
+
   @gmap_key = ENV["GMAP_KEY"]
 
   haml(:flash_edit)
