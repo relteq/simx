@@ -251,6 +251,10 @@ get "/editor/scenario/:id.html" do |id|
       )
       
       @export_url = "/model/scenario-by-key/#{key}.xml"
+
+      @simx_group = ENV["SIMX_GROUP"]
+      @simx_user  = ENV["SIMX_USER"]
+
       @gmap_key = ENV["GMAP_KEY"]
       
       @dbweb_key = key
@@ -284,6 +288,10 @@ get "/editor/network/:id.html" do |id|
       )
       
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
+
+      @simx_group = ENV["SIMX_GROUP"]
+      @simx_user  = ENV["SIMX_USER"]
+
       @gmap_key = ENV["GMAP_KEY"]
 
       @dbweb_key = key
@@ -320,6 +328,10 @@ get "/editor/controller_set/:id.html" do |id|
       )
       
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
+
+      @simx_group = ENV["SIMX_GROUP"]
+      @simx_user  = ENV["SIMX_USER"]
+
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
@@ -354,6 +366,10 @@ get "/editor/demand_profile_set/:id.html" do |id|
       )
       
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
+
+      @simx_group = ENV["SIMX_GROUP"]
+      @simx_user  = ENV["SIMX_USER"]
+
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
@@ -388,6 +404,10 @@ get "/editor/split_ratio_profile_set/:id.html" do |id|
       )
       
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
+
+      @simx_group = ENV["SIMX_GROUP"]
+      @simx_user  = ENV["SIMX_USER"]
+
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
@@ -422,6 +442,10 @@ get "/editor/capacity_profile_set/:id.html" do |id|
       )
       
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
+
+      @simx_group = ENV["SIMX_GROUP"]
+      @simx_user  = ENV["SIMX_USER"]
+
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
@@ -456,6 +480,10 @@ get "/editor/event_set/:id.html" do |id|
       )
       
       @export_url = "/model/wrapped-network-by-key/#{key}.xml"
+
+      @simx_group = ENV["SIMX_GROUP"]
+      @simx_user  = ENV["SIMX_USER"]
+
       @gmap_key = ENV["GMAP_KEY"]
 
       KEY_TO_ID[key] = [network_id, Time.now, params[:to_project]]
