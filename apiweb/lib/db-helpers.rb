@@ -12,22 +12,21 @@ helpers do
   end
 
   def s3
-    unless @s3
+    @s3 ||= begin
       ## sync?
       data_dir = ENV["SIMX_DATA_DIR"]
       
       if ENV["SIMX_S3_MOCK"] == "true"
         require 'simx/s3-mock'
-        @s3 = S3_Mock.new(
+        S3_Mock.new(
           :dir      => File.join(data_dir, "s3-mock", SIMX_S3_BUCKET),
           :url_base => "/file",
           :log      => log
         )
 
       else
-        ## use mock for short-term storage even if s3 available
         require 'simx/s3-aws'
-        @s3 = S3_AWS.new(
+        S3_AWS.new(
           :creds => {
             :access_key_id     => ENV["AMAZON_ACCESS_KEY_ID"],
             :secret_access_key => ENV["AMAZON_SECRET_ACCESS_KEY"]
@@ -36,6 +35,22 @@ helpers do
           :log    => log
         )
       end
+    end
+  end
+  
+  # temp file storage, accessible thru apiweb, using s3-mock;
+  # replaces s3 for short-term storage
+  def webtmp
+    @webtmp ||= begin
+      require 'simx/s3-mock'
+
+      data_dir = ENV["SIMX_DATA_DIR"]
+      
+      S3_Mock.new(
+        :dir      => File.join(data_dir, "webtmp"),
+        :url_base => "/tmp",
+        :log      => log
+      )
     end
   end
 

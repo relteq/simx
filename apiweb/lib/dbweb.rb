@@ -161,8 +161,8 @@ get "/model/scenario/:id.xml" do |id|
   end
 end
 
-# Exports the scenario, uploads the xml string to s3, and returns the url in the
-# response body, with content type text/plain.
+# Exports the scenario, uploads the xml string to webtmp, and returns the url
+# in the response body, with content type text/plain.
 
 get "/model/scenario/:id.url" do |id|
   protected!
@@ -172,7 +172,7 @@ get "/model/scenario/:id.url" do |id|
     content_type :text
     xml = export_scenario_xml(id)
     params["ext"] = "xml"
-    url = s3.store(xml, params)
+    url = webtmp.store(xml, params)
     out << url
   end
 end
@@ -227,7 +227,7 @@ get "/model/wrapped-network-by-key/:key.xml" do |key|
   end
 end
 
-# Exports the scenario, uploads the xml string to s3, and returns a html
+# Exports the scenario, uploads the xml string to webtmp, and returns a html
 # response that, when loaded in the client browser, runs our flash app, which
 # then loads the url passed to it by fashvars.
 
@@ -517,23 +517,52 @@ get "/reports/:report_id/report_xml" do |report_id|
   end
 end
 
-# Request s3 storage. +params+ can include "expiry", "ext".
+get "/file/:filename" do |filename|
+  protected!
+
+  stream_cautiously do |out|
+    log.info "deferred fetch of #{filename}"
+    out << s3.fetch(filename)
+  end
+end
+
+get "/tmp/:filename" do |filename|
+  protected!
+
+  stream_cautiously do |out|
+    log.info "deferred fetch of #{filename}"
+    out << webtmp.fetch(filename)
+  end
+end
+
+post "/store" do
+  log.warn "deprecated route: /store; use /file or /tmp instead; assuming /file"
+  redirect "/file"
+end
+
+# For long-term storage that will not be delete until a user request, or a
+# user-given expiration. This is good for user-created content.
+#
+# Storage may be s3 or local, depending on the aws mock flag.
+#
+# +params+ can include "expiry", "ext".
 #
 # Data is in the "file" field. For example:
 #
-#  curl localhost:4567/store -F file=@some_file
+#  curl localhost:4567/file -F file=@some_file
 #
-# Returns the s3 key, which is a md5 hash of the data, plus the specified file
-# extension, if any, which s3 uses to make a content-type header. Expiry is in
-# seconds. Default is none. Expiry is not guaranteed, but will not happen before
-# the specified number of seconds has elapsed.
-post "/store" do
+# Returns the url, which is based on the md5 hash of the data, plus the
+# specified file extension, if any, which s3 uses to make a content-type header.
+# Expiry is in seconds. Default is none. Expiry is not guaranteed, but will not
+# happen before the specified number of seconds has elapsed.
+#
+post "/file" do
   protected!
   
   host_with_port = request.host_with_port
   
   stream_cautiously do |out|
-    log.info "started deferred store operation"
+    log.info "started deferred file store operation"
     log.debug "params = #{params.inspect}"
     
     url =
@@ -551,12 +580,37 @@ post "/store" do
   end
 end
 
-get "/file/:filename" do |filename|
+# For short-term storage that can be deleted at any time, but will (almost)
+# always exist for long enough to download it. This is good for db exports,
+# sim results, etc.
+#
+# +params+ can include "expiry", "ext".
+#
+# Data is in the "file" field. For example:
+#
+#  curl localhost:4567/tmp -F file=@some_file
+#
+post "/tmp" do
   protected!
 
+  host_with_port = request.host_with_port
+  
   stream_cautiously do |out|
-    log.info "deferred fetch of #{filename}"
-    out << s3.fetch(filename)
+    log.info "started deferred tmp store operation"
+    log.debug "params = #{params.inspect}"
+    
+    url =
+      get_upload do |f|
+        webtmp.store(f, params)
+      end
+
+    if url !~ /^\w+:/
+      # in case of local storage, url omits the proto, host, port
+      url = "http://#{host_with_port}#{url}"
+    end
+
+    log.info "finished deferred store operation, url = #{url}"
+    out << url
   end
 end
 
