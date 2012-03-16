@@ -119,7 +119,12 @@ task :clean_data
 
 #== Implementation
 
-task :clean => [:stop, "workers:stop"] do
+clean_tgt = [:stop]
+if File.directory? "worker" # in case of simx deployed w/o workers in same dir
+  clean_tgt << "workers:stop"
+end
+
+task :clean => clean_tgt do
   rm_rf "var/run"
   rm_rf "var/log"
   rm_rf "var/tmp"
