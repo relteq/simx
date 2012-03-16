@@ -47,7 +47,6 @@ class S3_Mock
       key = Digest::MD5.hexdigest(data)
     end
     
-    
     if ext
       if /\./ =~ ext
         ext = ext[/[^.]*$/]
