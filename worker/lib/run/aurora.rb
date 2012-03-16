@@ -226,7 +226,7 @@ module Run
       ext = ext_for_mime_type(mime_type) if mime_type
 
       post_url = "http://" +
-        "#{apiweb_host}:#{apiweb_port}/webtmp?" +
+        "#{apiweb_host}:#{apiweb_port}/tmp?" +
         "expiry=#{expiry}&ext=#{ext}"
 
       log.info "requesting storage from #{post_url}"
