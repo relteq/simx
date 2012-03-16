@@ -50,7 +50,7 @@ vii:
       retry_delay:  10
 
 relteq-db:
-  host:         localhost
+  host:         simx
   user:         worker
   dir:          simx-dev
   runq_host:    localhost
