@@ -1,4 +1,4 @@
-test -f "$HOME/.aurora_env" && . "$HOME/.aurora_env"
+test -f "$HOME/.simx_worker_env" && . "$HOME/.simx_worker_env"
 
 env \
   PATH=/usr/local/bin:$PATH \

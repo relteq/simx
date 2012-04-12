@@ -1,5 +1,4 @@
-test -f "$HOME/.amazon_keys" && . "$HOME/.amazon_keys"
-test -f "$HOME/.gmap_kep" && . "$HOME/.gmap_kep"
+test -f "$HOME/.simx_env" && . "$HOME/.simx_env"
 
 env \
   PATH=/usr/local/bin:$PATH \
