@@ -16,6 +16,7 @@ worker:
   config file: dev.yaml
   log level: debug
 aws:
-  s3 bucket: relteq-uploads-dev
+  mock: true
+  ###s3 bucket: relteq-uploads-dev
 db:
   url: postgres://redmine:topl5t6y7u8i@relteq-db.dyndns.org/relteq-dev
