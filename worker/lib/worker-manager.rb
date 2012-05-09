@@ -220,7 +220,13 @@ class WorkerManager
     end
 
     log.info "started #{run_class} jruby worker, ppid=#{fpid}"
-    Process.waitpid fpid
+
+    begin
+      Process.waitpid fpid
+    rescue => e
+      log.warn "run_worker_once_in_jruby: #{e.message}"
+    end
+    
     return ($?.exitstatus == 0)
   end
   
@@ -238,7 +244,13 @@ class WorkerManager
       end
     end
     log.info "started #{run_class} worker pid=#{pid}"
-    Process.waitpid pid
+    
+    begin
+      Process.waitpid pid
+    rescue => e
+      log.warn "run_worker_once_in_ruby: #{e.message}"
+    end
+    
     result = ($?.exitstatus == 0)
     log.info "Finished ruby worker pid=#{pid}: result=#{result}" 
     return result
