@@ -1,0 +1,19 @@
+!!!
+%html{:style => 'height: 100%; margin: 0px; padding: 0px;'}
+    %head
+        %title Demo Episode 1: A New Hope
+    %body{:style => 'height: 95%;'}
+        .demo{:style => 'height: 100%; width: 100%;'}
+            %object{ :id => 'Demo',
+                :classid => 'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000',
+                :codebase => 'http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab',
+                :width => '100%',
+                :height => '100%',
+                :style => 'height: 100%; width: 100%;' }
+                %param{:name => 'movie', :value => @demo_swf}
+                %param{:name => 'quality', :value => 'high'}
+                %param{:name => 'flashVars', :value => "url=#{@scenario_url}&gmap_key=#{@gmap_key}"}
+                %embed{ :name => 'Demo', :width => '100%', :height => '100%',
+                    :src => @demo_swf, :FlashVars => "url=#{@scenario_url}&gmap_key=#{@gmap_key}",
+                    :pluginspage => "http://www.macromedia.com/go/getflashplayer",
+                    :type => "application/x-shockwave-flash" }

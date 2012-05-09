@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario id="null" name="null" schemaVersion="1.0.20" xmlns:aurora="http://path.berkeley.edu/aurora">
+  <network name="Peninsula highway" ml_control="false" q_control="false" dt="6" id="1">
+    <description></description>
+    <position>
+      <point lat="37.54742000345154" lng="-122.28949183475491"/>
+    </position>
+    <NodeList>
+      <node name="Node -20" type="F" id="-20">
+        <outputs>
+          <output link_id="-13"/>
+        </outputs>
+        <inputs>
+          <input link_id="-122"/>
+        </inputs>
+        <position>
+          <point lat="37.54887" lng="-122.29179999999998"/>
+        </position>
+      </node>
+      <node name="Node -22" type="F" id="-22">
+        <outputs>
+          <output link_id="-41"/>
+        </outputs>
+        <inputs>
+          <input link_id="-13"/>
+        </inputs>
+        <position>
+          <point lat="37.55382999999999" lng="-122.29636"/>
+        </position>
+      </node>
+      <node name="Node -23" type="F" id="-23">
+        <outputs>
+          <output link_id="-117"/>
+        </outputs>
+        <inputs>
+          <input link_id="-16"/>
+        </inputs>
+        <position>
+          <point lat="37.53339999999999" lng="-122.27744"/>
+        </position>
+      </node>
+      <node name="Node -90" type="F" id="-90">
+        <outputs>
+          <output link_id="-16"/>
+        </outputs>
+        <inputs/>
+        <position>
+          <point lat="37.52976" lng="-122.27388"/>
+        </position>
+      </node>
+      <node name="Node -105" type="F" id="-105">
+        <outputs>
+          <output link_id="-87"/>
+        </outputs>
+        <inputs>
+          <input link_id="-140"/>
+        </inputs>
+        <position>
+          <point lat="37.54579" lng="-122.28898"/>
+        </position>
+      </node>
+      <node name="Node -109" type="F" id="-109">
+        <outputs>
+          <output link_id="-140"/>
+        </outputs>
+        <inputs>
+          <input link_id="-117"/>
+        </inputs>
+        <position>
+          <point lat="37.54085" lng="-122.28438"/>
+        </position>
+      </node>
+      <node name="Node -121" type="F" id="-121">
+        <outputs>
+          <output link_id="-122"/>
+        </outputs>
+        <inputs>
+          <input link_id="-87"/>
+        </inputs>
+        <position>
+          <point lat="37.54724" lng="-122.29031"/>
+        </position>
+      </node>
+      <node name="Node -145" type="T" id="-145">
+        <outputs/>
+        <inputs>
+          <input link_id="-55"/>
+        </inputs>
+        <position>
+          <point lat="37.56864" lng="-122.31147"/>
+        </position>
+      </node>
+      <node name="Node -147" type="F" id="-147">
+        <outputs>
+          <output link_id="-55"/>
+        </outputs>
+        <inputs>
+          <input link_id="-65"/>
+        </inputs>
+        <position>
+          <point lat="37.56094" lng="-122.30306"/>
+        </position>
+      </node>
+      <node name="Node -149" type="F" id="-149">
+        <outputs>
+          <output link_id="-65"/>
+        </outputs>
+        <inputs>
+          <input link_id="-41"/>
+        </inputs>
+        <position>
+          <point lat="37.55621" lng="-122.29867"/>
+        </position>
+      </node>
+      <node name="Node -156" type="T" id="-156">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.55295" lng="-122.29556999999998"/>
+        </position>
+      </node>
+      <node name="Node -182" type="T" id="-182">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.525805253986256" lng="-122.2693976279068"/>
+        </position>
+      </node>
+      <node name="Node -189" type="T" id="-189">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.54474" lng="-122.2876"/>
+        </position>
+      </node>
+      <node name="Node -197" type="T" id="-197">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.54573" lng="-122.28580999999998"/>
+        </position>
+      </node>
+      <node name="Node -210" type="T" id="-210">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.55567480468977" lng="-122.28716356292725"/>
+        </position>
+      </node>
+      <node name="Node -216" type="T" id="-216">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.55041" lng="-122.29289"/>
+        </position>
+      </node>
+      <node name="Node -253" type="T" id="-253">
+        <outputs/>
+        <inputs/>
+        <position>
+          <point lat="37.5453" lng="-122.28658"/>
+        </position>
+      </node>
+    </NodeList>
+    <LinkList>
+      <link name="" road_name="US-101 N" lanes="4" length="0.42398994872913454" type="FW" id="-13">
+        <description></description>
+        <begin node_id="-20"/>
+        <end node_id="-22"/>
+        <fd densityCritical="24.075624" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>mwddFvbliV}]n[</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="5" length="0.3180878579822213" type="FW" id="-16">
+        <description></description>
+        <begin node_id="-90"/>
+        <end node_id="-23"/>
+        <fd densityCritical="24.075624" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>_`adFvrhiVuUfU</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="4" length="0.20826869655215047" type="FW" id="-41">
+        <description></description>
+        <begin node_id="-22"/>
+        <end node_id="-149"/>
+        <fd densityCritical="24.075624" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>kvedFf_miV}MlM</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="4" length="0.7044883376936939" type="FW" id="-55">
+        <description></description>
+        <begin node_id="-147"/>
+        <end node_id="-145"/>
+        <fd densityCritical="24.075624" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>{bgdFbiniVco@ps@</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="5" length="0.40619124564472847" type="FW" id="-65">
+        <description></description>
+        <begin node_id="-149"/>
+        <end node_id="-147"/>
+        <fd densityCritical="24.075626" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>iefdFtmmiVq\lZ</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="4" length="0.1245759803593368" type="FW" id="-87">
+        <description></description>
+        <begin node_id="-105"/>
+        <end node_id="-121"/>
+        <fd densityCritical="24.075624" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>cdddFbqkiVcHhG</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="4" length="0.6412244936051635" type="FW" id="-117">
+        <description></description>
+        <begin node_id="-23"/>
+        <end node_id="-109"/>
+        <fd densityCritical="24.075624" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>uvadF~hiiVsm@jj@</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="4" length="0.13924554987480162" type="FW" id="-122">
+        <description></description>
+        <begin node_id="-121"/>
+        <end node_id="-20"/>
+        <fd densityCritical="24.075626" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>gmddFlykiVeIhH</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="4" length="0.424190566518184" type="FW" id="-140">
+        <description></description>
+        <begin node_id="-109"/>
+        <end node_id="-105"/>
+        <fd densityCritical="24.075624" flowMax="2518.4875" densityJam="150.0"/>
+        <qmax>100</qmax>
+        <LinkGeometry>
+          <EncodedPolyline zoomFactor="2" numLevels="18">
+            <Points>iecdFjtjiVy]v[</Points>
+            <Levels>PP</Levels>
+          </EncodedPolyline>
+        </LinkGeometry>
+      </link>
+      <link name="" road_name="US-101 N" lanes="1" length="0.07424068499020292" type="OR" id="-154">
+        <description></description>
+        <begin node_id="-156"/>
+        <end node_id="-22"/>
+        <fd densityCritical="27.646223" flowMax="2447.0754" densityJam="150.0"/>
+        <qmax>100</qmax>
+      </link>
+      <link name="" road_name="US-101 N" lanes="5" length="0.36800320833921246" type="OR" id="-180">
+        <description></description>
+        <begin node_id="-182"/>
+        <end node_id="-90"/>
+        <fd densityCritical="45.98845" flowMax="2080.231" densityJam="150.0"/>
+        <qmax>100</qmax>
+      </link>
+      <link name="" road_name="US-101 N" lanes="1" length="0.1042491495275331" type="OR" id="-187">
+        <description></description>
+        <begin node_id="-189"/>
+        <end node_id="-105"/>
+        <fd densityCritical="39.30455" flowMax="2213.909" densityJam="150.0"/>
+        <qmax>100</qmax>
+      </link>
+      <link name="" road_name="E Hillsdale Blvd" lanes="1" length="0.49720925344245764" type="OR" id="-195">
+        <description></description>
+        <begin node_id="-197"/>
+        <end node_id="-121"/>
+        <fd densityCritical="39.30455" flowMax="2213.909" densityJam="150.0"/>
+        <qmax>100</qmax>
+      </link>
+      <link name="" road_name="CA-92 W" lanes="2" length="0.7184864300403955" type="OR" id="-208">
+        <description></description>
+        <begin node_id="-210"/>
+        <end node_id="-149"/>
+        <fd densityCritical="27.646223" flowMax="2447.0754" densityJam="150.0"/>
+        <qmax>100</qmax>
+      </link>
+      <link name="" road_name="414B" lanes="2" length="0.12215643145816665" type="FR" id="-214">
+        <description></description>
+        <begin node_id="-20"/>
+        <end node_id="-216"/>
+        <fd densityCritical="27.646223" flowMax="2447.0754" densityJam="150.0"/>
+        <qmax>100</qmax>
+      </link>
+      <link name="" road_name="US-101 N" lanes="1" length="0.34363707435135415" type="FR" id="-251">
+        <description></description>
+        <begin node_id="-109"/>
+        <end node_id="-253"/>
+        <fd densityCritical="39.304554" flowMax="2213.909" densityJam="150.0"/>
+        <qmax>100</qmax>
+      </link>
+    </LinkList>
+    <SignalList/>
+    <ODList/>
+    <SensorList/>
+    <DirectionsCache>
+      <DirectionsCacheEntry avoidHighways="false" road_name="US-101 N">
+        <From>
+          <ALatLng lat="37.55295" lng="-122.29556999999998"/>
+        </From>
+        <To>
+          <ALatLng lat="37.55382999999999" lng="-122.29636"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>}pedFlzliVkD`D</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="US-101 N">
+        <From>
+          <ALatLng lat="37.525805253986256" lng="-122.2693976279068"/>
+        </From>
+        <To>
+          <ALatLng lat="37.52976" lng="-122.27388"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>gg`dFvvgiVwW~Z</Points>
+          <Levels>PP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="US-101 N">
+        <From>
+          <ALatLng lat="37.54474" lng="-122.2876"/>
+        </From>
+        <To>
+          <ALatLng lat="37.54579" lng="-122.28898"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>k}cdFzhkiV}D|Ea@^</Points>
+          <Levels>P?P</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="E Hillsdale Blvd">
+        <From>
+          <ALatLng lat="37.54573" lng="-122.28580999999998"/>
+        </From>
+        <To>
+          <ALatLng lat="37.54724" lng="-122.29031"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>qcddFd}jiVsAqChBaBO_@}BzBxAfDTpA?`Bo@nJc@dA_FbG</Points>
+          <Levels>PDBFDADAEAP</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="13B">
+        <From>
+          <ALatLng lat="37.55412" lng="-122.29191"/>
+        </From>
+        <To>
+          <ALatLng lat="37.55621" lng="-122.29867"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>axedFlcliVP|A^tMMtBi@nCm@zAc@r@iBxBwApAkBhCe@`@</Points>
+          <Levels>PACAE@B@A@P</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="414B">
+        <From>
+          <ALatLng lat="37.54887" lng="-122.29179999999998"/>
+        </From>
+        <To>
+          <ALatLng lat="37.55041" lng="-122.29289"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>qwddFpbliVo@j@_GtD</Points>
+          <Levels>P@P</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="US-101 N">
+        <From>
+          <ALatLng lat="37.54085" lng="-122.28438"/>
+        </From>
+        <To>
+          <ALatLng lat="37.5453" lng="-122.28658"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>mecdFdtjiVmEtDUDcGlEuAHsCa@kAVmAl@GH</Points>
+          <Levels>PAAEBCA?P</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+      <DirectionsCacheEntry avoidHighways="false" road_name="CA-92 W">
+        <From>
+          <ALatLng lat="37.55567480468977" lng="-122.28716356292725"/>
+        </From>
+        <To>
+          <ALatLng lat="37.55621" lng="-122.29867"/>
+        </To>
+        <EncodedPolyline zoomFactor="2" numLevels="18">
+          <Points>}afdFxekiVhCdJpArFhAzFf@zD^tMMtBi@nCm@zAc@r@iBxBwApAkBhCe@`@</Points>
+          <Levels>PA@DBFBAD@@A@P</Levels>
+        </EncodedPolyline>
+      </DirectionsCacheEntry>
+    </DirectionsCache>
+  </network>
+  <InitialDensityProfile/>
+  <SplitRatioProfileSet>
+    <splitratios node_id="-90" dt="1"/>
+    <splitratios node_id="-145" dt="1"/>
+  </SplitRatioProfileSet>
+  <CapacityProfileSet>
+    <capacity link_id="-16" dt="1"></capacity>
+    <capacity link_id="-55" dt="1"></capacity>
+    <capacity link_id="-65" dt="1"></capacity>
+    <capacity link_id="-140" dt="1"></capacity>
+    <capacity link_id="-154" dt="1"></capacity>
+    <capacity link_id="-180" dt="1"></capacity>
+    <capacity link_id="-187" dt="1"></capacity>
+    <capacity link_id="-195" dt="1"></capacity>
+    <capacity link_id="-208" dt="1"></capacity>
+  </CapacityProfileSet>
+  <EventSet/>
+  <DemandProfileSet>
+    <demand knob="1" dt="1" link_id="-16"></demand>
+    <demand knob="1" dt="1" link_id="-55"></demand>
+    <demand knob="1" dt="1" link_id="-65"></demand>
+    <demand knob="1" dt="1" link_id="-140"></demand>
+    <demand knob="1" start_time="25200" dt="3600" link_id="-154">500,  1500,  1500,  500,  1000,  1500,  500,  1000,  1500</demand>
+    <demand knob="1" start_time="25200" dt="3600" link_id="-180">2000,  3000,  4000,  3000,  3000,  4000,  5000,  4000,  5000</demand>
+    <demand knob="1" start_time="25200" dt="3600" link_id="-187">500,  1500,  500,  1000,  500,  1500,  500,  1000,  500,  1500,  500</demand>
+    <demand knob="1" start_time="25200" dt="3600" link_id="-195">2000,  0,  0,  3000,  0,  0,  2000,  3000,  0,  2000,  3000,  0,  0</demand>
+    <demand knob="1" start_time="25200" dt="3600" link_id="-208">2000,  5000,  0,  0,  4000,  3000,  0,  5000,  4000,  3000,  2000</demand>
+  </DemandProfileSet>
+  <ControllerSet/>
+</scenario>

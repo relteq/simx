@@ -41,7 +41,9 @@ remote_files = FileList[
   # not NetworkEditor.swf, since that needs to be symlinked on each host
     ## swf location could be specified in the config
   
-  "public/examples"
+  "public/examples",
+  "public/demo/density-trace.yaml",
+  "public/demo/US101-test.xml"
 ]
 remote_files.exclude 'public/NetworkEditor.swf'
 remote_files.exclude 'public/tmp'

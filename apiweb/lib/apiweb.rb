@@ -147,6 +147,7 @@ end
 
 require 'apiweb/dbweb'
 require 'apiweb/runweb'
+require 'apiweb/demo'
 
 not_found do
   "#{request.path_info} not found.\n"
