@@ -147,7 +147,9 @@ get "/batch/:batch_id/run/:run_idx/result" do
   run = resp["runs"][run_idx] ### handle resp["runs"] == nil
   if run
     if run[:frac_complete] == 1.0
-      run[:data]
+      fix_data = run[:data].gsub(/http:\/\/localhost:\d+/, '')
+      log.debug "changed run data to #{fix_data.inspect}"
+      fix_data
     else
       # note: /^not finished/ is used by network editor to test for failure
       "not finished: batch_id=#{batch_id}, run_idx=#{run_idx}, " +
