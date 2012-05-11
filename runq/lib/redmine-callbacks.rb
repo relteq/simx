@@ -1,5 +1,9 @@
 module Runq
   class << self
+    def remove_proto_host(url)
+      url.gsub(/http:\/\/localhost:\d+/, '')
+    end
+
     def add_redmine_callbacks run_id, engine, param
       log.debug "Add redmine callbacks run=#{run_id}, engine=#{engine}"
       run = database[:runs].filter(:id => run_id)
@@ -15,11 +19,11 @@ module Runq
       log.debug "run finish_callback =#{run.first[:finish_callback]}"
     end
 
-  	def finish_simulation_callback args
-	    batch_param = args[:batch_param] or raise "batch param not present"
-	    n_complete = args[:n_complete] or raise "n_complete not present"
-	    n_runs = args[:n_runs] or raise "n_runs not present"
-	    req = args[:req] or raise "req not present"
+    def finish_simulation_callback args
+      batch_param = args[:batch_param] or raise "batch param not present"
+      n_complete = args[:n_complete] or raise "n_complete not present"
+      n_runs = args[:n_runs] or raise "n_runs not present"
+      req = args[:req] or raise "req not present"
 
       simulation_batch_id = batch_param[:redmine_simulation_batch_id]
       frontend_batch = apiweb_db[:simulation_batches].
@@ -39,7 +43,7 @@ module Runq
               apiweb_db[:output_files] << {
                 :simulation_batch_id => simulation_batch_id,
                 :s3_bucket => req.data['bucket'],
-                :key => key,
+                :key => remove_proto_host(key),
                 :created_at => Time.now,
                 :updated_at => Time.now
               }
@@ -50,10 +54,10 @@ module Runq
                                  :failure_message => req.data['error'] )
         end
       end
-  	end
-
-  	def finish_report_generator_callback args
-	    batch_param = args[:batch_param] or raise "batch param not present"
+    end
+        
+    def finish_report_generator_callback args
+      batch_param = args[:batch_param] or raise "batch param not present"
       req = args[:req] or raise "req not present"
 
       frontend_report = apiweb_db[:simulation_batch_reports].
@@ -77,7 +81,7 @@ module Runq
                   break
                 end
               end
-              frontend_report.update(field => req.data['output_urls'][index])
+              frontend_report.update(field => remove_proto_host(req.data['output_urls'][index]))
             end
           end
         else
@@ -85,9 +89,9 @@ module Runq
                                   :failure_message => req.data['error'] )
         end
       end
-  	end
+    end
 
-  	def update_simulation_callback args
+    def update_simulation_callback args
       batch_param = args[:batch_param] or raise "batch param not present"
       run = args[:run] or raise "run not present"
 
@@ -97,9 +101,9 @@ module Runq
       simulation_batch_id = batch_param[:redmine_simulation_batch_id]
       apiweb_db[:simulation_batches].where(:id => simulation_batch_id).
         update(:percent_complete => progress)
-  	end
+    end
 
-  	def update_report_generator_callback args
+    def update_report_generator_callback args
       batch_param = args[:batch_param] or raise "batch param not present"
       run = args[:run] or raise "run not present"
 
@@ -109,6 +113,6 @@ module Runq
       apiweb_db[:simulation_batch_reports].
         where(:id => simulation_batch_report_id).
         update(:percent_complete => progress)
-  	end
+    end
   end
 end
