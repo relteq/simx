@@ -126,6 +126,9 @@ module Aurora
       check       {lanes >= 0}
       check       {length >= 0}
       check       :type_link => Aurora::LINK_TYPES
+      
+      ###text        :geometry # encoded polyline, stored as a json hash
+      ### {'z': zoomFactor, 'n': numLevels, 'p': points, 'l': levels}
 
       text        :fd
       float       :qmax
