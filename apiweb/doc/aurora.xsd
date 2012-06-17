@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.19">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0.21">
 
   <xs:element name="scenario">
     <xs:complexType>
@@ -358,6 +358,7 @@
         <xs:element ref="fd" />
         <xs:element ref="dynamics" />
         <xs:element ref="qmax" minOccurs="0" />
+        <xs:element ref="LinkGeometry" minOccurs="0" />
       </xs:all>
       <xs:attribute name="name" type="xs:string" use="optional" />
       <xs:attribute name="road_name" type="xs:string" use="optional" />
@@ -936,4 +937,14 @@
   <xs:element name="Points" type="xs:string" />
   <xs:element name="Levels" type="xs:string" />
 
+  <xs:element name="LinkGeometry">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="EncodedPolyline" />
+        <xs:element ref="GeometrySource" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="GeometrySource" type="xs:string" />
 </xs:schema>
