@@ -152,6 +152,7 @@ get "/model/scenario/:id.xml" do |id|
 
   if can_access?({:type => 'Scenario', 
                   :id => id}, params[:access_token])
+    attachment("scenario-#{id}.xml")
     stream_cautiously do |out|
       content_type :xml
       out << export_scenario_xml(id)
@@ -184,6 +185,7 @@ get "/model/network/:id.xml" do |id|
   
   if can_access?({:type => 'Network', 
                   :id => id}, params[:access_token])
+    attachment("network-#{id}.xml")
     stream_cautiously do |out|
       content_type :xml
 
@@ -531,6 +533,7 @@ get "/tmp/:filename" do |filename|
   attachment(filename)
 
   stream_cautiously do |out|
+    attachment(filename)
     log.info "deferred fetch of #{filename}"
     out << webtmp.fetch(filename)
   end
