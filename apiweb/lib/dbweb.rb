@@ -528,6 +528,7 @@ end
 
 get "/tmp/:filename" do |filename|
   protected!
+  attachment(filename)
 
   stream_cautiously do |out|
     log.info "deferred fetch of #{filename}"
